@@ -82,7 +82,7 @@ namespace ParallelChess {
         }
 
         public static int MoveFromPos(Move move) {
-            return ((int)(move & Move.FROM_POS_BIT_OFFSET)) >> (int) Move.FROM_POS_BIT_OFFSET;
+            return ((int)(move & Move.FROM_POS_MASK)) >> (int) Move.FROM_POS_BIT_OFFSET;
         }
 
         public static Piece MoveCaptured(Move move) {
@@ -103,7 +103,12 @@ namespace ParallelChess {
         public static int MovePreviousCastlingBits(Move move) {
             return (int)(move & Move.PREVIOUS_CASTLING_BITS_MASK) >> (int)Move.PREVIOUS_CASTLING_BITS_OFFSET;
         }
+
+        public static Move FindTargetPosition(this List<Move> moves, int position) {
+            return moves.Find(move => MoveTargetPos(move) == position);
+        }
     }
+
 
 
 }
