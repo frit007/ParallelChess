@@ -123,5 +123,7 @@ namespace ParallelChessTests {
             Assert.IsTrue((castling & CastlingBits.WHITE_QUEEN_SIDE_CASTLE) == CastlingBits.WHITE_QUEEN_SIDE_CASTLE,
                 "White can still castle");
         }
+
+        
     }
 }

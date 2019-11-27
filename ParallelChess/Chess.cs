@@ -10,7 +10,7 @@ namespace ParallelChess {
 
 
     public class EnPasasnt {
-        public const byte noEnPassant = byte.MaxValue;
+        public const byte NO_ENPASSANT = byte.MaxValue;
     }
 
 
@@ -41,7 +41,11 @@ namespace ParallelChess {
                 } else if (Char.IsDigit(piece)) {
                     square += int.Parse(piece.ToString());
                 } else {
-                    Board.PutPiece(board, square, PieceParse.FromChar(piece));
+                    Piece parsedPiece = PieceParse.FromChar(piece);
+                    Board.PutPiece(board, square, parsedPiece);
+                    if((parsedPiece & Piece.KING) == Piece.KING) {
+                        Board.SetKingPosition(board, (parsedPiece & Piece.IS_WHITE) == Piece.IS_WHITE, square);
+                    }
                     square++;
                 }
             }
@@ -62,7 +66,7 @@ namespace ParallelChess {
             }
 
             if (enPassantAttackedSquare == "-") {
-                Board.SetEnPassantAttackedSquare(board, EnPasasnt.noEnPassant);
+                Board.SetEnPassantAttackedSquare(board, EnPasasnt.NO_ENPASSANT);
             } else {
                 Board.SetEnPassantAttackedSquare(board, Board.AlgebraicPosition(enPassantAttackedSquare));
             }
@@ -107,6 +111,14 @@ namespace ParallelChess {
             //}
 
             return ascii.ToString();
+        }
+
+        public static void makeMove(byte[] board, int from, int to) {
+            List<Move> moves = Board.GetMovesForPosition(board, from);
+
+            Move targetPosition = moves.FindTargetPosition(to);
+
+            Board.MakeMove(board, targetPosition);
         }
     }
 

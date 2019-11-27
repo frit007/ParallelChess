@@ -92,7 +92,7 @@ namespace ParallelChess {
             return (Piece)(((int)(move & Move.PROMOTION_MASK)) >> (int)Move.PROMOTION_BIT_OFFSET);
         }
 
-        public static bool MoveEnpassant(Move move) {
+        public static bool MoveIsEnpassant(Move move) {
             return (move & Move.ENPASSANT) == Move.ENPASSANT;
         }
 

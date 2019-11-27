@@ -1,19 +1,17 @@
-﻿using NUnit.Framework;
-using ParallelChess;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Environments;
+using ParallelChess;
 
-namespace ParallelChessTests {
-    class CastlingPerformance {
-
-
-
+namespace ParallelChessPerformance {
+    [SimpleJob()]
+    public class CastlingPerformance {
         CastlingBits canCastleLookup(int fromPosition) {
             CastlingBits castleBits = CastlingBits.CAN_ALL;
 
-            castleBits = (CastlingBits) ((int)castleBits & (int)CastlingHelper.castleLookup[fromPosition]);
+            castleBits = (CastlingBits)((int)castleBits & (int)CastlingHelper.castleLookup[fromPosition]);
 
             return castleBits;
         }
@@ -62,25 +60,25 @@ namespace ParallelChessTests {
             return castling;
         }
 
-        [Test]
+        [Benchmark]
         public void testPerformanceLookup() {
-            for (int i = 0; i < 1000000; i++) {
+            for (int i = 0; i < 1000000000; i++) {
                 // brug i % 64 til at checke alle positioner på brættet
                 canCastleLookup(i % 64);
             }
         }
 
-        [Test]
+        [Benchmark]
         public void testPerformanceIf() {
-            for (int i = 0; i < 1000000; i++) {
+            for (int i = 0; i < 1000000000; i++) {
                 canCastleIf(i % 64);
             }
         }
 
-        [Test]
+        [Benchmark]
         public void testPerformanceSwitch() {
-            for (int i = 0; i < 1000000; i++) {
-                canCastleSwitch(i%64);
+            for (int i = 0; i < 1000000000; i++) {
+                canCastleSwitch(i % 64);
             }
         }
     }

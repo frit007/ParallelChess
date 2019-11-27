@@ -95,6 +95,9 @@ namespace ParallelChess {
         public const int F8 = 61;
         public const int H8 = 63;
 
+        // it is often usefull to go one row forward or backwards
+        // for example when checking enpassant rules we need to get the piece behind a pawn.
+        public const int ROW = 8;
 
         // ----------- CASTLING -----------
         // Castling is a move in the game of chess involving a player's king and either of the player's original rooks. 
@@ -200,15 +203,19 @@ namespace ParallelChess {
         // boolean true for WHITE and false for BLACK
         public const int IS_WHITE_TURN = 68;
 
+        // -------------- KING POSITIONS ----------------
+        // because we need to know where the king is we store that information
+        public const int BLACK_KING_POSITION = 69;
+        public const int WHITE_KING_POSITION = 70;
+
         // -------------- FULL --------------
         // counter is increased after BLACKs turn 
         // since we likely need more than a byte to store the game length we dedicate 2 bytes to this.
-        public const int COUNTER_1_FROM_RIGHT = 69;
-        public const int COUNTER_2_FROM_RIGHT = 70;
+        public const int COUNTER_1_FROM_RIGHT = 71;
+        public const int COUNTER_2_FROM_RIGHT = 72;
 
-        // keep track of white king and black king?
 
-        public const int BOARD_STATE_SIZE = 71;
+        public const int BOARD_STATE_SIZE = 73;
 
     }
 }
