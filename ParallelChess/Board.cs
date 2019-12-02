@@ -23,46 +23,51 @@ namespace ParallelChess {
         }
 
         public static void SetIsWhitesTurn(byte[] board, bool isWhiteTurn) {
-            board[BoardOffset.IS_WHITE_TURN] = (byte)(isWhiteTurn ? 1 : 0);
+            board[BoardStateOffset.IS_WHITE_TURN] = (byte)(isWhiteTurn ? 1 : 0);
         }
         public static bool IsWhitesTurn(byte[] board) {
-            return board[BoardOffset.IS_WHITE_TURN] == 1;
+            return board[BoardStateOffset.IS_WHITE_TURN] == 1;
         }
 
         public static void SetCastleBit(byte[] board, CastlingBits castlingBit, bool isSet) {
             if (isSet) {
-                board[BoardOffset.CASTLING] |= (byte)castlingBit;
+                board[BoardStateOffset.CASTLING] |= (byte)castlingBit;
             } else {
-                board[BoardOffset.CASTLING] &= (byte)(~(byte)castlingBit);
+                board[BoardStateOffset.CASTLING] &= (byte)(~(byte)castlingBit);
             }
         }
 
         public static int GetKingPosition(byte[] board, bool white) {
-            return white ? board[BoardOffset.WHITE_KING_POSITION] : board[BoardOffset.BLACK_KING_POSITION];
+            return white ? board[BoardStateOffset.WHITE_KING_POSITION] : board[BoardStateOffset.BLACK_KING_POSITION];
         }
 
         public static void SetKingPosition(byte[] board, bool white, int position) {
             if(white) {
-                board[BoardOffset.WHITE_KING_POSITION] = (byte) position;
+                board[BoardStateOffset.WHITE_KING_POSITION] = (byte) position;
             } else {
-                board[BoardOffset.BLACK_KING_POSITION] = (byte) position;
+                board[BoardStateOffset.BLACK_KING_POSITION] = (byte) position;
             }
         }
 
         public static void SetAllCastlingBit(byte[] board, CastlingBits castlingBits) {
-            board[BoardOffset.CASTLING] = (byte)castlingBits;
+            board[BoardStateOffset.CASTLING] = (byte)castlingBits;
         }
 
         public static CastlingBits GetCastleBit(byte[] board) {
-            return (CastlingBits)board[BoardOffset.CASTLING];
+            return (CastlingBits)board[BoardStateOffset.CASTLING];
         }
 
-        public static byte[] CreateCopyBoard(byte[] board) {
-            return board.ToArray();
+        public static BoardState CreateCopyBoard(BoardState board) {
+            BoardState newBoard = new BoardState {
+                bytes = new byte[BoardStateOffset.BOARD_STATE_SIZE],
+            };
+            Buffer.BlockCopy(board.bytes, 0, newBoard.bytes, 0, BoardStateOffset.BOARD_STATE_SIZE);
+            return newBoard;
         }
 
-        public static void CopyBoard(byte[] fromBoard, byte[] toBoard) {
-            fromBoard.CopyTo(toBoard, 0);
+        public static void CopyBoard(BoardState fromBoard, BoardState toBoard) {
+            Buffer.BlockCopy(fromBoard.bytes, 0, toBoard.bytes, 0, BoardStateOffset.BOARD_STATE_SIZE);
+            //fromBoard.CopyTo(toBoard, 0);
         }
 
         // position is expected be in the format "a1" or "b5"
@@ -99,36 +104,36 @@ namespace ParallelChess {
         }
 
         public static void SetEnPassantAttackedSquare(byte[] board, int position) {
-            board[BoardOffset.EN_PASSANT_FIELD] = (byte)position;
+            board[BoardStateOffset.EN_PASSANT_FIELD] = (byte)position;
         }
 
         public static int GetEnPassantAttackedSquare(byte[] board) {
-            return board[BoardOffset.EN_PASSANT_FIELD];
+            return board[BoardStateOffset.EN_PASSANT_FIELD];
         }
 
         public static void SetHalfTurnCounter(byte[] board, int halfTurnCounter) {
             //throw new NotImplementedException();
-            board[BoardOffset.HALF_TURN_COUNTER] = (byte)halfTurnCounter;
+            board[BoardStateOffset.HALF_TURN_COUNTER] = (byte)halfTurnCounter;
         }
         public static void IncrementHalfTurnCounter(byte[] board) {
             //throw new NotImplementedException();
-            board[BoardOffset.HALF_TURN_COUNTER] = (byte) (GetHalfTurnCounter(board) + 1);
+            board[BoardStateOffset.HALF_TURN_COUNTER] = (byte) (GetHalfTurnCounter(board) + 1);
         }
 
         public static int GetHalfTurnCounter(byte[] board) {
-            return board[BoardOffset.HALF_TURN_COUNTER];
+            return board[BoardStateOffset.HALF_TURN_COUNTER];
         }
 
         public static void SetFullMoveClock(byte[] board, int moveClock) {
             byte firstByte = (byte)(moveClock & 0xFF);
             byte secondByte = (byte)((moveClock & 0xFF00) >> 8);
-            board[BoardOffset.COUNTER_1_FROM_RIGHT] = firstByte;
-            board[BoardOffset.COUNTER_2_FROM_RIGHT] = secondByte;
+            board[BoardStateOffset.TURN_COUNTER_1_FROM_RIGHT] = firstByte;
+            board[BoardStateOffset.TURN_COUNTER_2_FROM_RIGHT] = secondByte;
         }
 
         public static int GetFullMoveClock(byte[] board) {
-            return (board[BoardOffset.COUNTER_1_FROM_RIGHT] +
-                (board[BoardOffset.COUNTER_2_FROM_RIGHT] << 8));
+            return (board[BoardStateOffset.TURN_COUNTER_1_FROM_RIGHT] +
+                (board[BoardStateOffset.TURN_COUNTER_2_FROM_RIGHT] << 8));
         }
 
         public static void IncrementFullMoveClock(byte[] board) {
@@ -137,8 +142,12 @@ namespace ParallelChess {
 
 
         // me refers to the current player
-        public static bool PieceBelongsToMe(byte[] board, Piece piece) {
-            return Board.IsWhitesTurn(board) == ((piece & Piece.IS_WHITE) == Piece.IS_WHITE);
+        public static bool PieceBelongsToMe(BoardState board, Piece piece) {
+            // we abuse that Piece stores the information about color in its last bit
+            // therefor we can mask that bit away for example the piece 0x07 (white king) & 0x01(isWhitecheck) = 0x01
+            // this always produces 1 or 0 which can be directly compared to isWhiteTurn.
+            // IsWhite is either 0x01 (true) or 0x00 (false)
+            return  board.IsWhiteTurn == (byte)(piece & Piece.IS_WHITE);
         }
 
         // TODO: undersøg om det er værd at bruge 0x88 til at tjekke valide positioner.
@@ -173,8 +182,8 @@ namespace ParallelChess {
             return position - (PositionRow(position));
         }
 
-        public static bool IsPositionEmpty(byte[] board, int position) {
-            return GetPiece(board, position) == Piece.EMPTY;
+        public static bool IsPositionEmpty(BoardState board, int position) {
+            return board.GetPiece(position) == Piece.EMPTY;
         }
 
         public enum MoveOption {
@@ -183,17 +192,18 @@ namespace ParallelChess {
             NO_FIGHT
         }
 
-        public static MoveOption CanTakeSquare(byte[] board, int position) {
-            var piece = GetPiece(board, position);
+        public static MoveOption CanITakeSquare(BoardState board, int position) {
+            var piece = board.GetPiece(position);
             if (piece == Piece.EMPTY) {
                 //return true;
                 return MoveOption.NO_FIGHT;
             }
-            // check that the current color is not the same as 
-            if (IsWhitesTurn(board) != ((piece & Piece.IS_WHITE) == Piece.IS_WHITE)) {
-                return MoveOption.CAPTURE;
-            } else {
+
+            // check that the current color is not the same as the moving piece
+            if (PieceBelongsToMe(board, piece)) {
                 return MoveOption.INVALID;
+            } else {
+                return MoveOption.CAPTURE;
             }
         }
 
@@ -218,41 +228,43 @@ namespace ParallelChess {
         };
 
 
-        public static bool Attacked(byte[] board, int position, bool pretendToBeWhite) {
+        public static bool Attacked(BoardState board, int position, bool pretendToBeWhite) {
             // TODO implement
             return false;
         }
 
-        public static bool canICastleQueenSide(byte[] board) {
-            CastlingBits castlingBits = GetCastleBit(board);
-            if (IsWhitesTurn(board)) {
+        public static bool canICastleQueenSide(BoardState board) {
+            CastlingBits castlingBits = board.CastlingBits;
+            if (board.IsWhiteTurnBool) {
                 return (castlingBits & CastlingBits.WHITE_QUEEN_SIDE_CASTLE) == CastlingBits.WHITE_QUEEN_SIDE_CASTLE;
             } else {
                 return (castlingBits & CastlingBits.BLACK_QUEEN_SIDE_CASTLE) == CastlingBits.BLACK_QUEEN_SIDE_CASTLE;
             }
         }
 
-        public static bool CanCastleKingSide(byte[] board) {
-            CastlingBits castlingBits = GetCastleBit(board);
-            if (IsWhitesTurn(board)) {
+        public static bool CanCastleKingSide(BoardState board) {
+            CastlingBits castlingBits = board.CastlingBits;
+
+            // TODO bitshift optimize?
+            if (board.IsWhiteTurnBool) {
                 return (castlingBits & CastlingBits.WHITE_KING_SIDE_CASTLE) == CastlingBits.WHITE_KING_SIDE_CASTLE;
             } else {
                 return (castlingBits & CastlingBits.BLACK_KING_SIDE_CASTLE) == CastlingBits.BLACK_KING_SIDE_CASTLE;
             }
         }
 
-        private static void addPawnMove(byte[]board, int fromPosition, int targetPosition, Move moveBits, List<Move> moves) {
+        private static void addPawnMove(BoardState board, int fromPosition, int targetPosition, Move moveBits, List<Move> moves) {
             Piece takenPiece;
             int row = Board.PositionRow(targetPosition);
             if ((moveBits & Move.ENPASSANT) == Move.ENPASSANT) {
                 takenPiece = Piece.PAWN;
             } else {
-                takenPiece = GetPiece(board, targetPosition);
+                takenPiece = board.GetPiece(targetPosition);
             }
 
             // check if the pawn is going to move into a promotion row.
             // we don't check the color because a pawn can never enter its own promotion area
-            byte castlingBit = (byte)Board.GetCastleBit(board);
+            byte castlingBit = (byte) board.CastlingBits;
             if (row == 0 || row == 7) {
                 moves.Add(MoveHelper.CreateMove(targetPosition, fromPosition, takenPiece, Piece.BISHOP, moveBits, castlingBit));
                 moves.Add(MoveHelper.CreateMove(targetPosition, fromPosition, takenPiece, Piece.BISHOP, moveBits, castlingBit));
@@ -263,19 +275,19 @@ namespace ParallelChess {
             }
         }
 
-        private static void AddMove(byte[] board, int fromPosition, int targetPosition, Move moveBits, List<Move> moves) {
-            Piece takenPiece = GetPiece(board, targetPosition);
-            moves.Add(MoveHelper.CreateMove(targetPosition, fromPosition, takenPiece, Piece.EMPTY, moveBits, (byte)Board.GetCastleBit(board)));
+        private static void AddMove(BoardState board, int fromPosition, int targetPosition, Move moveBits, List<Move> moves) {
+            Piece takenPiece = board.GetPiece(targetPosition);
+            moves.Add(MoveHelper.CreateMove(targetPosition, fromPosition, takenPiece, Piece.EMPTY, moveBits, (byte) board.CastlingBits));
         }
 
-        private static void walkRelativePaths(byte[] board, int fromPosition, (int column, int row)[] movePositions, List<Move> moves) {
+        private static void walkRelativePaths(BoardState board, int fromPosition, (int column, int row)[] movePositions, List<Move> moves) {
             foreach (var relativeMove in movePositions) {
                 int move = 0;
                 int count = 0;
                 do {
                     if (IsValidPosition(fromPosition, relativeMove.column * count, relativeMove.row * count)) {
                         move = RelativePosition(fromPosition, relativeMove.column * count, relativeMove.row * count);
-                        var moveOption = CanTakeSquare(board, move);
+                        var moveOption = CanITakeSquare(board, move);
                         if (moveOption == MoveOption.CAPTURE) {
                             AddMove(board, fromPosition, move, Move.EMPTY, moves);
                             break;
@@ -291,22 +303,36 @@ namespace ParallelChess {
             }
         }
 
-        public static bool IsValidMove(byte[] board, Move move) {
+        public static bool IsValidMove(BoardState board, Move move) {
             // TODO: OPTIMIZE: make sure we don't create a virtual board every time
             var virtualBoard = CreateCopyBoard(board);
 
             MakeMove(virtualBoard, move);
 
-            bool isWhite = IsWhitesTurn(board);
-
-            return Attacked(virtualBoard, Board.GetKingPosition(virtualBoard, isWhite), isWhite);
+            bool isWhite = board.IsWhiteTurnBool;
+            
+            return Attacked(virtualBoard, virtualBoard.getKingPosition(board.IsWhiteTurn), isWhite);
         }
 
-        public static List<Move> GetMovesForPosition(byte[] board, int fromPosition, List<Move> moves = null) {
+
+        public static List<Move> GetMoves(BoardState board, List<Move> moves = null) {
+            if(moves == null) {
+                moves = new List<Move>();
+            }
+
+            for(int i = 0; i<64;i++) {
+                moves = GetMovesForPosition(board, i, moves);
+            }
+
+            return moves;
+        }
+
+        public static List<Move> GetMovesForPosition(BoardState board, int fromPosition, List<Move> moves = null) {
             if (moves == null) {
                 moves = new List<Move>();
             }
-            Piece piece = Board.GetPiece(board, fromPosition);
+            //Piece piece = Board.GetPiece(board, fromPosition);
+            Piece piece = board.GetPiece(fromPosition);
             if (!PieceBelongsToMe(board, piece)) {
                 return moves;
             }
@@ -368,7 +394,7 @@ namespace ParallelChess {
 
             switch (justPiece) {
                 case Piece.PAWN:
-                    bool isWhitesTurn = Board.IsWhitesTurn(board);
+                    bool isWhitesTurn = board.IsWhiteTurnBool;
                     int direction = isWhitesTurn ? 1 : -1;
 
                     // We don't need to check if there is a next row is outside the board.
@@ -392,11 +418,11 @@ namespace ParallelChess {
                     // because the pawn is never able to stand on the last because of promotion
                     if (PositionColumn(fromPosition) != Board.H_COLUMN) {
                         int move = RelativePosition(fromPosition, 1, direction);
-                        bool isEnpassant = GetEnPassantAttackedSquare(board) == move;
+                        bool isEnpassant = board.EnPassantTarget == move;
                         if (
                             // targetposition has to either be the enpassant square.
                             isEnpassant
-                            || CanTakeSquare(board, move) == MoveOption.CAPTURE)
+                            || CanITakeSquare(board, move) == MoveOption.CAPTURE)
                             // or be empty or contain an enemy) {
                             addPawnMove(board, fromPosition, move, Move.PAWN_MOVE | (isEnpassant ? Move.ENPASSANT : Move.ENPASSANT), moves);
                     }
@@ -405,11 +431,11 @@ namespace ParallelChess {
                     // because the pawn is never able to stand on the last because of promotion
                     if (PositionColumn(fromPosition) != Board.A_COLUMN) {
                         int move = RelativePosition(fromPosition, -1, direction);
-                        bool isEnpassant = GetEnPassantAttackedSquare(board) == move;
+                        bool isEnpassant = board.EnPassantTarget == move;
                         if (
                             // targetposition has to either be the enpassant square.
                             isEnpassant
-                            || CanTakeSquare(board, move) == MoveOption.CAPTURE)
+                            || CanITakeSquare(board, move) == MoveOption.CAPTURE)
                             // or be empty or contain an enemy) {
                             addPawnMove(board, fromPosition, move, Move.PAWN_MOVE | (isEnpassant ? Move.ENPASSANT : Move.ENPASSANT), moves);
                     }
@@ -419,13 +445,13 @@ namespace ParallelChess {
                     foreach (var relativeMove in kingMoves) {
                         if (IsValidPosition(fromPosition, relativeMove.column, relativeMove.row)) {
                             int move = RelativePosition(fromPosition, relativeMove.column, relativeMove.row);
-                            var moveOption = CanTakeSquare(board, move);
+                            var moveOption = CanITakeSquare(board, move);
                             if (moveOption != MoveOption.INVALID) {
                                 AddMove(board, fromPosition, move, Move.EMPTY, moves);
                             }
                         }
                     }
-                    bool isWhite = IsWhitesTurn(board);
+                    bool isWhite = board.IsWhiteTurnBool;
                     // check if they are allowed to castle
                     // 1. Check history if rook or king has moved. This information is stored in the castlingBit
                     // 2. Check if the king moves through any square that is under attack
@@ -458,7 +484,7 @@ namespace ParallelChess {
                     foreach (var relativeMove in knightMoves) {
                         if (IsValidPosition(fromPosition, relativeMove.column, relativeMove.row)) {
                             int move = RelativePosition(fromPosition, relativeMove.column, relativeMove.row);
-                            var moveOption = CanTakeSquare(board, move);
+                            var moveOption = CanITakeSquare(board, move);
                             if (moveOption != MoveOption.INVALID) {
                                 AddMove(board, fromPosition, move, Move.EMPTY, moves);
                             }
@@ -492,14 +518,14 @@ namespace ParallelChess {
         }
 
 
-        public static void MakeMove(byte[] board, Move move) {
+        public static void MakeMove(BoardState board, Move move) {
             int toPosition = MoveHelper.MoveTargetPos(move);
             int fromPosition = MoveHelper.MoveFromPos(move);
-            bool isWhitesTurn = Board.IsWhitesTurn(board);
+            bool isWhitesTurn = board.IsWhiteTurnBool;
 
-            Piece piece = GetPiece(board, fromPosition);
+            Piece piece = board.GetPiece(fromPosition);
             Piece pieceType = piece & Piece.PIECE_MASK;
-            Piece takenPiece = GetPiece(board, toPosition);
+            Piece takenPiece = board.GetPiece(toPosition);
             Piece promotion = MoveHelper.MovePromotion(move);
 
             switch (pieceType) {
@@ -507,59 +533,74 @@ namespace ParallelChess {
                     if (MoveHelper.MoveIsEnpassant(move)) {
                         // When taking with enpassant remove the piece
                         if (isWhitesTurn) {
-                            Board.PutPiece(board, toPosition - BoardOffset.ROW, Piece.EMPTY);
+                            board.SetPiece(toPosition - BoardStateOffset.ROW, Piece.EMPTY);
+                            //Board.PutPiece(board, toPosition - BoardOffset.ROW, Piece.EMPTY);
                         } else {
-                            Board.PutPiece(board, toPosition + BoardOffset.ROW, Piece.EMPTY);
+                            board.SetPiece(toPosition + BoardStateOffset.ROW, Piece.EMPTY);
+                            //Board.PutPiece(board, toPosition + BoardOffset.ROW, Piece.EMPTY);
                         }
                     }
                     if ((move & Move.BIG_PAWN_MOVE) == Move.BIG_PAWN_MOVE) {
                         // when making a big pawn move mark the square behind the moving pawn vulnerable to 
                         if (isWhitesTurn) {
-                            Board.SetEnPassantAttackedSquare(board, toPosition - BoardOffset.ROW);
+                            board.EnPassantTarget =(byte) (toPosition - BoardStateOffset.ROW);
+                            //Board.SetEnPassantAttackedSquare(board, toPosition - BoardOffset.ROW);
                         } else {
-                            Board.SetEnPassantAttackedSquare(board, toPosition + BoardOffset.ROW);
+                            board.EnPassantTarget = (byte)(toPosition + BoardStateOffset.ROW);
+                            //Board.SetEnPassantAttackedSquare(board, toPosition + BoardOffset.ROW);
                         }
                     } else {
-                        Board.SetEnPassantAttackedSquare(board, EnPasasnt.NO_ENPASSANT);
+                        board.EnPassantTarget = EnPassant.NO_ENPASSANT;
+                        //Board.SetEnPassantAttackedSquare(board, EnPassant.NO_ENPASSANT);
                     }
                     break;
                 case Piece.KING:
-                    SetKingPosition(board, isWhitesTurn, toPosition);
+                    //SetKingPosition(board, isWhitesTurn, toPosition);
+                    board.setKingPosition(board.IsWhiteTurn, (byte)toPosition);
                     break;
             }
 
 
-            var castleBit = Board.GetCastleBit(board);
+            var castleBit = board.CastlingBits;
             // remove opportunity to castle based on the position on the board
-            Board.SetAllCastlingBit(board, castleBit
-                & CastlingHelper.castleLookup[toPosition]
-                & CastlingHelper.castleLookup[fromPosition]);
+            //Board.SetAllCastlingBit(board, castleBit
+            //    & CastlingHelper.castleLookup[toPosition]
+            //    & CastlingHelper.castleLookup[fromPosition]);
+            board.CastlingBits = board.CastlingBits 
+                & CastlingHelper.castleLookup[toPosition] 
+                & CastlingHelper.castleLookup[fromPosition];
 
 
             // move piece to new position
             if (promotion == Piece.EMPTY) {
-                PutPiece(board, toPosition, piece);
+                //PutPiece(board, toPosition, piece);
+                board.SetPiece(toPosition, piece);
             } else {
-                PutPiece(board, toPosition, promotion);
+                //PutPiece(board, toPosition, promotion);
+                board.SetPiece(toPosition, promotion);
             }
 
             // remove piece from previous position
-            PutPiece(board, fromPosition, Piece.EMPTY);
+            board.SetPiece(fromPosition, Piece.EMPTY);
 
             if(pieceType == Piece.PAWN || ((takenPiece & Piece.PIECE_MASK) != Piece.EMPTY)) {
-                Board.SetHalfTurnCounter(board, 0);
+                //Board.SetHalfTurnCounter(board, 0);
+                board.HalfTurnCounter = 0;
             } else {
-                Board.IncrementHalfTurnCounter(board);
+                //Board.IncrementHalfTurnCounter(board);
+                board.HalfTurnCounter++;
             }
 
 
             if(!isWhitesTurn) {
                 // increment fullMoveClock after blacks turn
-                Board.IncrementFullMoveClock(board);
+                //Board.IncrementFullMoveClock(board);
+                board.TurnCounter++;
             }
 
             // flip turn
-            SetIsWhitesTurn(board, !isWhitesTurn);
+            //SetIsWhitesTurn(board, !isWhitesTurn);
+            board.IsWhiteTurn = (byte)(board.IsWhiteTurn ^ 1);
         }
 
     }

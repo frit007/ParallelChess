@@ -10,8 +10,8 @@ namespace ParallelChessTests {
         public void loadedFromFEN() {
             var board = Chess.LoadBoardFromFen();
 
-            Assert.AreEqual(BoardOffset.E1, Board.GetKingPosition(board, true));
-            Assert.AreEqual(BoardOffset.E8, Board.GetKingPosition(board, false));
+            Assert.AreEqual(BoardStateOffset.E1, board.WhiteKingPosition);
+            Assert.AreEqual(BoardStateOffset.E8, board.BlackKingPosition);
         }
 
         [Test]
@@ -44,9 +44,9 @@ namespace ParallelChessTests {
             */
             var board = Chess.LoadBoardFromFen("1k6/6pp/8/8/8/8/6PP/1K6 b - - 0 1");
 
-            Chess.makeMove(board, BoardOffset.B8, BoardOffset.B7);
+            Chess.makeMove(board, BoardStateOffset.B8, BoardStateOffset.B7);
 
-            Assert.AreEqual(BoardOffset.B7, Board.GetKingPosition(board, false));
+            Assert.AreEqual(BoardStateOffset.B7, board.BlackKingPosition);
         }
 
         [Test]
@@ -80,9 +80,9 @@ namespace ParallelChessTests {
 
             var board = Chess.LoadBoardFromFen("1k6/6pp/8/8/8/8/6PP/1K6 w - - 0 1");
 
-            Chess.makeMove(board, BoardOffset.B1, BoardOffset.B2);
+            Chess.makeMove(board, BoardStateOffset.B1, BoardStateOffset.B2);
 
-            Assert.AreEqual(BoardOffset.B2, Board.GetKingPosition(board, true));
+            Assert.AreEqual(BoardStateOffset.B2, board.WhiteKingPosition);
         }
     }
 }

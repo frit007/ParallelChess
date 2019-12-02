@@ -53,5 +53,17 @@ namespace ParallelChessPerformance {
             byte[] copy = new byte[arraySize];
             Array.Copy(byteArray, copy, arraySize);
         }
+
+        [Benchmark]
+        public void IntCopyTo() {
+            int[] copy = new int[arraySize];
+            intArray.CopyTo(copy,0);
+        }
+
+        [Benchmark]
+        public void ByteCopyTo() {
+            byte[] copy = new byte[arraySize];
+            byteArray.CopyTo(copy,0);
+        }
     }
 }

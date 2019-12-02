@@ -6,8 +6,8 @@ using ParallelChess;
 
 namespace ParallelChessTests {
     class MoveTest {
-        private int fromPosition = BoardOffset.E2;
-        private int toPosition = BoardOffset.E4;
+        private int fromPosition = BoardStateOffset.E2;
+        private int toPosition = BoardStateOffset.E4;
         Move doubleMove() => MoveHelper.CreateMove(toPosition, fromPosition, Piece.EMPTY, Piece.EMPTY, Move.ENPASSANT, (byte)CastlingBits.CAN_ALL);
 
         [Test]

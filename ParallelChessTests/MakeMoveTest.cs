@@ -8,23 +8,23 @@ namespace ParallelChessTests {
     class MakeMoveTest {
         [Test]
         public void MovePeasant() {
-            byte[] board = Chess.LoadBoardFromFen();
+            BoardState board = Chess.LoadBoardFromFen();
 
-            List<Move> list = Board.GetMovesForPosition(board, BoardOffset.E2);
+            List<Move> list = Board.GetMovesForPosition(board, BoardStateOffset.E2);
             
-            Move move = list.FindTargetPosition(BoardOffset.E4);
+            Move move = list.FindTargetPosition(BoardStateOffset.E4);
 
             Board.MakeMove(board, move);
 
-            Piece piece = Board.GetPiece(board, BoardOffset.E4);
+            Piece piece = board.E4;
 
-            Assert.AreEqual(Piece.PAWN, Board.GetPiece(board, BoardOffset.E4) & Piece.PIECE_MASK);
-            Assert.AreEqual(BoardOffset.E3, Board.GetEnPassantAttackedSquare(board));
+            Assert.AreEqual(Piece.PAWN, board.E4 & Piece.PIECE_MASK);
+            Assert.AreEqual(BoardStateOffset.E3, board.EnPassantTarget);
         }
 
 
         #region enpassant
-        public byte[] CreateEnpassant() {
+        public BoardState CreateEnpassant() {
             /* Starting position
             +---------------+
             |r n b q k b n r| 8
@@ -62,17 +62,17 @@ namespace ParallelChessTests {
             +---------------+
              A B C D E F G H
             */
-            byte[] board = Chess.LoadBoardFromFen("rnbqkbnr/pp1ppppp/8/8/3p4/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            BoardState board = Chess.LoadBoardFromFen("rnbqkbnr/pp1ppppp/8/8/3p4/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
             
-            List<Move> list = Board.GetMovesForPosition(board, BoardOffset.E2);
+            List<Move> list = Board.GetMovesForPosition(board, BoardStateOffset.E2);
 
-            Move move = list.FindTargetPosition(BoardOffset.E4);
+            Move move = list.FindTargetPosition(BoardStateOffset.E4);
 
             Board.MakeMove(board, move);
 
-            list = Board.GetMovesForPosition(board, BoardOffset.D4);
+            list = Board.GetMovesForPosition(board, BoardStateOffset.D4);
 
-            move = list.FindTargetPosition(BoardOffset.E3);
+            move = list.FindTargetPosition(BoardStateOffset.E3);
 
             Board.MakeMove(board, move);
 
@@ -81,26 +81,26 @@ namespace ParallelChessTests {
 
         [Test]
         public void checkEnpassantSuccededToMove() {
-            byte[] board = CreateEnpassant();
-            Assert.AreEqual(Piece.PAWN, Board.GetPiece(board, BoardOffset.E3) & Piece.PIECE_MASK);
+            BoardState board = CreateEnpassant();
+            Assert.AreEqual(Piece.PAWN, board.E3 & Piece.PIECE_MASK);
         }
 
         [Test]
         public void checkEnpassantIsNoLongerPossible() {
-            byte[] board = CreateEnpassant();
-            Assert.AreEqual(EnPasasnt.NO_ENPASSANT, Board.GetEnPassantAttackedSquare(board));
+            BoardState board = CreateEnpassant();
+            Assert.AreEqual(EnPassant.NO_ENPASSANT, board.EnPassantTarget);
         }
 
         [Test]
         public void checkEnpassantMovedFromPosition() {
-            byte[] board = CreateEnpassant();
-            Assert.AreEqual(Piece.EMPTY, Board.GetPiece(board,BoardOffset.D4)&Piece.PIECE_MASK);
+            BoardState board = CreateEnpassant();
+            Assert.AreEqual(Piece.EMPTY, board.D4&Piece.PIECE_MASK);
         }
 
         [Test]
         public void enPassantKilledEnemyPawn() {
-            byte[] board = CreateEnpassant();
-            Assert.AreEqual(Piece.EMPTY, Board.GetPiece(board, BoardOffset.E4) & Piece.PIECE_MASK);
+            BoardState board = CreateEnpassant();
+            Assert.AreEqual(Piece.EMPTY, board.E4 & Piece.PIECE_MASK);
         }
         #endregion
     }

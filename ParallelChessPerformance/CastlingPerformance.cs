@@ -19,17 +19,17 @@ namespace ParallelChessPerformance {
         CastlingBits canCastleIf(int fromPosition) {
             CastlingBits castling = CastlingBits.CAN_ALL;
 
-            if (fromPosition == BoardOffset.A1) {
+            if (fromPosition == BoardStateOffset.A1) {
                 castling = castling & CastlingBits.CAN_NOT_BQ;
-            } else if (fromPosition == BoardOffset.E1) {
+            } else if (fromPosition == BoardStateOffset.E1) {
                 castling = castling & CastlingBits.CAN_NOT_B;
-            } else if (fromPosition == BoardOffset.H1) {
+            } else if (fromPosition == BoardStateOffset.H1) {
                 castling = castling & CastlingBits.CAN_NOT_BK;
-            } else if (fromPosition == BoardOffset.A8) {
+            } else if (fromPosition == BoardStateOffset.A8) {
                 castling = castling & CastlingBits.CAN_NOT_WQ;
-            } else if (fromPosition == BoardOffset.E8) {
+            } else if (fromPosition == BoardStateOffset.E8) {
                 castling = castling & CastlingBits.CAN_NOT_W;
-            } else if (fromPosition == BoardOffset.H8) {
+            } else if (fromPosition == BoardStateOffset.H8) {
                 castling = castling & CastlingBits.CAN_NOT_WK;
             }
             return castling;
@@ -38,22 +38,22 @@ namespace ParallelChessPerformance {
         CastlingBits canCastleSwitch(int fromPosition) {
             CastlingBits castling = CastlingBits.CAN_ALL;
             switch (fromPosition) {
-                case BoardOffset.A1:
+                case BoardStateOffset.A1:
                     castling = castling & CastlingBits.CAN_NOT_BQ;
                     break;
-                case BoardOffset.E1:
+                case BoardStateOffset.E1:
                     castling = castling & CastlingBits.CAN_NOT_B;
                     break;
-                case BoardOffset.H1:
+                case BoardStateOffset.H1:
                     castling = castling & CastlingBits.CAN_NOT_BK;
                     break;
-                case BoardOffset.A8:
+                case BoardStateOffset.A8:
                     castling = castling & CastlingBits.CAN_NOT_WQ;
                     break;
-                case BoardOffset.E8:
+                case BoardStateOffset.E8:
                     castling = castling & CastlingBits.CAN_NOT_W;
                     break;
-                case BoardOffset.H8:
+                case BoardStateOffset.H8:
                     castling = castling & CastlingBits.CAN_NOT_WK;
                     break;
             }

@@ -8,13 +8,14 @@ namespace ParallelChessTests {
     class FenTest {
         [Test]
         public void SimpleFenTest() {
-            byte[] board = Chess.LoadBoardFromFen();
+            BoardState board = Chess.LoadBoardFromFen();
 
-            Piece piece = Board.GetPiece(board, BoardOffset.A1);
+            //Piece piece = Board.GetPiece(board, BoardOffset.A1);
+            //Piece piece = board.A1;
 
-            Assert.AreEqual(piece, Piece.IS_WHITE | Piece.ROOK);
-            Assert.AreEqual(Board.GetPiece(board, BoardOffset.E1), Piece.IS_WHITE | Piece.KING);
-            Assert.AreEqual(Board.GetPiece(board, BoardOffset.E8), Piece.IS_BLACK | Piece.KING);
+            Assert.AreEqual(board.A1, Piece.IS_WHITE | Piece.ROOK);
+            Assert.AreEqual(board.E1, Piece.IS_WHITE | Piece.KING);
+            Assert.AreEqual(board.E8, Piece.IS_BLACK | Piece.KING);
         }
     }
 }

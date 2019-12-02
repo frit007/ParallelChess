@@ -11,7 +11,7 @@ namespace ParallelChessTests {
         public void WhiteCannotCastleQueenSideAfterA1Moves() {
             CastlingBits castling = CastlingBits.CAN_ALL;
 
-            castling = castling & CastlingHelper.castleLookup[BoardOffset.A1];
+            castling = castling & CastlingHelper.castleLookup[BoardStateOffset.A1];
 
             Assert.IsFalse((castling & CastlingBits.WHITE_QUEEN_SIDE_CASTLE) == CastlingBits.WHITE_QUEEN_SIDE_CASTLE,
                 "White cannot castle queen side after a1 moves");
@@ -30,7 +30,7 @@ namespace ParallelChessTests {
         public void WhiteCannotCastleKingSideAfterH1Moves() {
             CastlingBits castling = CastlingBits.CAN_ALL;
 
-            castling = castling & CastlingHelper.castleLookup[BoardOffset.H1];
+            castling = castling & CastlingHelper.castleLookup[BoardStateOffset.H1];
 
             Assert.IsFalse((castling & CastlingBits.WHITE_KING_SIDE_CASTLE) == CastlingBits.WHITE_KING_SIDE_CASTLE,
                 "White cannot castle king side after h1 moves");
@@ -49,7 +49,7 @@ namespace ParallelChessTests {
         public void WhiteCannotCastleAfterE1Moves() {
             CastlingBits castling = CastlingBits.CAN_ALL;
 
-            castling = castling & CastlingHelper.castleLookup[BoardOffset.E1];
+            castling = castling & CastlingHelper.castleLookup[BoardStateOffset.E1];
 
             Assert.IsFalse((castling & CastlingBits.WHITE_KING_SIDE_CASTLE) == CastlingBits.WHITE_KING_SIDE_CASTLE,
                 "White cannot cannot king side after e1 moves");
@@ -71,7 +71,7 @@ namespace ParallelChessTests {
         public void BlackCannotCastleQueenSideAfterA8Moves() {
             CastlingBits castling = CastlingBits.CAN_ALL;
 
-            castling = castling & CastlingHelper.castleLookup[BoardOffset.A8];
+            castling = castling & CastlingHelper.castleLookup[BoardStateOffset.A8];
 
             Assert.IsFalse((castling & CastlingBits.BLACK_QUEEN_SIDE_CASTLE) == CastlingBits.BLACK_QUEEN_SIDE_CASTLE,
                 "Black cannot castle queen side after a8 moves");
@@ -90,7 +90,7 @@ namespace ParallelChessTests {
         public void BlackCannotCastleQueenSideAfterH8Moves() {
             CastlingBits castling = CastlingBits.CAN_ALL;
 
-            castling = castling & CastlingHelper.castleLookup[BoardOffset.H8];
+            castling = castling & CastlingHelper.castleLookup[BoardStateOffset.H8];
 
             Assert.IsTrue((castling & CastlingBits.BLACK_QUEEN_SIDE_CASTLE) == CastlingBits.BLACK_QUEEN_SIDE_CASTLE,
                 "Black can still castle queen side after h8 moves");
@@ -109,7 +109,7 @@ namespace ParallelChessTests {
         public void BlackCannotCastleQueenSideAfterKingMoves() {
             CastlingBits castling = CastlingBits.CAN_ALL;
 
-            castling = castling & CastlingHelper.castleLookup[BoardOffset.E8];
+            castling = castling & CastlingHelper.castleLookup[BoardStateOffset.E8];
 
             Assert.IsFalse((castling & CastlingBits.BLACK_QUEEN_SIDE_CASTLE) == CastlingBits.BLACK_QUEEN_SIDE_CASTLE,
                 "Black canont castle queen side after a8 moves");

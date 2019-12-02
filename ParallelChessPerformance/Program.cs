@@ -5,7 +5,10 @@ namespace ParallelChessPerformance {
     class Program {
         static void Main(string[] args) {
             //Console.WriteLine("Hello World!");
-            var summary = BenchmarkRunner.Run<AddVsIf>();
+            var summary = BenchmarkRunner.Run<GetMovePerformance>();
+
+            //UsingBoardStateStruct usingBoardStateStruct = new UsingBoardStateStruct();
+            //usingBoardStateStruct.makeAMove();
         }
     }
 }
