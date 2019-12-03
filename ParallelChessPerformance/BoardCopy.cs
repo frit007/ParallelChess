@@ -8,7 +8,7 @@ namespace ParallelChessPerformance {
     [SimpleJob]
     public class BoardCopy {
 
-        [Params(10, 80, 160, 200, 500, 1000, 5000, 10000)]
+        [Params(10, 80, 120, 160)]
         static public int arraySize;
 
         int[] intArray;
@@ -54,16 +54,5 @@ namespace ParallelChessPerformance {
             Array.Copy(byteArray, copy, arraySize);
         }
 
-        [Benchmark]
-        public void IntCopyTo() {
-            int[] copy = new int[arraySize];
-            intArray.CopyTo(copy,0);
-        }
-
-        [Benchmark]
-        public void ByteCopyTo() {
-            byte[] copy = new byte[arraySize];
-            byteArray.CopyTo(copy,0);
-        }
     }
 }

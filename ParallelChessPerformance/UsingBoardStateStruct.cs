@@ -9,7 +9,7 @@ namespace ParallelChessPerformance {
     [SimpleJob]
     class UsingBoardStateStruct {
         [Benchmark]
-        public void makeAMove() {
+        public void MakeAMove() {
             BoardState board = Chess.LoadBoardFromFen();
             BoardState boardState = new BoardState();
             unsafe {

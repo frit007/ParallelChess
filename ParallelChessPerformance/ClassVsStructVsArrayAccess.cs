@@ -96,21 +96,21 @@ namespace ParallelChessPerformance {
         //}
 
         [Benchmark]
-        public void incrementFullMoveCount_class() {
+        public void IncrementFullMoveCount_class() {
             for (int i = 0; i < 10000000; i++) {
                 boardClass.moveCount++;
             }
         }
 
         [Benchmark]
-        public void incrementFullMoveCount_struct() {
+        public void IncrementFullMoveCount_struct() {
             for (int i = 0; i < 10000000; i++) {
                 boardStruct.moveCount++;
             }
         }
 
         [Benchmark]
-        public void incrementFullMoveCount_array_union() {
+        public void IncrementFullMoveCount_array_union() {
             for (int i = 0; i < 10000000; i++) {
                 UnionBoard unionBoard = new UnionBoard() { byteBoard = boardArray };
                 unionBoard.shortBoard[ByteOffset.moveCount_1]++;
@@ -118,7 +118,7 @@ namespace ParallelChessPerformance {
         }
 
         [Benchmark]
-        public void incrementFullMoveCount_array_unsafe() {
+        public void IncrementFullMoveCount_array_unsafe() {
 
             unsafe {
                 for (int i = 0; i < 10000000; i++) {
@@ -131,7 +131,7 @@ namespace ParallelChessPerformance {
         }
 
         [Benchmark]
-        public void incrementFullMoveCount_array_bitmanipulation() {
+        public void IncrementFullMoveCount_array_bitmanipulation() {
             for (int i = 0; i < 10000000; i++) {
                 short moveCount = (short)(boardArray[ByteOffset.moveCount_1] | (boardArray[ByteOffset.moveCount_2] << 8));
                 moveCount++;

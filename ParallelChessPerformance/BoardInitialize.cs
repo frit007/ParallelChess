@@ -10,7 +10,7 @@ namespace ParallelChessPerformance {
 
 
         [Benchmark]
-        public void initializeFlat() {
+        public void InitializeFlat() {
             for (var i = 0; i < 10000000; i++) {
                 byte[] boardFlat = new byte[64];
             }
@@ -19,14 +19,14 @@ namespace ParallelChessPerformance {
 
 
         [Benchmark]
-        public void initializeMultidimenional() {
+        public void InitializeMultidimenional() {
             for (var i = 0; i < 10000000; i++) {
                 byte[,] boardMultidimensional = new byte[8, 8];
             }
         }
 
         [Benchmark]
-        public void initializeJaggedArray() {
+        public void InitializeJaggedArray() {
             for (var i = 0; i < 10000000; i++) {
                 byte[][] boardJagged = new byte[8][] {
                             new byte[8],

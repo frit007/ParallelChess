@@ -39,7 +39,7 @@ namespace ParallelChess {
             for (var i = 0; i < positions.Length; i++) {
                 char piece = positions[i];
                 if (piece == '/') {
-                    square -= 16;
+                    square -= 24;
                 } else if (Char.IsDigit(piece)) {
                     square += int.Parse(piece.ToString());
                 } else {
@@ -48,7 +48,7 @@ namespace ParallelChess {
                     board.SetPiece(square, parsedPiece);
                     if((parsedPiece & Piece.PIECE_MASK) == Piece.KING) {
                         //Board.SetKingPosition(board, (parsedPiece & Piece.IS_WHITE) == Piece.IS_WHITE, square);
-                        board.setKingPosition((int)(parsedPiece & Piece.IS_WHITE), (byte)square);
+                        board.SetKingPosition((int)(parsedPiece & Piece.IS_WHITE), (byte)square);
                     }
                     square++;
                 }
@@ -98,7 +98,7 @@ namespace ParallelChess {
             for (int row = 7; row >= 0; row--) {
                 ascii.Append("|");
                 for (int column = 0; column < 8; column++) {
-                    var position = row * 8 + column;
+                    var position = row * BoardStateOffset.ROW_OFFSET + column;
                     var piece = board.GetPiece(position);
                     //var piece = Board.GetPiece(board, position);
                     ascii.Append(PieceParse.ToChar(piece));
@@ -127,7 +127,7 @@ namespace ParallelChess {
             return ascii.ToString();
         }
 
-        public static void makeMove(BoardState board, int from, int to) {
+        public static void MakeMove(BoardState board, int from, int to) {
             List<Move> moves = Board.GetMovesForPosition(board, from);
 
             Move targetPosition = moves.FindTargetPosition(to);

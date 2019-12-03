@@ -77,8 +77,26 @@ namespace ParallelChessPerformance {
         [Benchmark]
         public void GetAllMoves() {
             BoardState board = Chess.LoadBoardFromFen();
+            List<Move> moves = new List<Move>();
             for(int i = 0; i < 1000000;i++) {
-                var moves = Board.GetMoves(board);
+                moves.Clear();
+                moves = Board.GetMoves(board, moves);
+            }
+        }
+
+        [Benchmark]
+        public void MakeAllMoves() {
+            BoardState board = Chess.LoadBoardFromFen();
+            BoardState virtualBoard = Board.CreateCopyBoard(board);
+            List<Move> moves = new List<Move>();
+            for (int i = 0; i < 1000000; i++) {
+                moves.Clear();
+                moves = Board.GetMoves(board,moves);
+                foreach(var move in moves) {
+                    Board.CopyBoard(board, virtualBoard);
+                    Board.MakeMove(virtualBoard, move);
+                    Board.IsValidMove(virtualBoard, move);
+                }
             }
         }
 

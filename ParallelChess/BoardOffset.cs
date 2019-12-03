@@ -16,10 +16,12 @@ namespace ParallelChess {
 //	        column = i - row * 8
 //	        letter = String.fromCharCode('A'.charCodeAt(0) + column)
 //            // console.log(row,column, letter)
-//            result+= `public const int ${letter}${row+1} = ${i};\n`;
+//            result+= `public const int ${letter
+//}${row+1} = ${i};\n`;
 //            if(column == 7) {
 //                result += "\n"
 //            }
+
 //	for(var i = 0; i < 64; i++) {
 //	        row = Math.floor(i / 8);
 //	        column = i - row * 8

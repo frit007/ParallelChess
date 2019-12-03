@@ -7,7 +7,7 @@ using ParallelChess;
 namespace ParallelChessTests {
     class KingTrackingTest {
         [Test]
-        public void loadedFromFEN() {
+        public void LoadedFromFEN() {
             var board = Chess.LoadBoardFromFen();
 
             Assert.AreEqual(BoardStateOffset.E1, board.WhiteKingPosition);
@@ -15,7 +15,7 @@ namespace ParallelChessTests {
         }
 
         [Test]
-        public void followBlackKingOnMove() {
+        public void FollowBlackKingOnMove() {
             /* Starting position Blacks turn
             +---------------+
             |_ k _ _ _ _ _ _| 8
@@ -44,13 +44,13 @@ namespace ParallelChessTests {
             */
             var board = Chess.LoadBoardFromFen("1k6/6pp/8/8/8/8/6PP/1K6 b - - 0 1");
 
-            Chess.makeMove(board, BoardStateOffset.B8, BoardStateOffset.B7);
+            Chess.MakeMove(board, BoardStateOffset.B8, BoardStateOffset.B7);
 
             Assert.AreEqual(BoardStateOffset.B7, board.BlackKingPosition);
         }
 
         [Test]
-        public void followWhiteKingOnMove() {
+        public void FollowWhiteKingOnMove() {
             /* Starting position Whites turn
             +---------------+
             |_ k _ _ _ _ _ _| 8
@@ -80,7 +80,7 @@ namespace ParallelChessTests {
 
             var board = Chess.LoadBoardFromFen("1k6/6pp/8/8/8/8/6PP/1K6 w - - 0 1");
 
-            Chess.makeMove(board, BoardStateOffset.B1, BoardStateOffset.B2);
+            Chess.MakeMove(board, BoardStateOffset.B1, BoardStateOffset.B2);
 
             Assert.AreEqual(BoardStateOffset.B2, board.WhiteKingPosition);
         }

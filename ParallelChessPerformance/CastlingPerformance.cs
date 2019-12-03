@@ -8,7 +8,7 @@ using ParallelChess;
 namespace ParallelChessPerformance {
     [SimpleJob()]
     public class CastlingPerformance {
-        CastlingBits canCastleLookup(int fromPosition) {
+        CastlingBits CanCastleLookup(int fromPosition) {
             CastlingBits castleBits = CastlingBits.CAN_ALL;
 
             castleBits = (CastlingBits)((int)castleBits & (int)CastlingHelper.castleLookup[fromPosition]);
@@ -16,7 +16,7 @@ namespace ParallelChessPerformance {
             return castleBits;
         }
 
-        CastlingBits canCastleIf(int fromPosition) {
+        CastlingBits CanCastleIf(int fromPosition) {
             CastlingBits castling = CastlingBits.CAN_ALL;
 
             if (fromPosition == BoardStateOffset.A1) {
@@ -35,7 +35,7 @@ namespace ParallelChessPerformance {
             return castling;
         }
 
-        CastlingBits canCastleSwitch(int fromPosition) {
+        CastlingBits CanCastleSwitch(int fromPosition) {
             CastlingBits castling = CastlingBits.CAN_ALL;
             switch (fromPosition) {
                 case BoardStateOffset.A1:
@@ -61,24 +61,24 @@ namespace ParallelChessPerformance {
         }
 
         [Benchmark]
-        public void testPerformanceLookup() {
+        public void TestPerformanceLookup() {
             for (int i = 0; i < 1000000000; i++) {
                 // brug i % 64 til at checke alle positioner på brættet
-                canCastleLookup(i % 64);
+                CanCastleLookup(i % 64);
             }
         }
 
         [Benchmark]
-        public void testPerformanceIf() {
+        public void TestPerformanceIf() {
             for (int i = 0; i < 1000000000; i++) {
-                canCastleIf(i % 64);
+                CanCastleIf(i % 64);
             }
         }
 
         [Benchmark]
-        public void testPerformanceSwitch() {
+        public void TestPerformanceSwitch() {
             for (int i = 0; i < 1000000000; i++) {
-                canCastleSwitch(i % 64);
+                CanCastleSwitch(i % 64);
             }
         }
     }

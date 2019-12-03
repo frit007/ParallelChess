@@ -22,7 +22,7 @@ namespace ParallelChessPerformance {
         };
 
         [Benchmark]
-        public void incrementEntireBoardFlat() {
+        public void IncrementEntireBoardFlat() {
             for (var i = 0; i < 100000; i++) {
                 for (int x = 0; x < 8; x++) {
                     for (int y = 0; y < 8; y++) {
@@ -33,7 +33,7 @@ namespace ParallelChessPerformance {
         }
 
         [Benchmark]
-        public void incrementEntireBoardMultidimensional() {
+        public void IncrementEntireBoardMultidimensional() {
             for (var i = 0; i < 100000; i++) {
                 for (int x = 0; x < 8; x++) {
                     for (int y = 0; y < 8; y++) {
@@ -44,7 +44,7 @@ namespace ParallelChessPerformance {
         }
 
         [Benchmark]
-        public void incrementEntireBoardJaggedArray() {
+        public void IncrementEntireBoardJaggedArray() {
             for (var i = 0; i < 100000; i++) {
                 for (int x = 0; x < 8; x++) {
                     for (int y = 0; y < 8; y++) {

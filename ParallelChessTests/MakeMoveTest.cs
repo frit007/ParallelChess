@@ -80,25 +80,25 @@ namespace ParallelChessTests {
         }
 
         [Test]
-        public void checkEnpassantSuccededToMove() {
+        public void CheckEnpassantSuccededToMove() {
             BoardState board = CreateEnpassant();
             Assert.AreEqual(Piece.PAWN, board.E3 & Piece.PIECE_MASK);
         }
 
         [Test]
-        public void checkEnpassantIsNoLongerPossible() {
+        public void CheckEnpassantIsNoLongerPossible() {
             BoardState board = CreateEnpassant();
             Assert.AreEqual(EnPassant.NO_ENPASSANT, board.EnPassantTarget);
         }
 
         [Test]
-        public void checkEnpassantMovedFromPosition() {
+        public void CheckEnpassantMovedFromPosition() {
             BoardState board = CreateEnpassant();
             Assert.AreEqual(Piece.EMPTY, board.D4&Piece.PIECE_MASK);
         }
 
         [Test]
-        public void enPassantKilledEnemyPawn() {
+        public void EnPassantKilledEnemyPawn() {
             BoardState board = CreateEnpassant();
             Assert.AreEqual(Piece.EMPTY, board.E4 & Piece.PIECE_MASK);
         }
