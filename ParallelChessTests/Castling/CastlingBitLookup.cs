@@ -1,12 +1,11 @@
 ﻿using NUnit.Framework;
+using ParallelChess;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ParallelChess;
 
-namespace ParallelChessTests {
-    class CanCastleTest {
-
+namespace ParallelChessTests.Castling {
+    class CastlingBitLookup {
         [Test]
         public void WhiteCannotCastleQueenSideAfterA1Moves() {
             CastlingBits castling = CastlingBits.CAN_ALL;
@@ -78,7 +77,7 @@ namespace ParallelChessTests {
 
             Assert.IsTrue((castling & CastlingBits.BLACK_KING_SIDE_CASTLE) == CastlingBits.BLACK_KING_SIDE_CASTLE,
                 "Black can still castle king side after a8 moves");
-            
+
             Assert.IsTrue((castling & CastlingBits.WHITE_KING_SIDE_CASTLE) == CastlingBits.WHITE_KING_SIDE_CASTLE,
                 "White can still castle");
 
@@ -123,7 +122,5 @@ namespace ParallelChessTests {
             Assert.IsTrue((castling & CastlingBits.WHITE_QUEEN_SIDE_CASTLE) == CastlingBits.WHITE_QUEEN_SIDE_CASTLE,
                 "White can still castle");
         }
-
-        
     }
 }

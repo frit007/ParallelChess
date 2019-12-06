@@ -16,6 +16,36 @@ namespace ParallelChess {
 
     public class Chess {
 
+        // Loads a board from the FEN notation(Forsyth–Edwards Notation)
+        // Useful for getting to certain chess positions quickly. 
+        // Use the website below to generate positions
+        // https://lichess.org/editor/8/1QQ2QQ1/QqqQQqqQ/QqqqqqqQ/QqqqqqqQ/1QqqqqQ1/2QqqQ2/3QQ3_b_-_-_0_1
+        // FEN consists of 6 parts which are sepperated by space
+        // 1. Position
+        //  - Describes what pieces are at which positions
+        //  - The pieces are described from left to right with a "/" to indicate row changes
+        //  - a single letter is used to represent a piece
+        //    - P = Pawn
+        //    - N = Knight
+        //    - B = Bishop
+        //    - R = Rook
+        //    - Q = Queen
+        //    - K = King
+        //  - Capital letters indicate White pieces, while lowercase letter indicate Black pieces
+        // 2. active color
+        //  - Either "w" or "b", which indicates whose turn it is.
+        // 3. castling options
+        //  - stores information if about who is allowed to castle.
+        //  - Capital letters indicate White side lowercase letters are blacks options
+        //  - the letters K and Q mean queen or kingside castle.
+        //  - If no castling options it is marked with a "-"
+        // 4. En passant target
+        //  - marks which square is current possible to attack with en passant.
+        // 5. Half move clock
+        //  - Stores how many half moves have been made since the last capture or pawn move
+        //  - This is used for declaring stalemate
+        // 6. Fullmove number
+        //  - Counts how many full moves have been made
         public static BoardState LoadBoardFromFen(String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
             BoardState board = new BoardState() {
                 bytes = new byte[BoardStateOffset.BOARD_STATE_SIZE]
@@ -67,7 +97,7 @@ namespace ParallelChess {
             }
             if (castlingOptions.Contains("k")) {
                 //Board.SetCastleBit(board, CastlingBits.BLACK_KING_SIDE_CASTLE, true);
-                board.CastlingBits |= CastlingBits.BLACK_QUEEN_SIDE_CASTLE;
+                board.CastlingBits |= CastlingBits.BLACK_KING_SIDE_CASTLE;
             }
             if (castlingOptions.Contains("q")) {
                 //Board.SetCastleBit(board, CastlingBits.BLACK_QUEEN_SIDE_CASTLE, true);
@@ -127,12 +157,14 @@ namespace ParallelChess {
             return ascii.ToString();
         }
 
-        public static void MakeMove(BoardState board, int from, int to) {
+        public static Move MakeMove(BoardState board, int from, int to) {
             List<Move> moves = Board.GetMovesForPosition(board, from);
 
             Move targetPosition = moves.FindTargetPosition(to);
 
             Board.MakeMove(board, targetPosition);
+
+            return targetPosition;
         }
     }
 

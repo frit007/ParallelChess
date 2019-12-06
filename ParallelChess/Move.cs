@@ -106,7 +106,17 @@ namespace ParallelChess {
         }
 
         public static Move FindTargetPosition(this List<Move> moves, int position) {
-            return moves.Find(move => MoveTargetPos(move) == position);
+            return moves.Find(move => {
+                int targetPosition = MoveTargetPos(move);
+                return position == targetPosition;
+            });
+            //return moves.Find(move => MoveTargetPos(move) == position);
+        }
+
+        public static string ReadableMove(Move move) {
+            var fromPosition = MoveFromPos(move);
+            var toPosition = MoveTargetPos(move);
+            return $"from: {Board.ReadablePosition(fromPosition)} to: {Board.ReadablePosition(toPosition)}";
         }
     }
 

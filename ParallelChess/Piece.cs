@@ -21,24 +21,6 @@ namespace ParallelChess {
     // 0 = unused space
     [Flags]
     public enum Piece {
-        //EMPTY = 0b0000_0000,
-        //PAWN = 0b0000_0001,
-        //KNIGHT = 0b0000_0010,
-        //KING = 0b0000_0011,
-        //ROOK = 0b0000_0100,
-        //BISHOP = 0b0000_1000,
-        //QUEEN = 0b0000_1100,
-
-        //// used to only get what piece it is
-        //PIECE_MASK = 0b0000_1111,
-
-        //// we are using the 3rd and 4th bit to store information about if the piece attacks slanted or straight(or both in case of the queen)
-        //// this is done to speed up attacked checks
-        //ATTACKS_STRAIGHT = 0b000_0100,
-        //ATTACKS_SLANTED = 0b000_1000,
-
-        //IS_WHITE = 0b1000_0000,
-        //IS_BLACK = 0b0000_0000,
 
         EMPTY = 0b0000_0000,
         PAWN = 0b0000_0010,
