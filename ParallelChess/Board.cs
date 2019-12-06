@@ -634,8 +634,27 @@ namespace ParallelChess {
             int fromPosition = MoveHelper.MoveFromPos(move);
 
             copy.bytes[fromPosition] = copy.bytes[targetPosition];
-            copy.bytes[targetPosition] = (byte) Piece.EMPTY;
-            //copy.bytes[targetPosition] = (byte)MoveHelper.MoveCaptured(move);
+            //copy.bytes[targetPosition] = (byte) Piece.EMPTY;
+            copy.bytes[targetPosition] = (byte)MoveHelper.MoveCaptured(move);
+
+            //MoveHelper.
+            if((move & Move.CASTLING) == Move.CASTLING) {
+                // if the target move is less than the kingsposition it is queenside castling, 
+                // otherwise it is kingside castle 
+                if(targetPosition < fromPosition) {
+                    // copy the rook back to its starting position 
+                    copy.bytes[fromPosition - 4] = copy.bytes[fromPosition - 1];
+                    copy.bytes[fromPosition - 1] = 0;
+                } else {
+                    copy.bytes[fromPosition + 3] = copy.bytes[fromPosition + 1];
+                    copy.bytes[fromPosition + 1] = 0;
+                }
+            }
+            CastlingBits previous = (CastlingBits) MoveHelper.MovePreviousCastlingBits(move);
+
+            
+
+            copy.bytes[BoardStateOffset.CASTLING] = (byte)previous;
         }
 
         public static void MakeMove(BoardState board, Move move) {
