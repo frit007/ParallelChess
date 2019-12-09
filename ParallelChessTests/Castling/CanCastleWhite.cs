@@ -24,7 +24,7 @@ namespace ParallelChessTests.Castling {
             BoardState board = Chess.LoadBoardFromFen("r3k2r/8/8/2r5/8/8/8/R3K2R w KQkq - 0 1");
             var moves = Board.GetMovesForPosition(board, BoardStateOffset.E1);
 
-            Assert.AreEqual(Move.EMPTY, moves.FindTargetPosition(BoardStateOffset.C1));
+            Assert.IsFalse(MoveHelper.MoveIsNotEmpty(moves.FindTargetPosition(BoardStateOffset.C1)));
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace ParallelChessTests.Castling {
             BoardState board = Chess.LoadBoardFromFen("r3k2r/8/8/3r4/8/8/8/R3K2R w KQkq - 0 1");
             var moves = Board.GetMovesForPosition(board, BoardStateOffset.E1);
 
-            Assert.AreEqual(Move.EMPTY, moves.FindTargetPosition(BoardStateOffset.C1));
+            Assert.IsFalse(MoveHelper.MoveIsNotEmpty(moves.FindTargetPosition(BoardStateOffset.C1)));
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace ParallelChessTests.Castling {
             BoardState board = Chess.LoadBoardFromFen("r3k2r/8/8/4r3/8/8/8/R3K2R w KQkq - 0 1");
             var moves = Board.GetMovesForPosition(board, BoardStateOffset.E1);
 
-            Assert.AreEqual(Move.EMPTY, moves.FindTargetPosition(BoardStateOffset.C1));
+            Assert.IsFalse(MoveHelper.MoveIsNotEmpty(moves.FindTargetPosition(BoardStateOffset.C1)));
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace ParallelChessTests.Castling {
             BoardState board = Chess.LoadBoardFromFen("r3k2r/8/8/4r3/8/8/8/R3K2R w KQkq - 0 1");
             var moves = Board.GetMovesForPosition(board, BoardStateOffset.E1);
 
-            Assert.AreEqual(Move.EMPTY, moves.FindTargetPosition(BoardStateOffset.G1));
+            Assert.IsFalse(MoveHelper.MoveIsNotEmpty(moves.FindTargetPosition(BoardStateOffset.G1)));
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace ParallelChessTests.Castling {
             BoardState board = Chess.LoadBoardFromFen("r3k2r/8/8/5r2/8/8/8/R3K2R w KQkq - 0 1");
             var moves = Board.GetMovesForPosition(board, BoardStateOffset.E1);
 
-            Assert.AreEqual(Move.EMPTY, moves.FindTargetPosition(BoardStateOffset.G1));
+            Assert.IsFalse(MoveHelper.MoveIsNotEmpty(moves.FindTargetPosition(BoardStateOffset.G1)));
         }
 
         [Test]
@@ -130,11 +130,12 @@ namespace ParallelChessTests.Castling {
              |R _ _ _ K _ _ R| 1
              +---------------+
               A B C D E F G H
+
              */
             BoardState board = Chess.LoadBoardFromFen("r3k2r/8/8/6r1/8/8/8/R3K2R w KQkq - 0 1");
             var moves = Board.GetMovesForPosition(board, BoardStateOffset.E1);
 
-            Assert.AreEqual(Move.EMPTY, moves.FindTargetPosition(BoardStateOffset.G1));
+            Assert.IsFalse(MoveHelper.MoveIsNotEmpty(moves.FindTargetPosition(BoardStateOffset.G1)));
         }
         #endregion
     }
