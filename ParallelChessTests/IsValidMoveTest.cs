@@ -126,10 +126,10 @@ namespace ParallelChessTests {
             Assert.IsTrue(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.F2)), "Knight can move to E3 to protect the king");
 
             Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.F4)), "Knight cannot move To F4 because the king is under attack");
-            Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.E3)), "Knight cannot move To E3 because the king is under attack");
-            Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.C4)), "Knight cannot move To C4 because the king is under attack");
-            Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.B3)), "Knight cannot move To B3 because the king is under attack");
-            Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.B1)), "Knight cannot move To B1 because the king is under attack");
+            Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.E5)), "Knight cannot move To E3 because the king is under attack");
+            Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.C5)), "Knight cannot move To C4 because the king is under attack");
+            Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.B4)), "Knight cannot move To B3 because the king is under attack");
+            Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.B2)), "Knight cannot move To B1 because the king is under attack");
             Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.C1)), "Knight cannot move To C1 because the king is under attack");
         }
 
@@ -175,7 +175,7 @@ namespace ParallelChessTests {
 
             // invalid moves
             Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.A8)));
-            Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.G1)));
+            Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.G2)));
             Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.A2)));
             Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.G8)));
             Assert.IsFalse(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.F3)));

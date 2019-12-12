@@ -188,7 +188,7 @@ namespace ParallelChessTests.Castling {
             BoardState board = Chess.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b - - 0 1");
             var moves = Board.GetMovesForPosition(board, BoardStateOffset.E8);
 
-            Assert.AreEqual(Move.EMPTY, moves.FindTargetPosition(BoardStateOffset.C8));
+            Assert.IsFalse(MoveHelper.isValidMove(moves.FindTargetPosition(BoardStateOffset.C8)));
         }
 
 
