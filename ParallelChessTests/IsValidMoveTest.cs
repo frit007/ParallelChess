@@ -121,7 +121,6 @@ namespace ParallelChessTests {
             List<Move> moves = Board.GetMovesForPosition(board, BoardStateOffset.D3);
 
             Assert.AreEqual(7, moves.Count, "The knight should have 7 move options");
-            Move move = moves.FindTargetPosition(BoardStateOffset.E3);
 
             Assert.IsTrue(Board.IsValidMove(board, moves.FindTargetPosition(BoardStateOffset.F2)), "Knight can move to E3 to protect the king");
 

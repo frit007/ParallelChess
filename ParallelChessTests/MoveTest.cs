@@ -13,7 +13,7 @@ namespace ParallelChessTests {
         [Test]
         public void CheckFromPosition() {
             Move move = DoubleMove();
-            int position = MoveHelper.MoveTargetPos(move);
+            int position = MoveHelper.MoveFromPos(move);
             Assert.AreEqual(fromPosition, position);
         }
 

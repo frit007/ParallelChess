@@ -7,7 +7,7 @@ namespace ParallelChess {
 
     public static class BoardStateOffset{
         // ------------0x88-------------
-        // 0x88 is method used checking if location is out of bound very fast
+        // 0x88 is a method used for checking if a location is out of bounds very fast
         // it is done by creating an array and leaving every second row blank.
         // We can then check if a position is in a invalid row by anding a position with 0x88
         // for example if you tried to move one right from H3(39) + 1 = 40. 40 is a invalid position 

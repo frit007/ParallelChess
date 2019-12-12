@@ -81,23 +81,21 @@ namespace ParallelChess {
         }
 
         // position is expected be in the format "a1" or "b5"
-        // converts it to a number from 0 to 63, which is the number system used internally
+        // converts it to a number from 0 to 119, which is the number system used internally
         // examples
         // a1 -> 0
         // a3 -> 2
-        // h8 -> 63
+        // h8 -> 119
         public static int AlgebraicPosition(string readablePosition) {
             readablePosition = readablePosition.ToLower();
 
             // abuse the ascii system by converting the row to a number from 0 to 7
             // subtract 'a' because then the number will start from 0
-            // a -> 0 * 8 = 0
-            // c -> 2 * 8 = 16
-            // h -> 7 * 8 = 56
-            int algebraicPosition = (readablePosition[0] - 'a') * BoardStateOffset.ROW_OFFSET;
+            int algebraicPosition = (readablePosition[0] - 'a');
 
-            // add the column to the positon, subtract one because 
-            algebraicPosition += int.Parse(readablePosition.Substring(1, 0)) - 1;
+            // add the column to the positon, subtract one because
+            // multiply by the rowoffset to get the correct row.
+            algebraicPosition += (int.Parse(readablePosition.Substring(1, 1)) - 1) * BoardStateOffset.ROW_OFFSET;
 
             return algebraicPosition;
         }
@@ -472,10 +470,10 @@ namespace ParallelChess {
 
 
         public static bool IsValidMove(BoardState board, Move move) {
-
+            byte myTurn = board.IsWhiteTurn;
             MakeMove(board, move);
-
-            var attacked = !Attacked(board, board.GetKingPosition(board.IsWhiteTurn), board.IsWhiteTurn);
+            
+            var attacked = !Attacked(board, board.GetKingPosition(myTurn), myTurn);
 
             UndoMove(board, move);
 
@@ -529,7 +527,7 @@ namespace ParallelChess {
                     if (isWhitesTurn ? PositionRow(fromPosition) == 1 : PositionRow(fromPosition) == 6) {
                         int move = RelativePosition(fromPosition, 0, 2 * direction);
                         if (IsPositionEmpty(board, move)) {
-                            AddPawnMove(board, fromPosition, move, Move.BIG_PAWN_MOVE, moves);
+                            AddPawnMove(board, fromPosition, move, Move.EMPTY, moves);
                         }
                     }
 
@@ -592,7 +590,7 @@ namespace ParallelChess {
                         && !Attacked(board, fromPosition + 1, isWhite)
                         && !Attacked(board, fromPosition + 2, isWhite)
                         ) {
-                        AddMove(board, fromPosition, fromPosition + 2, Move.CASTLING, moves);
+                        AddMove(board, fromPosition, fromPosition + 2, Move.EMPTY, moves);
                     }
 
                     // Do the same queen side
@@ -604,7 +602,7 @@ namespace ParallelChess {
                         && !Attacked(board, fromPosition - 1, isWhite)
                         && !Attacked(board, fromPosition - 2, isWhite)
                         ) {
-                        AddMove(board,fromPosition, fromPosition - 2, Move.CASTLING, moves);
+                        AddMove(board,fromPosition, fromPosition - 2, Move.EMPTY, moves);
                     }
 
                     break;
@@ -648,25 +646,14 @@ namespace ParallelChess {
         public static void UndoMove(BoardState copy, Move move) {
             int targetPosition = MoveHelper.MoveTargetPos(move);
             int fromPosition = MoveHelper.MoveFromPos(move);
+            int theirColour = copy.IsWhiteTurn;
+            int ourTurn = copy.IsWhiteTurn ^ 1;
 
             copy.bytes[fromPosition] = copy.bytes[targetPosition];
             //copy.bytes[targetPosition] = (byte) Piece.EMPTY;
-            copy.bytes[targetPosition] = (byte) MoveHelper.MoveCaptured(move);
+            copy.bytes[targetPosition] = (byte) MoveHelper.MoveCaptured(move, theirColour);
 
             Piece movedPiece = copy.GetPiece(fromPosition);
-
-            if ((move & Move.CASTLING) == Move.CASTLING) {
-                // if the target move is less than the kingsposition it is queenside castling, 
-                // otherwise it is kingside castle 
-                if(targetPosition < fromPosition) {
-                    // copy the rook back to its starting position 
-                    copy.bytes[fromPosition - 4] = copy.bytes[fromPosition - 1];
-                    copy.bytes[fromPosition - 1] = 0;
-                } else {
-                    copy.bytes[fromPosition + 3] = copy.bytes[fromPosition + 1];
-                    copy.bytes[fromPosition + 1] = 0;
-                }
-            }
 
             CastlingBits previous = MoveHelper.MovePreviousCastlingBits(move);
             copy.bytes[BoardStateOffset.HALF_TURN_COUNTER] = (byte) MoveHelper.PreviousHalfMove(move);
@@ -686,12 +673,26 @@ namespace ParallelChess {
             // we abuse that isWhite is a integer which is 1 on whites turn and 0 and blacks turn
             copy.TurnCounter -= copy.IsWhiteTurn;
 
-            // switch turn back to whites turn
-            copy.IsWhiteTurn ^= 1;
-
             if ((movedPiece & Piece.KING) == Piece.KING) {
-                copy.SetKingPosition(copy.IsWhiteTurn, (byte) fromPosition);
+                if (MoveHelper.MoveIsCastle(fromPosition, targetPosition)) {
+                    // if the target move is less than the kingsposition it is queenside castling, 
+                    // otherwise it is kingside castle 
+                    if (targetPosition < fromPosition) {
+                        // copy the rook back to its starting position 
+                        copy.bytes[fromPosition - 4] = copy.bytes[fromPosition - 1];
+                        copy.bytes[fromPosition - 1] = 0;
+                    } else {
+                        copy.bytes[fromPosition + 3] = copy.bytes[fromPosition + 1];
+                        copy.bytes[fromPosition + 1] = 0;
+                    }
+                }
+                copy.SetKingPosition(ourTurn, (byte)fromPosition);
             }
+
+            // switch turn back to whites turn
+            copy.IsWhiteTurn = (byte) ourTurn;
+
+
 
 
 
@@ -708,7 +709,7 @@ namespace ParallelChess {
             Piece piece = board.GetPiece(fromPosition);
             Piece pieceType = piece & Piece.PIECE_MASK;
             Piece takenPiece = board.GetPiece(toPosition);
-            Piece promotion = MoveHelper.MovePromotion(move);
+            Piece promotion = MoveHelper.MovePromotion(move, board.IsWhiteTurn);
 
             switch (pieceType) {
                 case Piece.PAWN:
@@ -722,7 +723,7 @@ namespace ParallelChess {
                             //Board.PutPiece(board, toPosition + BoardOffset.ROW, Piece.EMPTY);
                         }
                     }
-                    if ((move & Move.BIG_PAWN_MOVE) == Move.BIG_PAWN_MOVE) {
+                    if (MoveHelper.MoveIsBigPawn(fromPosition,toPosition)) {
                         // when making a big pawn move mark the square behind the moving pawn vulnerable to 
                         if (isWhitesTurn) {
                             board.EnPassantTarget =(byte) (toPosition - BoardStateOffset.ROW_OFFSET);
@@ -738,7 +739,7 @@ namespace ParallelChess {
                     break;
                 case Piece.KING:
                     //SetKingPosition(board, isWhitesTurn, toPosition);
-                    if((move & Move.CASTLING) == Move.CASTLING) {
+                    if(MoveHelper.MoveIsCastle(fromPosition, toPosition)) {
                         switch (toPosition) {
                             case BoardStateOffset.C1:
                                 board.D1 = board.A1;
