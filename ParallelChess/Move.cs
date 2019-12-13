@@ -150,6 +150,17 @@ namespace ParallelChess {
             //return moves.Find(move => MoveTargetPos(move) == position);
         }
 
+        public static Move FindTargetPosition(this List<Move> moves, int position, Piece promotion) {
+            return moves.Find(move => {
+                int targetPosition = move.targetPosition;
+                if(position == targetPosition) {
+                    return promotion == Piece.EMPTY || promotion == (Piece)move.promotion;
+                }
+                return false;
+            });
+            //return moves.Find(move => MoveTargetPos(move) == position);
+        }
+
         public static string ReadableMove(Move move) {
             var fromPosition = move.fromPosition;
             var toPosition = move.targetPosition;

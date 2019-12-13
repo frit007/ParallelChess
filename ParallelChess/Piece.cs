@@ -3,17 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace ParallelChess {
-    //public static class Piece {
-    //    public const byte EMPTY = 0;
-    //    public const byte PAWN = 1;
-    //    public const byte ROOK = 2;
-    //    public const byte KNIGHT = 3;
-    //    public const byte BISHOP = 4;
-    //    public const byte KING = 5;
-    //    public const byte QUEEN = 6;
-
-    //    public const byte IS_WHITE = 7;
-    //}
     // Pieces are represented using 1 byte that means different parts of the byte is used to store different information
     // piece information
     // 0000 cppp
@@ -22,16 +11,19 @@ namespace ParallelChess {
     [Flags]
     public enum Piece {
 
-        EMPTY = 0b0000_0000,
-        PAWN = 0b0000_0010,
-        KNIGHT = 0b0000_0100,
-        KING = 0b0000_0110,
-        ROOK = 0b0000_1000,
-        BISHOP = 0b0001_0000,
-        QUEEN = 0b0001_1000,
+        EMPTY   = 0b0000_0000,
+
+        PAWN    = 0b1000_0010,
+        KNIGHT  = 0b1000_0100,
+        KING    = 0b1000_0110,
+        ROOK    = 0b1000_1000,
+        BISHOP  = 0b1001_0000,
+        QUEEN   = 0b1001_1000,
 
         // used to only get what piece it is
-        PIECE_MASK = 0b0001_1110,
+        // use the first bit to mark pieces, this is not strictly necessary but it makes the error messages nicer
+        // otherwise ROOK and ATTACKS_STRAIGHT have the same color pattern and for some reason is prefers ATTACKS_STRAIGHT
+        PIECE_MASK = 0b1001_1110,
 
         // we are using the 3rd and 4th bit to store information about if the piece attacks slanted or straight(or both in case of the queen)
         // this is done to speed up attacked checks
@@ -40,7 +32,8 @@ namespace ParallelChess {
 
         // use the furthest right as as isWhite because we can compare is directly to isWhite then
         IS_WHITE = 0b0000_0001,
-        IS_BLACK = 0b0000_0000,
+        // IS_BLACK would be 0000_0000 but it gives anoying error messages, therefor if something is not white it is implied to be black
+        //IS_BLACK = 0b0000_0000,
     }
 
     public static class PieceParse {
@@ -50,7 +43,7 @@ namespace ParallelChess {
             // therefor if the charcter changed when 
             bool isWhite = lowercaseCharacter != c;
 
-            Piece piece = isWhite ? Piece.IS_WHITE : Piece.IS_BLACK;
+            Piece piece = isWhite ? Piece.IS_WHITE : Piece.EMPTY; 
 
             piece |= lowercaseCharacter switch
             {

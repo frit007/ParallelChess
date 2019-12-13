@@ -4,7 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using ParallelChess;
 
-namespace ParallelChessTests {
+namespace ParallelChessTests.BaseChess {
     class FenTest {
         [Test]
         public void SimpleFenTest() {
@@ -15,7 +15,7 @@ namespace ParallelChessTests {
 
             Assert.AreEqual(board.A1, Piece.IS_WHITE | Piece.ROOK);
             Assert.AreEqual(board.E1, Piece.IS_WHITE | Piece.KING);
-            Assert.AreEqual(board.E8, Piece.IS_BLACK | Piece.KING);
+            Assert.AreEqual(board.E8, Piece.KING);
         }
 
         [Test]

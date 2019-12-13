@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using ParallelChess;
 
-namespace ParallelChessTests {
+namespace ParallelChessTests.BaseChess {
     class KingTrackingTest {
         [Test]
         public void LoadedFromFEN() {

@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using ParallelChess;
 
-namespace ParallelChessTests.Castling {
+namespace ParallelChessTests.BaseChess.Castling {
     class CanCastleWhite {
 
         #region White cannot move through check

@@ -3,7 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ParallelChess;
-namespace ParallelChessTests {
+
+namespace ParallelChessTests.BaseChess {
     class UtilityTest {
 
         [Test]

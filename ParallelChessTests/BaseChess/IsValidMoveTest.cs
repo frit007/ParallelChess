@@ -5,7 +5,7 @@ using System.Text;
 using ParallelChess;
 using System.Linq;
 
-namespace ParallelChessTests {
+namespace ParallelChessTests.BaseChess {
     class IsValidMoveTest {
         //[Test]
         //public void RunOutOfBoardLeft() {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using ParallelChess;
 
-namespace ParallelChessTests.Castling {
+namespace ParallelChessTests.BaseChess.Castling {
     class CanCastleTest {
 
 
@@ -121,8 +121,8 @@ namespace ParallelChessTests.Castling {
             BoardState board = Chess.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
             Chess.MakeMove(board, BoardStateOffset.E8, BoardStateOffset.G8);
 
-            Assert.AreEqual(Piece.KING | Piece.IS_BLACK, board.G8);
-            Assert.AreEqual(Piece.ROOK | Piece.IS_BLACK, board.F8);
+            Assert.AreEqual(Piece.KING, board.G8);
+            Assert.AreEqual(Piece.ROOK, board.F8);
 
             Assert.AreEqual(CastlingBits.EMPTY, board.CastlingBits & (CastlingBits.BLACK_KING_SIDE_CASTLE | CastlingBits.BLACK_KING_SIDE_CASTLE), "Black can no longer castle");
 
@@ -161,8 +161,8 @@ namespace ParallelChessTests.Castling {
             BoardState board = Chess.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
             Chess.MakeMove(board, BoardStateOffset.E8, BoardStateOffset.C8);
 
-            Assert.AreEqual(Piece.KING | Piece.IS_BLACK, board.C8);
-            Assert.AreEqual(Piece.ROOK | Piece.IS_BLACK, board.D8);
+            Assert.AreEqual(Piece.KING, board.C8);
+            Assert.AreEqual(Piece.ROOK, board.D8);
 
             Assert.AreEqual(CastlingBits.EMPTY, board.CastlingBits & (CastlingBits.BLACK_KING_SIDE_CASTLE | CastlingBits.BLACK_KING_SIDE_CASTLE), "Black can no longer castle");
 

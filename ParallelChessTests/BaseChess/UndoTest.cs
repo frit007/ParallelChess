@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ParallelChessTests {
+namespace ParallelChessTests.BaseChess {
     class UndoTest {
         public void everyThingIsEqual(BoardState original, BoardState copy) {
             for (int i = 0; i < BoardStateOffset.BOARD_STATE_SIZE; i++) {
@@ -91,7 +91,6 @@ namespace ParallelChessTests {
 
             Assert.AreEqual(original.F4, copy.F4);
             Assert.AreEqual(original.C7, copy.C7);
-            //everyThingIsEqual(original, copy);
         }
 
         [Test]
@@ -638,6 +637,166 @@ namespace ParallelChessTests {
 
             Assert.AreEqual(original.D7, copy.D7);
             Assert.AreEqual(original.E5, copy.E5);
+        }
+
+        [Test]
+        public void undoWhitePromoteToBishop() {
+            /* Starting position
+            +---------------+
+            |r _ b _ _ _ _ _| 8
+            |p k p P _ _ _ _| 7
+            |N p r _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |R _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+
+            D7->C8 promote to Bishop
+            +---------------+
+            |r _ B _ _ _ _ _| 8
+            |p k p _ _ _ _ _| 7
+            |N p r _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |R _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+
+            var board = Chess.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
+
+            var moves = Board.GetMovesForPosition(board, BoardStateOffset.D7);
+            var move = moves.FindTargetPosition(BoardStateOffset.C8, Piece.BISHOP);
+            Board.MakeMove(board, move);
+            Board.UndoMove(board, move);
+
+            Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.C8));
+            Assert.AreEqual(Piece.PAWN | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.D7));
+        }
+
+        [Test]
+        public void undoWhitePromoteToQueen() {
+            /* Starting position
+            +---------------+
+            |r _ b _ _ _ _ _| 8
+            |p k p P _ _ _ _| 7
+            |N p r _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |R _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+
+            D7->C8 promote to Queen
+            +---------------+
+            |r _ Q _ _ _ _ _| 8
+            |p k p _ _ _ _ _| 7
+            |N p r _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |R _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+
+            var board = Chess.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
+
+            var moves = Board.GetMovesForPosition(board, BoardStateOffset.D7);
+            var move = moves.FindTargetPosition(BoardStateOffset.C8, Piece.QUEEN);
+            Board.MakeMove(board, move);
+            Board.UndoMove(board, move);
+
+            Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.C8));
+            Assert.AreEqual(Piece.PAWN | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.D7));
+        }
+
+        [Test]
+        public void undoWhitePromoteToRook() {
+            /* Starting position
+            +---------------+
+            |r _ b _ _ _ _ _| 8
+            |p k p P _ _ _ _| 7
+            |N p r _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |R _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+
+            D7->C8 promote to Rook
+            +---------------+
+            |r _ R _ _ _ _ _| 8
+            |p k p _ _ _ _ _| 7
+            |N p r _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |R _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+
+            var board = Chess.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
+
+            var moves = Board.GetMovesForPosition(board, BoardStateOffset.D7);
+            var move = moves.FindTargetPosition(BoardStateOffset.C8, Piece.ROOK);
+            Board.MakeMove(board, move);
+            Board.UndoMove(board, move);
+
+            Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.C8));
+            Assert.AreEqual(Piece.PAWN | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.D7));
+        }
+
+        [Test]
+        public void undoWhitePromoteToKnight() {
+            /* Starting position
+            +---------------+
+            |r _ b _ _ _ _ _| 8
+            |p k p P _ _ _ _| 7
+            |N p r _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |R _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+
+            D7->C8 promote to Knight
+            +---------------+
+            |r _ N _ _ _ _ _| 8
+            |p k p _ _ _ _ _| 7
+            |N p r _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |R _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+
+            var board = Chess.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
+
+            var moves = Board.GetMovesForPosition(board, BoardStateOffset.D7);
+            var move = moves.FindTargetPosition(BoardStateOffset.C8, Piece.KNIGHT);
+            Board.MakeMove(board, move);
+            Board.UndoMove(board, move);
+
+            Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.C8));
+            Assert.AreEqual(Piece.PAWN | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.D7));
         }
 
     }

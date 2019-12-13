@@ -162,6 +162,24 @@ namespace ParallelChess {
 
             Move targetPosition = moves.FindTargetPosition(to);
 
+            if (!MoveHelper.isValidMove(targetPosition)) {
+                throw new Exception("Move not found");
+            }
+
+            Board.MakeMove(board, targetPosition);
+
+            return targetPosition;
+        }
+
+        public static Move MakeMove(BoardState board, int from, int to, Piece promotion) {
+            List<Move> moves = Board.GetMovesForPosition(board, from);
+
+            Move targetPosition = moves.FindTargetPosition(to, promotion);
+
+            if(!MoveHelper.isValidMove(targetPosition)) {
+                throw new Exception("Move not found");
+            }
+
             Board.MakeMove(board, targetPosition);
 
             return targetPosition;

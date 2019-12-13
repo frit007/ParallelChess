@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using ParallelChess;
 
-namespace ParallelChessTests {
+namespace ParallelChessTests.BaseChess {
     class MoveTest {
         private int fromPosition = BoardStateOffset.E2;
         private int toPosition = BoardStateOffset.E4;

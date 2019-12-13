@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ParallelChessTests.Castling {
+namespace ParallelChessTests.BaseChess.Castling {
     class CastlingBitLookup {
         [Test]
         public void WhiteCannotCastleQueenSideAfterA1Moves() {
