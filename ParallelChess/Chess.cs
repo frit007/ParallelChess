@@ -121,6 +121,64 @@ namespace ParallelChess {
             return board;
         }
 
+        public static String BoardToFen(BoardState board) {
+            StringBuilder fen = new StringBuilder();
+
+            for (int row = 7; row >= 0; row--) {
+                int count = 0;
+                for (int column = 0; column < 8; column++) {
+                    var position = row * BoardStateOffset.ROW_OFFSET + column;
+                    var piece = board.GetPiece(position);
+                    //var piece = Board.GetPiece(board, position);
+                    char c = PieceParse.ToChar(piece);
+                    if (c == '_') {
+                        count++;
+                    }else {
+                        if(count != 0) {
+                            fen.Append(count);
+                            count = 0;
+                        }
+                        fen.Append(c);
+                    }
+                }
+                if (count != 0) {
+                    fen.Append(count);
+                }
+
+                if(row != 0) {
+                    fen.Append("/");
+                }
+            }
+            fen.Append(" ");
+            fen.Append(board.IsWhiteTurnBool ? "w" : "b");
+            fen.Append(" ");
+            CastlingBits castlingBits = board.CastlingBits;
+            if (castlingBits == CastlingBits.EMPTY) {
+                fen.Append("-");
+            } else {
+                if((castlingBits & CastlingBits.WHITE_KING_SIDE_CASTLE) != CastlingBits.EMPTY) {
+                    fen.Append("K");
+                }
+                if ((castlingBits & CastlingBits.WHITE_QUEEN_SIDE_CASTLE) != CastlingBits.EMPTY) {
+                    fen.Append("Q");
+                }
+                if ((castlingBits & CastlingBits.BLACK_KING_SIDE_CASTLE) != CastlingBits.EMPTY) {
+                    fen.Append("k");
+                }
+                if ((castlingBits & CastlingBits.BLACK_QUEEN_SIDE_CASTLE) != CastlingBits.EMPTY) {
+                    fen.Append("q");
+                }
+            }
+            fen.Append(" ");
+            fen.Append(board.EnPassantTarget != EnPassant.NO_ENPASSANT ? Board.ReadablePosition(board.EnPassantTarget) : "-");
+            fen.Append(" ");
+            fen.Append(board.HalfTurnCounter);
+            fen.Append(" ");
+            fen.Append(board.TurnCounter);
+
+            return fen.ToString();
+        }
+
         public static String AsciiBoard(BoardState board) {
             StringBuilder ascii = new StringBuilder();
 
@@ -157,14 +215,30 @@ namespace ParallelChess {
             return ascii.ToString();
         }
 
-        public static Move MakeMove(BoardState board, int from, int to) {
+        public static Move FindMove(BoardState board, int from , int to) {
             List<Move> moves = Board.GetMovesForPosition(board, from);
 
             Move targetPosition = moves.FindTargetPosition(to);
-
             if (!MoveHelper.isValidMove(targetPosition)) {
                 throw new Exception("Move not found");
             }
+
+            return targetPosition;
+        }
+
+        public static Move FindMove(BoardState board, int from, int to, Piece promotion) {
+            List<Move> moves = Board.GetMovesForPosition(board, from);
+
+            Move targetPosition = moves.FindTargetPosition(to, promotion);
+            if (!MoveHelper.isValidMove(targetPosition)) {
+                throw new Exception("Move not found");
+            }
+
+            return targetPosition;
+        }
+
+        public static Move MakeMove(BoardState board, int from, int to) {
+            Move targetPosition = FindMove(board, from, to);
 
             Board.MakeMove(board, targetPosition);
 
@@ -172,13 +246,7 @@ namespace ParallelChess {
         }
 
         public static Move MakeMove(BoardState board, int from, int to, Piece promotion) {
-            List<Move> moves = Board.GetMovesForPosition(board, from);
-
-            Move targetPosition = moves.FindTargetPosition(to, promotion);
-
-            if(!MoveHelper.isValidMove(targetPosition)) {
-                throw new Exception("Move not found");
-            }
+            Move targetPosition = FindMove(board, from, to, promotion);
 
             Board.MakeMove(board, targetPosition);
 

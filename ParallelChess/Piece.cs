@@ -13,17 +13,17 @@ namespace ParallelChess {
 
         EMPTY   = 0b0000_0000,
 
-        PAWN    = 0b1000_0010,
-        KNIGHT  = 0b1000_0100,
-        KING    = 0b1000_0110,
-        ROOK    = 0b1000_1000,
-        BISHOP  = 0b1001_0000,
-        QUEEN   = 0b1001_1000,
+        PAWN    = 0b0010_0010,
+        KNIGHT  = 0b0010_0100,
+        KING    = 0b0010_0110,
+        ROOK    = 0b0010_1000,
+        BISHOP  = 0b0011_0000,
+        QUEEN   = 0b0011_1000,
 
         // used to only get what piece it is
         // use the first bit to mark pieces, this is not strictly necessary but it makes the error messages nicer
         // otherwise ROOK and ATTACKS_STRAIGHT have the same color pattern and for some reason is prefers ATTACKS_STRAIGHT
-        PIECE_MASK = 0b1001_1110,
+        PIECE_MASK = 0b0011_1110,
 
         // we are using the 3rd and 4th bit to store information about if the piece attacks slanted or straight(or both in case of the queen)
         // this is done to speed up attacked checks

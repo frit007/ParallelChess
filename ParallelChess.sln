@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParallelChess", "ParallelCh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParallelChessTests", "ParallelChessTests\ParallelChessTests.csproj", "{50E56AEB-81CB-4A72-A1A4-13B5DA36B3E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelChessPerformance", "ParallelChessPerformance\ParallelChessPerformance.csproj", "{37C9C4A8-017C-48A3-AA27-EC46C31B7717}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParallelChessPerformance", "ParallelChessPerformance\ParallelChessPerformance.csproj", "{37C9C4A8-017C-48A3-AA27-EC46C31B7717}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsciiCommentGenerator", "AsciiCommentGenerator\AsciiCommentGenerator.csproj", "{227D92BC-5174-4E82-A8F4-6560556E1102}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{37C9C4A8-017C-48A3-AA27-EC46C31B7717}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37C9C4A8-017C-48A3-AA27-EC46C31B7717}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37C9C4A8-017C-48A3-AA27-EC46C31B7717}.Release|Any CPU.Build.0 = Release|Any CPU
+		{227D92BC-5174-4E82-A8F4-6560556E1102}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{227D92BC-5174-4E82-A8F4-6560556E1102}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{227D92BC-5174-4E82-A8F4-6560556E1102}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{227D92BC-5174-4E82-A8F4-6560556E1102}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

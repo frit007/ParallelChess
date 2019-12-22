@@ -7,7 +7,7 @@ using System.Text;
 namespace ParallelChessTests.BaseChess {
     class MakeMoveTest {
         [Test]
-        public void MovePeasant() {
+        public void MovePawn() {
             BoardState board = Chess.LoadBoardFromFen();
 
             List<Move> list = Board.GetMovesForPosition(board, BoardStateOffset.E2);
@@ -20,6 +20,29 @@ namespace ParallelChessTests.BaseChess {
 
             Assert.AreEqual(Piece.PAWN, board.E4 & Piece.PIECE_MASK);
             Assert.AreEqual(BoardStateOffset.E3, board.EnPassantTarget);
+        }
+
+        [Test]
+        public void WhitePawnAttackFromH2() {
+            /*
+             * Start position (white to play)
+            +---------------+
+            |_ _ _ k _ _ _ _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P P| 2
+            |_ _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+            */
+            var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/6p1/6PP/3K4 w - - 0 1");
+            Chess.MakeMove(board, BoardStateOffset.H2, BoardStateOffset.G3);
+            Assert.AreEqual(Piece.EMPTY, board.H2);
+
+            Assert.AreEqual(Piece.PAWN | Piece.IS_WHITE, board.G3);
         }
 
         [Test]
@@ -398,6 +421,86 @@ namespace ParallelChessTests.BaseChess {
             BoardState board = TakeEnpassant();
             Assert.AreEqual(Piece.EMPTY, board.E4 & Piece.PIECE_MASK);
         }
+
+        [Test]
+        public void EnPassantIsClearedAfterEnemyMove() {
+            /*
+             * Start position (White to play)
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |_ _ _ q k _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ P _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             D2->D4
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |_ _ _ q k _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ P _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+            D7->D4 (move a piece that is not a pawn)
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |_ _ _ q k _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ P _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            BoardState board = Chess.LoadBoardFromFen("8/3qk3/8/8/8/8/3P4/4K3 w - - 0 1");
+            Chess.MakeMove(board, BoardStateOffset.D2, BoardStateOffset.D4);
+            Chess.MakeMove(board, BoardStateOffset.D7, BoardStateOffset.D4);
+            Assert.AreEqual(EnPassant.NO_ENPASSANT, board.EnPassantTarget);
+        }
         #endregion
+
+
+        // this position is tested because it threw an outside the bounds error at one point
+        [Test]
+        public void WeirdPosition() {
+            /*
+             * Start position (Black to play)
+            +---------------+
+            |r n b q k b n r| 8
+            |_ p p p p p p p| 7
+            |_ _ _ _ _ _ _ _| 6
+            |p _ _ _ _ _ _ _| 5
+            |P _ _ _ _ _ _ _| 4
+            |_ _ P _ _ _ _ _| 3
+            |p P _ P P P P P| 2
+            |_ N B Q K B N R| 1
+            +---------------+
+             A B C D E F G H
+             */
+            var board = Chess.LoadBoardFromFen("rnbqkbnr/1ppppppp/8/p7/P7/2P5/pP1PPPPP/1NBQKBNR b Kkq - 0 4");
+
+            Board.GetMovesForPosition(board, BoardStateOffset.A2);
+        }
+
+        [Test]
+        public void BlackPromotionStressUndoTest() {
+            var board = Chess.LoadBoardFromFen("1nbqkbnr/rppppppp/p7/8/1P6/P1P5/1p1PPPPP/R1BQKBNR b KQk - 0 3");
+            var original = Board.CreateCopyBoard(board);
+            var moves = Board.GetMoves(board);
+            foreach (var move in moves) {
+                Board.MakeMove(board, move);
+                Board.UndoMove(board, move);
+            }
+        }
     }
 }

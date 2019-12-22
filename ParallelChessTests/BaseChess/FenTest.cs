@@ -24,5 +24,23 @@ namespace ParallelChessTests.BaseChess {
 
             Assert.AreEqual(BoardStateOffset.B6, board.EnPassantTarget);
         }
+
+        [Test]
+        public void toFenEnpassant() {
+            var originalFEN = "4k3/8/8/PpP5/8/8/8/4K3 b - b6 0 1";
+            
+            var board = Chess.LoadBoardFromFen(originalFEN);
+
+            Assert.AreEqual(originalFEN, Chess.BoardToFen(board));
+        }
+
+        [Test]
+        public void toFenWithCastling() {
+            var originalFEN = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1";
+
+            var board = Chess.LoadBoardFromFen(originalFEN);
+
+            Assert.AreEqual(originalFEN, Chess.BoardToFen(board));
+        }
     }
 }

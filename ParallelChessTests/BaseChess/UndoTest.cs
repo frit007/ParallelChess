@@ -6,9 +6,9 @@ using System.Text;
 
 namespace ParallelChessTests.BaseChess {
     class UndoTest {
-        public void everyThingIsEqual(BoardState original, BoardState copy) {
+        public void everyThingIsEqual(BoardState original, BoardState copy, Move move) {
             for (int i = 0; i < BoardStateOffset.BOARD_STATE_SIZE; i++) {
-                Assert.AreEqual(original.bytes[i], copy.bytes[i], $"The boards are not equal at offset {i}");
+                Assert.AreEqual(original.bytes[i], copy.bytes[i], $"The boards are not equal at offset {i}, after playing the move {MoveHelper.ReadableMove(move)}");
             }
         }
 
@@ -583,6 +583,9 @@ namespace ParallelChessTests.BaseChess {
 
             Assert.AreEqual(original.E4, copy.E4);
             Assert.AreEqual(original.D2, copy.D2);
+            Assert.AreEqual(original.D3, copy.D3);
+
+            everyThingIsEqual(original, copy, firstMove);
         }
 
         [Test]
@@ -637,6 +640,9 @@ namespace ParallelChessTests.BaseChess {
 
             Assert.AreEqual(original.D7, copy.D7);
             Assert.AreEqual(original.E5, copy.E5);
+            Assert.AreEqual(original.D6, copy.D6);
+
+            everyThingIsEqual(original, copy, firstMove);
         }
 
         [Test]
@@ -749,7 +755,7 @@ namespace ParallelChessTests.BaseChess {
              */
 
             var board = Chess.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
-
+            var original = Board.CreateCopyBoard(board);
             var moves = Board.GetMovesForPosition(board, BoardStateOffset.D7);
             var move = moves.FindTargetPosition(BoardStateOffset.C8, Piece.ROOK);
             Board.MakeMove(board, move);
@@ -757,6 +763,7 @@ namespace ParallelChessTests.BaseChess {
 
             Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.C8));
             Assert.AreEqual(Piece.PAWN | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.D7));
+            everyThingIsEqual(original, board, move);
         }
 
         [Test]
@@ -797,6 +804,114 @@ namespace ParallelChessTests.BaseChess {
 
             Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.C8));
             Assert.AreEqual(Piece.PAWN | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.D7));
+        }
+
+        [Test]
+        public void undoEnpassantTarget() {
+            /*
+             * Start position (White to play)
+            +---------------+
+            |_ _ _ k _ _ _ _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P P| 2
+            |_ _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             Play H2->H4
+            +---------------+
+            |_ _ _ k _ _ _ _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ P| 4
+            |_ _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             Undo
+             */
+            var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/6p1/6PP/3K4 w - - 0 1");
+            var original = Board.CreateCopyBoard(board);
+
+            var move = Chess.MakeMove(board, BoardStateOffset.H2, BoardStateOffset.H4);
+            Board.UndoMove(board, move);
+            Assert.AreEqual(original.EnPassantTarget, board.EnPassantTarget);
+        }
+
+        [Test]
+        public void undoStressTest1() {
+            var board = Chess.LoadBoardFromFen();
+            var original = Board.CreateCopyBoard(board);
+
+            foreach (var move in Board.GetMoves(board)) {
+                Board.MakeMove(board, move);
+                Board.UndoMove(board, move);
+                everyThingIsEqual(original, board, move);
+            }
+        }
+
+        [Test]
+        public void undoStressTest2() {
+            var board = Chess.LoadBoardFromFen("r2qkb1r/pp3ppp/2n2n2/6B1/3pN1b1/P7/1PP1BPPP/R2QK1NR b KQkq - 0 10");
+            var original = Board.CreateCopyBoard(board);
+
+            foreach (var move in Board.GetMoves(board)) {
+                Board.MakeMove(board, move);
+                Board.UndoMove(board, move);
+                everyThingIsEqual(original, board, move);
+            }
+        }
+
+        [Test]
+        public void undoStressTest3() {
+            var board = Chess.LoadBoardFromFen("r2qkb1r/ppP2ppp/2n2n2/6B1/3pN1b1/P7/2P1BPPP/R2QK1NR b KQkq - 0 10");
+            var original = Board.CreateCopyBoard(board);
+
+            foreach (var move in Board.GetMoves(board)) {
+                Board.MakeMove(board, move);
+                Board.UndoMove(board, move);
+                everyThingIsEqual(original, board, move);
+            }
+        }
+
+        [Test]
+        public void undoStressTest4() {
+            var board = Chess.LoadBoardFromFen("r2qkb1r/ppP2ppp/2n2n2/6B1/3pN1b1/P7/2P1BPPP/R2QK1NR w KQkq - 0 10");
+            var original = Board.CreateCopyBoard(board);
+
+            foreach (var move in Board.GetMoves(board)) {
+                Board.MakeMove(board, move);
+                Board.UndoMove(board, move);
+                everyThingIsEqual(original, board, move);
+            }
+        }
+        [Test]
+        public void undoStressTest5() {
+            var board = Chess.LoadBoardFromFen("r5k1/5ppp/1p6/p1p5/7b/1PPrqPP1/1PQ4P/R4R1K b - - 0 1");
+            var original = Board.CreateCopyBoard(board);
+
+            foreach (var move in Board.GetMoves(board)) {
+                Board.MakeMove(board, move);
+                Board.UndoMove(board, move);
+                everyThingIsEqual(original, board, move);
+            }
+        }
+
+        [Test]
+        public void BlackPromotionStressUndoTest() {
+            var board = Chess.LoadBoardFromFen("1nbqkbnr/rppppppp/p7/8/1P6/P1P5/1p1PPPPP/R1BQKBNR b KQk - 0 3");
+            var original = Board.CreateCopyBoard(board);
+            var moves = Board.GetMovesForPosition(board, BoardStateOffset.B2);
+            foreach (var move in moves) {
+                Board.MakeMove(board, move);
+                Board.UndoMove(board, move);
+                everyThingIsEqual(original, board, move);
+            }
         }
 
     }
