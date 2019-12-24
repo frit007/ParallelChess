@@ -43,22 +43,24 @@ namespace ParallelChess.AI {
             };
             
 
-            var winner = Board.detectWinner(board, moves);
-            if ((winner == Winner.WINNER_WHITE || winner == Winner.WINNER_BLACK)) {
-                if(maximizing) {
-                    bestMove.score = float.MinValue + board.VirtualLevel;
-                    // if a checkmate is found then no deeper moves matter since we are going to play that move
-                    return bestMove;
-                } else {
-                    bestMove.score = float.MaxValue - board.VirtualLevel;
-                    return bestMove;
-                }
-            } else if (winner == Winner.DRAW) {
-                bestMove.score = 0;
-                return bestMove;
-            }
+
 
             if (board.VirtualLevel == depth) {
+                var winner = Board.detectWinner(board, moves);
+                if ((winner == Winner.WINNER_WHITE || winner == Winner.WINNER_BLACK)) {
+                    if (maximizing) {
+                        bestMove.score = float.MinValue + board.VirtualLevel;
+                        // if a checkmate is found then no deeper moves matter since we are going to play that move
+                        return bestMove;
+                    } else {
+                        bestMove.score = float.MaxValue - board.VirtualLevel;
+                        return bestMove;
+                    }
+                } else if (winner == Winner.DRAW) {
+                    bestMove.score = 0;
+                    return bestMove;
+                }
+
                 var score = EvalBoard.evalBoard(board, moves);
                 if(!maximizing) {
                     // if the score is not for the optimized player flip the score.
@@ -69,8 +71,18 @@ namespace ParallelChess.AI {
                 };
             }
 
+            // because detectWinner requires checking for valid moves, which is slow only do it for end nodes
+            // for all other cases reimplement reimplement the logic locally
+            if (Board.hasInsufficientMaterialOrTimeLimit(board)) {
+                bestMove.score = 0;
+                return bestMove;
+            }
+            // hasValidMove is used to track if the player has a valid move they can play, 
+            // if not this is used to declare a winner
+            bool foundValidMove = false;
 
-            
+
+
             foreach (var move in moves) {
                 byte myTurn = board.IsWhiteTurn;
 
@@ -87,6 +99,7 @@ namespace ParallelChess.AI {
                     Board.UndoMove(board, move);
                     continue;
                 }
+                foundValidMove = true;
                 BestMove moveScore = MinMax(board, depth, !maximizing, min, max);
                 moveScore.move = move;
                 board.VirtualLevel--;
@@ -106,12 +119,22 @@ namespace ParallelChess.AI {
                         bestMove = moveScore;
                     }
                     max = Math.Min(moveScore.score, max);
-                    if(min >= max) {
+                    if (min >= max) {
                         return bestMove;
                     }
                 }
 
-                
+                if (!foundValidMove) {
+                    if (maximizing) {
+                        bestMove.score = float.MinValue + board.VirtualLevel;
+                        // if a checkmate is found then no deeper moves matter since we are going to play that move
+                        return bestMove;
+                    } else {
+                        bestMove.score = float.MaxValue - board.VirtualLevel;
+                        return bestMove;
+                    }
+                }
+
                 //Console.WriteLine("-------------undo----------------");
                 //Console.WriteLine(Chess.AsciiBoard(board));
 

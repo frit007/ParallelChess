@@ -914,5 +914,43 @@ namespace ParallelChessTests.BaseChess {
             }
         }
 
+        [Test]
+        public void UndoKingMovePosition() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |r k r _ _ _ _ _| 8
+            |p p p _ _ p p p| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ N _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ K _ _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+            C1 -> C2
+            +---------------+
+            |r k r _ _ _ _ _| 8
+            |p p p _ _ p p p| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ N _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ K _ _ _ _ _| 2
+            |_ _ _ _ _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            var board = Chess.LoadBoardFromFen("rkr5/ppp2ppp/8/4N3/8/8/8/2K5 w - - 0 1");
+            var original = Board.CreateCopyBoard(board);
+            var moves = Board.GetMoves(board);
+
+            var move = Chess.MakeMove(board, BoardStateOffset.C1, BoardStateOffset.C2, Piece.EMPTY);
+            Board.UndoMove(board, move);
+
+            Assert.AreEqual(original.BlackKingPosition, board.BlackKingPosition);
+        }
+
     }
 }

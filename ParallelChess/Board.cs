@@ -44,15 +44,15 @@ namespace ParallelChess {
                 }
             }
 
-            if (board.HalfTurnCounter == 50) {
-                return Winner.DRAW;
-            }
-
-            if (detectInsufficientMaterial(board)) {
+            if (hasInsufficientMaterialOrTimeLimit(board)) {
                 return Winner.DRAW;
             }
 
             return Winner.NONE;
+        }
+
+        public static bool hasInsufficientMaterialOrTimeLimit(BoardState board) {
+            return board.HalfTurnCounter == 50 || detectInsufficientMaterial(board);
         }
 
         public static Winner detectWinner(BoardState board, IEnumerable<Move> moves) {

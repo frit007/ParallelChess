@@ -32,6 +32,31 @@ namespace ParallelChessTests.BaseChess {
         }
 
         [Test]
+        public void QueenCheckMateWhite() {
+            /*
+             * Starting position (Black to play)
+            +---------------+
+            |_ k _ _ Q _ _ _| 8
+            |p p p p _ p p p| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ K _ _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            var board = Chess.LoadBoardFromFen("1k2Q3/pppp1ppp/8/8/8/8/8/2K5 b - - 0 1");
+
+            var moves = Board.GetMoves(board);
+
+            var winner = Board.detectWinner(board, moves);
+
+            Assert.AreEqual(Winner.WINNER_WHITE, winner);
+        }
+
+        [Test]
         public void CheckMateBlack() {
             /*
              * Starting position (White to play)

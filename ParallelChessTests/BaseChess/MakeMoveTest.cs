@@ -23,6 +23,30 @@ namespace ParallelChessTests.BaseChess {
         }
 
         [Test]
+        public void PawnsCanNotJumpOverPiece() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |_ _ _ _ _ _ k _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ r _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ p _ p _| 3
+            |_ _ _ _ P _ P _| 2
+            |_ _ N _ _ _ K _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            var board = Chess.LoadBoardFromFen("6k1/8/8/3r4/8/4p1p1/4P1P1/2N3K1 w - - 0 1");
+
+            var moves = Board.GetMoves(board);
+
+            var move = moves.FindTargetPosition(BoardStateOffset.E4);
+            Assert.IsFalse(MoveHelper.isValidMove(move));
+        }
+
+        [Test]
         public void WhitePawnAttackFromH2() {
             /*
              * Start position (white to play)
