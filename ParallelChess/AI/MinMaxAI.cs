@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ParallelChess.AI {
+    // based on https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
+    // use alpha beta prunning to reduce the amount of notes searched, in best case scenario this can remove over half of the searched nodes
     public static class MinMaxAI {
         public static long movesEvaluated = 0;
         public struct BestMove {
@@ -25,19 +28,39 @@ namespace ParallelChess.AI {
             initThreadStaticVariables();
         }
 
-        public static BestMove MinMax(BoardState board, byte optimizeForColor, int depth, float min = float.MaxValue, float max = float.MaxValue) {
-            var theirColor = optimizeForColor ^ 1;
+        public static BestMove MinMax(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
+            var optimizeForColor = maximizing ? 1 : 0;
+            var minimizeForColor = optimizeForColor ^ 1;
 
-            BestMove bestMove = new BestMove() {
-                score = board.IsWhiteTurn == optimizeForColor ? max : min
-            };
+
+
             var moveList = layeredLists[board.VirtualLevel];
             moveList.Clear();
-
             var moves = Board.GetMoves(board, moveList);
+
+            BestMove bestMove = new BestMove() {
+                score = maximizing ? float.MinValue : float.MaxValue,
+            };
+            
+
+            var winner = Board.detectWinner(board, moves);
+            if ((winner == Winner.WINNER_WHITE || winner == Winner.WINNER_BLACK)) {
+                if(maximizing) {
+                    bestMove.score = float.MinValue + board.VirtualLevel;
+                    // if a checkmate is found then no deeper moves matter since we are going to play that move
+                    return bestMove;
+                } else {
+                    bestMove.score = float.MaxValue - board.VirtualLevel;
+                    return bestMove;
+                }
+            } else if (winner == Winner.DRAW) {
+                bestMove.score = 0;
+                return bestMove;
+            }
+
             if (board.VirtualLevel == depth) {
                 var score = EvalBoard.evalBoard(board, moves);
-                if(board.IsWhiteTurn != optimizeForColor) {
+                if(!maximizing) {
                     // if the score is not for the optimized player flip the score.
                     score *= -1;
                 }
@@ -46,53 +69,49 @@ namespace ParallelChess.AI {
                 };
             }
 
+
+            
             foreach (var move in moves) {
+                byte myTurn = board.IsWhiteTurn;
 
                 Board.MakeMove(board, move);
-                movesEvaluated++;
-                var winner = Board.detectWinner(board, moves);
 
-                // abuse that winner 0 is black and winner 1 white 
-                if((byte)winner == optimizeForColor) {
-                    bestMove.move = move;
-                    bestMove.score = float.MaxValue;
-                    Board.UndoMove(board, move);
-                    // if a checkmate is found then no deeper moves matter since we are going to play that move
-                    return bestMove;
-                }else if((byte)winner == theirColor) {
-                    bestMove.score = float.MinValue;
-                    bestMove.move = move;
-                    Board.UndoMove(board, move);
-                    return bestMove;
-                }else if(winner == Winner.DRAW) {
-                    if(optimizeForColor != board.IsWhiteTurn) {
-                        // if it is currently their turn it means it was our move which means we will pick the highest of these options
-                        if(bestMove.score < 0) {
-                            bestMove.score = 0;
-                            bestMove.move = move;
-                            if (bestMove.score < min) {
-                                return bestMove;
-                            }
-                        }
-                    } else {
-                        // if it was their move then they will try to minimize the move
-                        if (bestMove.score > 0) {
-                            bestMove.score = 0;
-                            bestMove.move = move;
-                            if(bestMove.score > min) {
-                                // if this worse than a guaranteed minimum then return
-                                return bestMove;
-                            }
-                        }
-                    }
+                movesEvaluated++;
+
+                board.VirtualLevel++;
+
+                var attacked = Board.Attacked(board, board.GetKingPosition(myTurn), myTurn);
+                if(attacked) {
+                    // if the king is under attack after making the move then it is not a valid move, in which case ignore the move
+                    board.VirtualLevel--;
                     Board.UndoMove(board, move);
                     continue;
                 }
-
-                board.VirtualLevel++;
-                MinMax(board, optimizeForColor, depth);
+                BestMove moveScore = MinMax(board, depth, !maximizing, min, max);
+                moveScore.move = move;
                 board.VirtualLevel--;
                 Board.UndoMove(board, move);
+                
+                if(maximizing) {
+                    // optimize for player
+                    if(moveScore.score > bestMove.score) {
+                        bestMove = moveScore;
+                    }
+                    min = Math.Max(moveScore.score, min);
+                    if (min >= max) {
+                        return bestMove;
+                    }
+                } else {
+                    if (moveScore.score < bestMove.score) {
+                        bestMove = moveScore;
+                    }
+                    max = Math.Min(moveScore.score, max);
+                    if(min >= max) {
+                        return bestMove;
+                    }
+                }
+
+                
                 //Console.WriteLine("-------------undo----------------");
                 //Console.WriteLine(Chess.AsciiBoard(board));
 

@@ -131,10 +131,23 @@ namespace ParallelChess {
 
         public const int BOARD_STATE_SIZE = 120;
         //public const int BOARD_STATE_SIZE = 1000;
+
+        public static List<(Piece piece, int position)> listPieces(this BoardState board) {
+            List<(Piece, int)> items = new List<(Piece, int)>();
+
+            for (int column = 0; column < 8; column++) {
+                for (int row = 0; row < 8 * BoardStateOffset.ROW_OFFSET; row += BoardStateOffset.ROW_OFFSET) {
+                    var position = column + row;
+                    items.Add((board.GetPiece(position), position));
+                }
+            }
+
+            return items;
+        }
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    public unsafe struct BoardState {
+    public struct BoardState {
         // 
         //public const int BOARD_STATE_SIZE_IN_BYTES = 75;
 
@@ -494,6 +507,11 @@ namespace ParallelChess {
             get { return 0 != bytes[BoardStateOffset.IS_WHITE_TURN]; }
             set { bytes[BoardStateOffset.IS_WHITE_TURN] = (byte)(value ? 1 : 0); }
         }
+
+        public string FEN {
+            get { return Chess.BoardToFen(this); }
+        }
+
 
         //// contains king positions
         //// 0 -> black king position

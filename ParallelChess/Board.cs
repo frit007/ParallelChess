@@ -30,19 +30,11 @@ namespace ParallelChess {
         public const int G_COLUMN = 6;
         public const int H_COLUMN = 7;
 
-
-
-        // TODO avoid checking if there are valid moves
-        public static Winner detectWinner(BoardState board, IEnumerable<Move> moves) {
-            //int count = history.Count();
-            var validMoves = moves.Count((move) => {
-                return IsValidMove(board, move);
-            });
-
-            if(validMoves == 0) {
+        public static Winner detectWinnerAreThereValidMoves(BoardState board, bool areThereValidMoves) {
+            if (!areThereValidMoves) {
                 // check if king is under attack
-                if(Attacked(board, board.GetKingPosition(board.IsWhiteTurn), board.IsWhiteTurn)) {
-                    if(board.IsWhiteTurnBool) {
+                if (Attacked(board, board.GetKingPosition(board.IsWhiteTurn), board.IsWhiteTurn)) {
+                    if (board.IsWhiteTurnBool) {
                         return Winner.WINNER_BLACK;
                     } else {
                         return Winner.WINNER_WHITE;
@@ -52,15 +44,24 @@ namespace ParallelChess {
                 }
             }
 
-            if(board.HalfTurnCounter == 50) {
+            if (board.HalfTurnCounter == 50) {
                 return Winner.DRAW;
             }
 
-            if(detectInsufficientMaterial(board)) {
+            if (detectInsufficientMaterial(board)) {
                 return Winner.DRAW;
             }
 
             return Winner.NONE;
+        }
+
+        public static Winner detectWinner(BoardState board, IEnumerable<Move> moves) {
+            //int count = history.Count();
+            var validMoves = moves.Where((move) => {
+                return IsValidMove(board, move);
+            });
+
+            return detectWinnerAreThereValidMoves(board, validMoves.Count() != 0);
         }
 
         // Detect Insufficient material. according to https://www.chessstrategyonline.com/content/tutorials/how-to-play-chess-draws there are 4 options for insufficient material
@@ -473,11 +474,11 @@ namespace ParallelChess {
             byte myTurn = board.IsWhiteTurn;
             MakeMove(board, move);
 
-            var attacked = !Attacked(board, board.GetKingPosition(myTurn), myTurn);
+            var notAttacked = !Attacked(board, board.GetKingPosition(myTurn), myTurn);
 
             UndoMove(board, move);
 
-            return attacked;
+            return notAttacked;
         }
 
         public static List<Move> GetMoves(BoardState board, List<Move> moves = null) {
@@ -524,8 +525,9 @@ namespace ParallelChess {
 
                     // check if the pawn is on the starting position. If it is then assume that it is possible to move forward
                     if (isWhitesTurn ? PositionRow(fromPosition) == 1 : PositionRow(fromPosition) == 6) {
+                        int hasToBeEmptyPosition = RelativePosition(fromPosition, 0, direction);
                         int move = RelativePosition(fromPosition, 0, 2 * direction);
-                        if (IsPositionEmpty(board, move)) {
+                        if (IsPositionEmpty(board, move) && IsPositionEmpty(board, hasToBeEmptyPosition)) {
                             AddPawnMove(board, fromPosition, move, MoveFlags.BIG_PAWN_MOVE | MoveFlags.PAWN_MOVE, moves);
                         }
                     }

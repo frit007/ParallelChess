@@ -62,20 +62,33 @@ namespace ParallelChess.AI {
         // positive scores are in our favor negative scores are in their favor
         public static float evalBoard(BoardState board, List<Move> myMoves) {
             float score = 0;
-
+            var original = Board.CreateCopyBoard(board);
             score += countPieceValues(board);
 
-            var myValidMoves = myMoves.Where(move => Board.IsValidMove(board, move));
+            List<Move> myValidMoves = new List<Move>();
+            foreach (var ourMove in myMoves) {
+                if(Board.IsValidMove(board, ourMove)) {
+                    myValidMoves.Add(ourMove);
+                }
+            }
 
             // flip the board positions to check for legal moves
             board.IsWhiteTurn ^= 1;
             moves.Clear();
             var theirMoves = Board.GetMoves(board, moves);
-            var theirValidMoves = theirMoves.Where(move => Board.IsValidMove(board, move));
+            List<Move> theirValidMoves = new List<Move>();
+            foreach (var move in theirValidMoves) {
+                if (Board.IsValidMove(board, move)) {
+                    theirValidMoves.Add(move);
+                }
+            }
+            score += countAttackedFields(board, myMoves, theirMoves) * PSEUDO_VALID_MOVE_PENALTY;
+            //var theirValidMoves = theirMoves.Where(move => Board.IsValidMove(board, move)).ToList();
+            // NOTE: the score has to be counted before switching the turns back to normal, 
+            // because otherwise the the linq statement will not evaluate with the correct state.
+            score += countAttackedFields(board, myValidMoves, theirValidMoves);
             board.IsWhiteTurn ^= 1;
 
-            score += countAttackedFields(board, myMoves, myMoves) * PSEUDO_VALID_MOVE_PENALTY;
-            score += countAttackedFields(board, myValidMoves, theirValidMoves);
 
             return score;
         }
