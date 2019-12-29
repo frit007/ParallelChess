@@ -16,6 +16,8 @@ namespace ParallelChess.AI {
         // To avoid creating too many lists and destroying them have a list ready for each depth layer which is then cleared
         [ThreadStatic]
         public static List<Move>[] layeredLists = new List<Move>[100];
+        [ThreadStatic]
+        private static ulong boardHash = 0;
 
         public static void initThreadStaticVariables() {
             layeredLists = new List<Move>[100];
@@ -28,54 +30,88 @@ namespace ParallelChess.AI {
             initThreadStaticVariables();
         }
 
-        public static BestMove MinMax(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
-            var bestMove = MinMaxInternal(board, depth, maximizing, min, max);
-            if(!MoveHelper.isValidMove(bestMove.move)) {
-                // if the MinMax algorithm cannot find a move that avoids checkmate it becomes depressed and doesn't return any valid moves
-                // therefor if the returned move is invalid return the first legal move 
-                foreach (var legalMove in Board.GetMoves(board).Where(move => Board.IsLegalMove(board, move))) {
+        public static List<BestMove> MinMax(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
+            boardHash = HashBoard.hash(board);
+            List<BestMove> movePoints = new List<BestMove>();
+            //var bestMove = MinMaxInternal(board, depth, maximizing, min, max);
+            var bestMove = maximizing ? float.MinValue : float.MaxValue;
 
+            var moveList = layeredLists[board.VirtualLevel];
+            moveList.Clear();
+            
+            var moves = Board.GetMoves(board, moveList);
 
-                    return new BestMove() {
-                        score = bestMove.score,
-                        move = legalMove,
-                    };
+            var winner = Board.detectWinner(board, moves);
+
+            foreach (var move in moves) {
+                byte myTurn = board.IsWhiteTurn;
+                boardHash = HashBoard.ApplyMove(board, move, boardHash);
+                Board.MakeMove(board, move);
+
+                movesEvaluated++;
+
+                board.VirtualLevel++;
+
+                var attacked = Board.Attacked(board, board.GetKingPosition(myTurn), myTurn);
+                if (attacked) {
+                    // if the king is under attack after making the move then it is not a valid move, in which case ignore the move
+                    board.VirtualLevel--;
+                    Board.UndoMove(board, move);
+                    boardHash = HashBoard.ApplyMove(board, move, boardHash);
+                    continue;
+                }
+                var moveScore = MinMaxInternal(board, depth, !maximizing, min, max);
+                movePoints.Add(new BestMove() {
+                    move = move,
+                    score = moveScore,
+                });
+
+                board.VirtualLevel--;
+                Board.UndoMove(board, move);
+                boardHash = HashBoard.ApplyMove(board, move, boardHash);
+
+                if (maximizing) {
+                    // optimize for player
+                    if (moveScore > bestMove) {
+                        bestMove = moveScore;
+                    }
+                    min = Math.Max(moveScore, min);
+                } else {
+                    if (moveScore < bestMove) {
+                        bestMove = moveScore;
+                    }
+                    max = Math.Min(moveScore, max);
                 }
             }
-            return bestMove;
+
+            // sort the moves in order of
+            movePoints.Sort((a, b) => (a.score < b.score) ? 1 : -1);
+
+            return movePoints;
         }
 
-        private static BestMove MinMaxInternal(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
+        private static float MinMaxInternal(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
             var optimizeForColor = maximizing ? 1 : 0;
             var minimizeForColor = optimizeForColor ^ 1;
 
-
+            float bestMove = maximizing ? float.MinValue : float.MaxValue;
 
             var moveList = layeredLists[board.VirtualLevel];
             moveList.Clear();
             var moves = Board.GetMoves(board, moveList);
-
-            BestMove bestMove = new BestMove() {
-                score = maximizing ? -10000000000000000f : 10000000000000000f,
-            };
-            
-
 
 
             if (board.VirtualLevel == depth) {
                 var winner = Board.detectWinner(board, moves);
                 if ((winner == Winner.WINNER_WHITE || winner == Winner.WINNER_BLACK)) {
                     if (maximizing) {
-                        bestMove.score = float.MinValue + board.VirtualLevel;
                         // if a checkmate is found then no deeper moves matter since we are going to play that move
-                        return bestMove;
+                        return float.MinValue + board.VirtualLevel;
                     } else {
-                        bestMove.score = float.MaxValue - board.VirtualLevel;
-                        return bestMove;
+                        return float.MaxValue - board.VirtualLevel;
                     }
                 } else if (winner == Winner.DRAW) {
-                    bestMove.score = 0;
-                    return bestMove;
+                    return 0;
                 }
 
                 var score = EvalBoard.evalBoard(board, moves);
@@ -83,16 +119,13 @@ namespace ParallelChess.AI {
                     // if the score is not for the optimized player flip the score.
                     score *= -1;
                 }
-                return new BestMove() {
-                    score = score,
-                };
+                return score;
             }
 
             // because detectWinner requires checking for valid moves, which is slow only do it for end nodes
             // for all other cases reimplement reimplement the logic locally
             if (Board.hasInsufficientMaterialOrTimeLimit(board)) {
-                bestMove.score = 0;
-                return bestMove;
+                return 0;
             }
             // hasValidMove is used to track if the player has a valid move they can play, 
             // if not this is used to declare a winner
@@ -100,6 +133,7 @@ namespace ParallelChess.AI {
             foreach (var move in moves) {
                 byte myTurn = board.IsWhiteTurn;
 
+                boardHash = HashBoard.ApplyMove(board, move, boardHash);
                 Board.MakeMove(board, move);
 
                 movesEvaluated++;
@@ -111,58 +145,41 @@ namespace ParallelChess.AI {
                     // if the king is under attack after making the move then it is not a valid move, in which case ignore the move
                     board.VirtualLevel--;
                     Board.UndoMove(board, move);
+                    boardHash = HashBoard.ApplyMove(board, move, boardHash);
                     continue;
                 }
                 foundValidMove = true;
-                BestMove moveScore = MinMax(board, depth, !maximizing, min, max);
-                moveScore.move = move;
+                var moveScore = MinMaxInternal(board, depth, !maximizing, min, max);
                 board.VirtualLevel--;
                 Board.UndoMove(board, move);
-                
-                if(maximizing) {
+                boardHash = HashBoard.ApplyMove(board, move, boardHash);
+
+                if (maximizing) {
                     // optimize for player
-                    if(moveScore.score > bestMove.score) {
+                    if(moveScore > bestMove) {
                         bestMove = moveScore;
                     }
-                    min = Math.Max(moveScore.score, min);
+                    min = Math.Max(moveScore, min);
                     if (min >= max) {
                         return bestMove;
                     }
                 } else {
-                    if (moveScore.score < bestMove.score) {
+                    if (moveScore < bestMove) {
                         bestMove = moveScore;
                     }
-                    max = Math.Min(moveScore.score, max);
+                    max = Math.Min(moveScore, max);
                     if (min >= max) {
                         return bestMove;
                     }
                 }
-
-                //Console.WriteLine("-------------undo----------------");
-                //Console.WriteLine(Chess.AsciiBoard(board));
-
-                //for (int row = 7; row >= 0; row--) {
-                //    for (int column = 0; column < 8; column++) {
-                //        var position = row * BoardStateOffset.ROW_OFFSET + column;
-                //        if (board.bytes[position] == (byte)Piece.PAWN) {
-                //            blackPawnCount++;
-                //        }
-                //    }
-                //}
-                //if (blackPawnCount == 9) {
-                //    Console.WriteLine("SOMETHING MESSED UP");
-                //}
-
             }
 
             if (!foundValidMove) {
                 if (maximizing) {
-                    bestMove.score = float.MinValue + board.VirtualLevel;
+                    return float.MinValue + board.VirtualLevel;
                     // if a checkmate is found then no deeper moves matter since we are going to play that move
-                    return bestMove;
                 } else {
-                    bestMove.score = float.MaxValue - board.VirtualLevel;
-                    return bestMove;
+                    return float.MaxValue - board.VirtualLevel;
                 }
             }
 

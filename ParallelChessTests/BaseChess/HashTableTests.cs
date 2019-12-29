@@ -350,6 +350,8 @@ namespace ParallelChessTests.BaseChess {
             incrementalUpdate("r3k2r/8/8/2pP4/8/8/8/R3K2R w KQkq c6 0 2", BoardStateOffset.D5, BoardStateOffset.C6);
         }
 
+
+        // in theory the same function can be used to undo a move since we xor everything
         [Test]
         public void canUndoEnpassant() {
             /*
