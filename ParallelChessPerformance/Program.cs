@@ -15,7 +15,7 @@ namespace ParallelChessPerformance {
 
             //Console.WriteLine("hi");
             //Console.WriteLine("Hello World!");
-            var summary = BenchmarkRunner.Run<FunctionCallOverheadPerformance>();
+            var summary = BenchmarkRunner.Run<MinMaxPerformance>();
 
             //UsingBoardStateStruct usingBoardStateStruct = new UsingBoardStateStruct();
             //usingBoardStateStruct.makeAMove();

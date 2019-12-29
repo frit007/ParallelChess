@@ -18,6 +18,8 @@ namespace ParallelChess.AI {
         public static List<Move>[] layeredLists = new List<Move>[100];
         [ThreadStatic]
         private static ulong boardHash = 0;
+        [ThreadStatic]
+        private static Dictionary<ulong, float> moveScores = new Dictionary<ulong, float>();
 
         public static void initThreadStaticVariables() {
             layeredLists = new List<Move>[100];
@@ -85,7 +87,8 @@ namespace ParallelChess.AI {
             }
 
             // sort the moves in order of
-            movePoints.Sort((a, b) => (a.score < b.score) ? 1 : -1);
+            //movePoints.Sort((a, b) => (a.score < b.score) ? 1 : -1);
+            movePoints = movePoints.OrderBy(move => move.score).Reverse().ToList();
 
             return movePoints;
         }
@@ -102,23 +105,35 @@ namespace ParallelChess.AI {
 
 
             if (board.VirtualLevel == depth) {
+                float existingScore = 0;
+                //if(moveScores.TryGetValue(boardHash,out existingScore)) {
+                //    return existingScore;
+                //}
+                float score;
                 var winner = Board.detectWinner(board, moves);
                 if ((winner == Winner.WINNER_WHITE || winner == Winner.WINNER_BLACK)) {
                     if (maximizing) {
                         // if a checkmate is found then no deeper moves matter since we are going to play that move
-                        return float.MinValue + board.VirtualLevel;
+                        score = float.MinValue + board.VirtualLevel;
+                        //moveScores.Add(boardHash, score);
+                        return score;
                     } else {
-                        return float.MaxValue - board.VirtualLevel;
+                        score = float.MaxValue - board.VirtualLevel;
+                        //moveScores.Add(boardHash, score);
+                        return score;
                     }
                 } else if (winner == Winner.DRAW) {
-                    return 0;
+                    score = 0;
+                    //moveScores.Add(boardHash, score);
+                    return score;
                 }
 
-                var score = EvalBoard.evalBoard(board, moves);
+                score = EvalBoard.evalBoard(board, moves);
                 if(!maximizing) {
                     // if the score is not for the optimized player flip the score.
                     score *= -1;
                 }
+                //moveScores.Add(boardHash, score);
                 return score;
             }
 

@@ -11,7 +11,6 @@ namespace ParallelChessPerformance {
         public void MinMaxTest() {
             var board = Chess.LoadBoardFromFen();
             MinMaxAI.MinMax(board, 6);
-        //ParallelChess.AI.MinMax()
         }
     }
 }

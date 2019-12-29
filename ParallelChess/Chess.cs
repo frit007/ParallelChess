@@ -179,7 +179,12 @@ namespace ParallelChess {
             return fen.ToString();
         }
 
-        public static String AsciiBoard(BoardState board) {
+        public static String AsciiBoard(BoardState board, List<Move> moves = null, bool displayCount = false) {
+            if(moves == null) {
+                moves = new List<Move>();
+            }
+            moves = moves.Where(move => Board.IsLegalMove(board, move)).ToList();
+
             StringBuilder ascii = new StringBuilder();
 
             ascii.Append("+---------------+\n");
@@ -188,8 +193,16 @@ namespace ParallelChess {
                 for (int column = 0; column < 8; column++) {
                     var position = row * BoardStateOffset.ROW_OFFSET + column;
                     var piece = board.GetPiece(position);
-                    //var piece = Board.GetPiece(board, position);
-                    ascii.Append(PieceParse.ToChar(piece));
+                    var movesOnPosition = moves.Count(move => move.targetPosition == position);
+                    if(movesOnPosition > 0) {
+                        if(movesOnPosition < 10 && displayCount) {
+                            ascii.Append(movesOnPosition);
+                        } else {
+                            ascii.Append("x");
+                        }
+                    } else {
+                        ascii.Append(PieceParse.ToChar(piece));
+                    }
                     if(column != 7) {
                         ascii.Append(" ");
                     }
@@ -200,18 +213,6 @@ namespace ParallelChess {
             ascii.Append("+---------------+\n");
 
             ascii.Append(" A B C D E F G H");
-
-            //for (int position = 0; position <= BoardOffset.H8; position++) {
-            //    var piece = Board.GetPiece(board, position);
-
-            //    if(position ) {
-
-            //    }
-
-            //    ascii += PieceParse.ToChar(piece);
-
-            //}
-
             return ascii.ToString();
         }
 
