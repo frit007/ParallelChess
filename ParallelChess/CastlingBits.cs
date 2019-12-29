@@ -43,19 +43,19 @@ namespace ParallelChess {
         // Used to lookup which castling options are still alowed when you move to or from a position on the board
         public static CastlingBits[] castleLookup = {
             CAN_NOT_WQ, CAN_ALL, CAN_ALL, CAN_ALL, CAN_NOT_W, CAN_ALL, CAN_ALL, CAN_NOT_WK,
-            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow
+            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow (used for 0x88)
             CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL,
-            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow
+            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow (used for 0x88)
             CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL,
-            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow
+            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow (used for 0x88)
             CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL,
-            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow
+            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow (used for 0x88)
             CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL,
-            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow
+            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow (used for 0x88)
             CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL,
-            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow
+            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow (used for 0x88)
             CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, 
-            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow
+            CAN_ALL,    CAN_ALL, CAN_ALL, CAN_ALL, CAN_ALL,   CAN_ALL, CAN_ALL, CAN_ALL, // invalidRow (used for 0x88)
             CAN_NOT_BQ, CAN_ALL, CAN_ALL, CAN_ALL, CAN_NOT_B, CAN_ALL, CAN_ALL, CAN_NOT_BK,
         };
     }

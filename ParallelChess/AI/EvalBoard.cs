@@ -67,7 +67,7 @@ namespace ParallelChess.AI {
 
             List<Move> myValidMoves = new List<Move>();
             foreach (var ourMove in myMoves) {
-                if(Board.IsValidMove(board, ourMove)) {
+                if(Board.IsLegalMove(board, ourMove)) {
                     myValidMoves.Add(ourMove);
                 }
             }
@@ -77,8 +77,8 @@ namespace ParallelChess.AI {
             moves.Clear();
             var theirMoves = Board.GetMoves(board, moves);
             List<Move> theirValidMoves = new List<Move>();
-            foreach (var move in theirValidMoves) {
-                if (Board.IsValidMove(board, move)) {
+            foreach (var move in theirMoves) {
+                if (Board.IsLegalMove(board, move)) {
                     theirValidMoves.Add(move);
                 }
             }

@@ -222,6 +222,9 @@ namespace ParallelChess {
             if (!MoveHelper.isValidMove(targetPosition)) {
                 throw new Exception("Move not found");
             }
+            if(!Board.IsLegalMove(board, targetPosition)) {
+                throw new Exception("Illegal move");
+            }
 
             return targetPosition;
         }
@@ -232,6 +235,10 @@ namespace ParallelChess {
             Move targetPosition = moves.FindTargetPosition(to, promotion);
             if (!MoveHelper.isValidMove(targetPosition)) {
                 throw new Exception("Move not found");
+            }
+
+            if (!Board.IsLegalMove(board, targetPosition)) {
+                throw new Exception("Illegal move");
             }
 
             return targetPosition;

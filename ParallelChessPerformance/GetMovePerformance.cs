@@ -109,7 +109,7 @@ namespace ParallelChessPerformance {
                 moves.Clear();
                 moves = Board.GetMoves(board, moves);
                 foreach (var move in moves) {
-                    Board.IsValidMove(virtualBoard, move);
+                    Board.IsLegalMove(virtualBoard, move);
                 }
             }
         }
@@ -131,7 +131,7 @@ namespace ParallelChessPerformance {
                         foreach (var move in moves) {
                             //Board.CopyBoard(board, virtualBoard);
                             //Board.MakeMove(virtualBoard, move);
-                            Board.IsValidMove(virtualBoard, move);
+                            Board.IsLegalMove(virtualBoard, move);
                         }
                     }
                 });
@@ -205,7 +205,7 @@ namespace ParallelChessPerformance {
                 moves.Clear();
                 moves = Board.GetMoves(board, moves);
                 foreach (var move in moves) {
-                    Board.IsValidMove(board, move);
+                    Board.IsLegalMove(board, move);
                 }
             }
         }

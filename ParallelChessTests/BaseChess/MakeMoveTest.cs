@@ -526,5 +526,46 @@ namespace ParallelChessTests.BaseChess {
                 Board.UndoMove(board, move);
             }
         }
+
+        // this test was added because there was a scenario where a king was counted as a knight, 
+        // which meant black king defended the knight on f6
+        [Test]
+        public void KingTakesKnight() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |_ _ _ _ _ _ k _| 8
+            |p p _ _ _ _ _ _| 7
+            |_ _ _ _ K n p _| 6
+            |_ _ _ _ _ _ p p| 5
+            |_ P _ _ _ _ _ _| 4
+            |_ _ _ _ r _ _ _| 3
+            |_ _ _ _ _ _ P P| 2
+            |R _ _ _ _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             E6 -> F6
+            +---------------+
+            |_ _ _ _ _ _ k _| 8
+            |p p _ _ _ _ _ _| 7
+            |_ _ _ _ _ K p _| 6
+            |_ _ _ _ _ _ p p| 5
+            |_ P _ _ _ _ _ _| 4
+            |_ _ _ _ r _ _ _| 3
+            |_ _ _ _ _ _ P P| 2
+            |R _ _ _ _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            var board = Chess.LoadBoardFromFen("6k1/pp6/4Knp1/6pp/1P6/4r3/6PP/R7 w - - 2 43");
+
+            var moves = Board.GetMoves(board);
+
+            var move = moves.FindTargetPosition(BoardStateOffset.F6);
+
+            Assert.True(MoveHelper.isValidMove(move));
+
+            Assert.IsTrue(Board.IsLegalMove(board, move));
+        }
     }
 }

@@ -74,7 +74,7 @@ namespace ParallelChessTests.BaseChess {
 
             var move = Chess.MakeMove(board, BoardStateOffset.G2, BoardStateOffset.F3);
 
-            //Board.UndoMove(board, move);
+            Board.UndoMove(board, move);
 
             everyThingIsEqual(original, board);
         }
@@ -99,13 +99,13 @@ namespace ParallelChessTests.BaseChess {
 
             var moves = Board.GetMoves(board);
 
-            board.IsWhiteTurn ^= 1;
-            moves.Clear();
-            var theirMoves = Board.GetMoves(board, moves);
-            var theirValidMoves = theirMoves.Where(move => Board.IsValidMove(board, move)).ToList();
-            // NOTE: the score has to be counted before switching the turns back to normal, 
-            // because otherwise the the linq statement will not evaluate with the correct state.
-            board.IsWhiteTurn ^= 1;
+            //board.IsWhiteTurn ^= 1;
+            //moves.Clear();
+            //var theirMoves = Board.GetMoves(board, moves);
+            //var theirValidMoves = theirMoves.Where(move => Board.IsLegalMove(board, move)).ToList();
+            //// NOTE: the score has to be counted before switching the turns back to normal, 
+            //// because otherwise the the linq statement will not evaluate with the correct state.
+            //board.IsWhiteTurn ^= 1;
 
             EvalBoard.evalBoard(board, moves);
 

@@ -211,11 +211,110 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("r1b1n2r/1q1nNpbk/1p1p2p1/p2NpPPp/2P1P2P/3BB3/PP6/R2QK2R w - - 0 1");
 
-            var moves = Board.GetMoves(board);
-
             BestMove foundMove = MinMaxAI.MinMax(board, 5);
 
             Assert.AreEqual(BoardStateOffset.H5, foundMove.move.targetPosition);
+        }
+
+        [Test]
+        public void keepPlayingEvenWhenLost() {
+            /*
+             * Starting position (Black to play)
+            +---------------+
+            |B _ _ _ _ _ _ _| 8
+            |_ _ _ _ _ P R p| 7
+            |_ _ _ _ N _ _ k| 6
+            |_ _ _ p _ _ p _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ P _ P _| 3
+            |P _ _ _ _ _ K _| 2
+            |_ _ _ _ _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            var board = Chess.LoadBoardFromFen("B7/5PRp/4N2k/3p2p1/8/4P1P1/P5K1/8 b - - 0 2");
+
+            var moves = Board.GetMoves(board);
+            BestMove foundMove = MinMaxAI.MinMax(board, 5);
+
+            Assert.IsTrue(MoveHelper.isValidMove(foundMove.move));
+        }
+
+        [Test]
+        public void keepPlayingEvenWhenLostSimpler() {
+            /*
+             * Starting position (Black to play)
+            +---------------+
+            |_ _ _ _ _ _ _ k| 8
+            |p R p _ _ _ p _| 7
+            |P p P _ _ _ P _| 6
+            |_ P _ _ _ _ p _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            var board = Chess.LoadBoardFromFen("7k/pRp3p1/PpP3P1/1P4p1/8/8/8/8 b - - 0 1");
+
+            var moves = Board.GetMoves(board);
+
+            BestMove foundMove = MinMaxAI.MinMax(board, 2);
+
+            Assert.IsTrue(MoveHelper.isValidMove(foundMove.move));
+        }
+
+        [Test]
+        public void evalBoardItIsEqual() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |_ _ _ _ k _ _ _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            var board = Chess.LoadBoardFromFen("4k3/8/8/8/8/8/8/4K3 w - - 0 1");
+
+            var moves = Board.GetMoves(board);
+            Assert.Less(EvalBoard.evalBoard(board, moves), 0.000001f);
+        }
+        public void everyThingIsEqual(BoardState original, BoardState copy) {
+            for (int i = 0; i < BoardStateOffset.BOARD_STATE_SIZE; i++) {
+                Assert.AreEqual(original.bytes[i], copy.bytes[i], $"The boards are not equal at offset {i}");
+            }
+        }
+
+        [Test]
+        [Category("slowtest")]
+        public void MinMaxDoesNotChangeAnything() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |r n b q k b n r| 8
+            |p p p p p p p p| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ P _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |P P P P _ P P P| 2
+            |R N B Q K B N R| 1
+            +---------------+
+             A B C D E F G H
+            */
+            var board = Chess.LoadBoardFromFen("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2");
+            var original = Board.CreateCopyBoard(board);
+            var moves = Board.GetMoves(board);
+            BestMove foundMove = MinMaxAI.MinMax(board, 5);
+
+            everyThingIsEqual(original, board);
         }
     }
 }

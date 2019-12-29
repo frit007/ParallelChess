@@ -29,6 +29,23 @@ namespace ParallelChess.AI {
         }
 
         public static BestMove MinMax(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
+            var bestMove = MinMaxInternal(board, depth, maximizing, min, max);
+            if(!MoveHelper.isValidMove(bestMove.move)) {
+                // if the MinMax algorithm cannot find a move that avoids checkmate it becomes depressed and doesn't return any valid moves
+                // therefor if the returned move is invalid return the first legal move 
+                foreach (var legalMove in Board.GetMoves(board).Where(move => Board.IsLegalMove(board, move))) {
+
+
+                    return new BestMove() {
+                        score = bestMove.score,
+                        move = legalMove,
+                    };
+                }
+            }
+            return bestMove;
+        }
+
+        private static BestMove MinMaxInternal(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
             var optimizeForColor = maximizing ? 1 : 0;
             var minimizeForColor = optimizeForColor ^ 1;
 
@@ -39,7 +56,7 @@ namespace ParallelChess.AI {
             var moves = Board.GetMoves(board, moveList);
 
             BestMove bestMove = new BestMove() {
-                score = maximizing ? float.MinValue : float.MaxValue,
+                score = maximizing ? -10000000000000000f : 10000000000000000f,
             };
             
 
@@ -80,9 +97,6 @@ namespace ParallelChess.AI {
             // hasValidMove is used to track if the player has a valid move they can play, 
             // if not this is used to declare a winner
             bool foundValidMove = false;
-
-
-
             foreach (var move in moves) {
                 byte myTurn = board.IsWhiteTurn;
 
@@ -124,17 +138,6 @@ namespace ParallelChess.AI {
                     }
                 }
 
-                if (!foundValidMove) {
-                    if (maximizing) {
-                        bestMove.score = float.MinValue + board.VirtualLevel;
-                        // if a checkmate is found then no deeper moves matter since we are going to play that move
-                        return bestMove;
-                    } else {
-                        bestMove.score = float.MaxValue - board.VirtualLevel;
-                        return bestMove;
-                    }
-                }
-
                 //Console.WriteLine("-------------undo----------------");
                 //Console.WriteLine(Chess.AsciiBoard(board));
 
@@ -150,6 +153,17 @@ namespace ParallelChess.AI {
                 //    Console.WriteLine("SOMETHING MESSED UP");
                 //}
 
+            }
+
+            if (!foundValidMove) {
+                if (maximizing) {
+                    bestMove.score = float.MinValue + board.VirtualLevel;
+                    // if a checkmate is found then no deeper moves matter since we are going to play that move
+                    return bestMove;
+                } else {
+                    bestMove.score = float.MaxValue - board.VirtualLevel;
+                    return bestMove;
+                }
             }
 
 

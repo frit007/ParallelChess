@@ -57,9 +57,15 @@ namespace ParallelChess {
 
         public static Winner detectWinner(BoardState board, IEnumerable<Move> moves) {
             //int count = history.Count();
-            var validMoves = moves.Where((move) => {
-                return IsValidMove(board, move);
-            });
+            List<Move> validMoves = new List<Move>();
+            foreach (var move in moves) {
+                if (IsLegalMove(board, move)) {
+                    validMoves.Add(move);
+                }
+            }
+            //var validMoves = moves.Where((move) => {
+            //    return IsLegalMove(board, move);
+            //}).ToList();
 
             return detectWinnerAreThereValidMoves(board, validMoves.Count() != 0);
         }
@@ -182,7 +188,7 @@ namespace ParallelChess {
         }
 
         //// TODO: undersøg om det er værd at bruge 0x88 til at tjekke valide positioner.
-        //public static bool IsValidPosition(int position, int relativeColumn, int relativeRow) {
+        //public static bool (int  & 0x88p == 0osition, int relativeColumn, int relativeRow) {
         //    int targetPosition = Board.RelativePosition(position, relativeColumn, relativeRow);
         //    int targetRow = targetPosition / 8;
         //    int expectedRow = position / 8 + relativeRow;
@@ -201,17 +207,17 @@ namespace ParallelChess {
         //        && targetRow == expectedRow;
         //}
 
-        public static bool IsValidPosition(int position) {
-            // ------------0x88-------------
-            // 0x88 is method used checking if location is out of bound very fast
-            // it is done by creating an array and leaving every second row blank.
-            // We can then check if a position is in a invalid row by anding a position with 0x88
-            // for example if you tried to move one right from H3(39) + 1 = 40. 40 is a invalid position 
-            // which can be caught by checking 0x88 & 40 = 8. Any invalid position will result in a non zero value
-            // the potential disadvantage to this approach is that the boardState is larger, which will take longer to copy and 
-            // might mean that the array is no longer cached in CPU cache.
-            return (0x88 & position) == 0;
-        }
+        //public static bool (int  & 0x88p == 0osition) {
+        //    // ------------0x88-------------
+        //    // 0x88 is method used checking if location is out of bound very fast
+        //    // it is done by creating an array and leaving every second row blank.
+        //    // We can then check if a position is in a invalid row by anding a position with 0x88
+        //    // for example if you tried to move one right from H3(39) + 1 = 40. 40 is a invalid position 
+        //    // which can be caught by checking 0x88 & 40 = 8. Any invalid position will result in a non zero value
+        //    // the potential disadvantage to this approach is that the boardState is larger, which will take longer to copy and 
+        //    // might mean that the array is no longer cached in CPU cache.
+        //    return (0x88 & position) == 0;
+        //}
 
         public static int RelativePosition(int position, int relativeColumn, int relativeRow) {
             return position + relativeRow * BoardStateOffset.ROW_OFFSET + relativeColumn;
@@ -312,7 +318,7 @@ namespace ParallelChess {
                 bool isFirstPosition = true;
                 do {
                     relativePosition += move;
-                    if (IsValidPosition(relativePosition)) {
+                    if ((relativePosition & 0x88) == 0) {
                         var piece = board.GetPiece(relativePosition);
                         if (piece != Piece.EMPTY) {
                             Piece enemySlantedAttacked = (theirColorPiece | Piece.ATTACKS_SLANTED);
@@ -341,7 +347,7 @@ namespace ParallelChess {
                 bool isFirstPosition = true;
                 do {
                     relativePosition += move;
-                    if (IsValidPosition(relativePosition)) {
+                    if ((relativePosition & 0x88) == 0) {
                         var piece = board.GetPiece(relativePosition);
                         if (piece != Piece.EMPTY) {
                             Piece enemySlantedAttacked = (theirColorPiece | Piece.ATTACKS_STRAIGHT);
@@ -366,10 +372,10 @@ namespace ParallelChess {
             foreach (var move in directKnightMoves) {
                 int relativePosition = position + move;
 
-                if (IsValidPosition(relativePosition)) {
+                if ((relativePosition & 0x88) == 0) {
                     var piece = board.GetPiece(relativePosition);
                     Piece enemySlantedAttacked = (theirColorPiece | Piece.KNIGHT);
-                    if ((piece & (Piece.KNIGHT | Piece.IS_WHITE)) == enemySlantedAttacked) {
+                    if ((piece & (Piece.PIECE_MASK | Piece.IS_WHITE)) == enemySlantedAttacked) {
                         return true;
                     }
                 }
@@ -377,14 +383,14 @@ namespace ParallelChess {
 
             int leftPawnPosition = position - BoardStateOffset.ROW_OFFSET - 1 + BoardStateOffset.ROW_OFFSET * pretendToBeWhite * 2;
             int rightPawnPosition = position - BoardStateOffset.ROW_OFFSET + 1 + BoardStateOffset.ROW_OFFSET * pretendToBeWhite * 2;
-            if (IsValidPosition(leftPawnPosition)) {
+            if ((leftPawnPosition & 0x88) == 0) {
                 Piece leftPawn = board.GetPiece(leftPawnPosition);
                 if (leftPawn == (theirColorPiece | Piece.PAWN)) {
                     return true;
                 }
             }
 
-            if (IsValidPosition(rightPawnPosition)) {
+            if ((rightPawnPosition & 0x88) == 0) {
                 Piece rightPawn = board.GetPiece(rightPawnPosition);
                 if (rightPawn == (theirColorPiece | Piece.PAWN)) {
                     return true;
@@ -445,7 +451,7 @@ namespace ParallelChess {
                 int move = fromPosition;
                 do {
                     move += relativePosition;
-                    if (IsValidPosition(move)) {
+                    if ((move & 0x88) == 0) {
                         var moveOption = CanITakeSquare(board, move);
                         if (moveOption == MoveOption.NO_FIGHT) {
                             AddMove(board, fromPosition, move, MoveFlags.EMPTY, moves);
@@ -470,7 +476,7 @@ namespace ParallelChess {
         //});
 
 
-        public static bool IsValidMove(BoardState board, Move move) {
+        public static bool IsLegalMove(BoardState board, Move move) {
             byte myTurn = board.IsWhiteTurn;
             MakeMove(board, move);
 
@@ -564,7 +570,7 @@ namespace ParallelChess {
                 case Piece.KING:
                     foreach (var relativeMove in directKingMoves) {
                         int move = relativeMove + fromPosition;
-                        if (IsValidPosition(move)) {
+                        if ((move & 0x88) == 0) {
                             var moveOption = CanITakeSquare(board, move);
                             if (moveOption != MoveOption.INVALID) {
                                 AddMove(board, fromPosition, move, MoveFlags.EMPTY, moves);
@@ -611,7 +617,7 @@ namespace ParallelChess {
                 case Piece.KNIGHT:
                     foreach (var relativeMove in directKnightMoves) {
                         int move = fromPosition + relativeMove;
-                        if (IsValidPosition(move)) {
+                        if ((move & 0x88) == 0) {
                             var moveOption = CanITakeSquare(board, move);
                             if (moveOption != MoveOption.INVALID) {
                                 AddMove(board, fromPosition, move, MoveFlags.EMPTY, moves);
