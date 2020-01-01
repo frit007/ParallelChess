@@ -18,7 +18,7 @@ namespace ParallelChess {
         public static void initThreadStaticVariables() {
             IsValidMoveVirtualBoard = new byte[BoardStateOffset.BOARD_STATE_SIZE];
             EvalBoard.initThreadStaticVariables();
-            MinMaxAI.initThreadStaticVariables();
+            //MinMaxAI.initThreadStaticVariables();
         }
 
         public const int A_COLUMN = 0;

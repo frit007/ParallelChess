@@ -62,7 +62,7 @@ namespace ParallelChess.AI {
         // positive scores are in our favor negative scores are in their favor
         public static float evalBoard(BoardState board, List<Move> myMoves) {
             float score = 0;
-            var original = Board.CreateCopyBoard(board);
+            //var original = Board.CreateCopyBoard(board);
             score += countPieceValues(board);
 
             List<Move> myValidMoves = new List<Move>();

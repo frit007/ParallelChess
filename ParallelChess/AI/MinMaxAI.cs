@@ -6,33 +6,35 @@ using System.Text;
 namespace ParallelChess.AI {
     // based on https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
     // use alpha beta prunning to reduce the amount of notes searched, in best case scenario this can remove over half of the searched nodes
-    public static class MinMaxAI {
-        public static long movesEvaluated = 0;
+    public class MinMaxAI {
+        //public static long movesEvaluated = 0;
         public struct BestMove {
             public Move move;
             public float score;
         }
 
         // To avoid creating too many lists and destroying them have a list ready for each depth layer which is then cleared
-        [ThreadStatic]
+        //[ThreadStatic]
         public static List<Move>[] layeredLists = new List<Move>[100];
-        [ThreadStatic]
+        //[ThreadStatic]
         private static ulong boardHash = 0;
-        [ThreadStatic]
+        //[ThreadStatic]
         private static Dictionary<ulong, float> moveScores = new Dictionary<ulong, float>();
 
-        public static void initThreadStaticVariables() {
+        public MinMaxAI() {
             layeredLists = new List<Move>[100];
             for (int i = 0; i < layeredLists.Length; i++) {
                 layeredLists[i] = new List<Move>();
             }
+            moveScores = new Dictionary<ulong, float>();
+            boardHash = 0;
         }
 
-        static MinMaxAI() {
-            initThreadStaticVariables();
-        }
+        //static MinMaxAI() {
+        //    initThreadStaticVariables();
+        //}
 
-        public static List<BestMove> MinMax(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
+        public List<BestMove> MinMaxList(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
             boardHash = HashBoard.hash(board);
             List<BestMove> movePoints = new List<BestMove>();
             //var bestMove = MinMaxInternal(board, depth, maximizing, min, max);
@@ -43,14 +45,13 @@ namespace ParallelChess.AI {
             
             var moves = Board.GetMoves(board, moveList);
 
+            // TODO we need something threadstatic?
             var winner = Board.detectWinner(board, moves);
 
             foreach (var move in moves) {
                 byte myTurn = board.IsWhiteTurn;
                 boardHash = HashBoard.ApplyMove(board, move, boardHash);
                 Board.MakeMove(board, move);
-
-                movesEvaluated++;
 
                 board.VirtualLevel++;
 
@@ -62,7 +63,7 @@ namespace ParallelChess.AI {
                     boardHash = HashBoard.ApplyMove(board, move, boardHash);
                     continue;
                 }
-                var moveScore = MinMaxInternal(board, depth, !maximizing, min, max);
+                var moveScore = MinMax(board, depth, !maximizing, min, max);
                 movePoints.Add(new BestMove() {
                     move = move,
                     score = moveScore,
@@ -86,14 +87,14 @@ namespace ParallelChess.AI {
                 }
             }
 
-            // sort the moves in order of
+            // sort the moves in descending order
             //movePoints.Sort((a, b) => (a.score < b.score) ? 1 : -1);
             movePoints = movePoints.OrderBy(move => move.score).Reverse().ToList();
 
             return movePoints;
         }
 
-        private static float MinMaxInternal(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
+        public float MinMax(BoardState board, int depth, bool maximizing = true, float min = float.MinValue, float max = float.MaxValue) {
             var optimizeForColor = maximizing ? 1 : 0;
             var minimizeForColor = optimizeForColor ^ 1;
 
@@ -101,10 +102,12 @@ namespace ParallelChess.AI {
 
             var moveList = layeredLists[board.VirtualLevel];
             moveList.Clear();
-            var moves = Board.GetMoves(board, moveList);
+            //var moves = Board.GetMoves(board, moveList);
+            // TOOD switch to existing list
+            var moves = Board.GetMoves(board);
 
 
-            if (board.VirtualLevel == depth) {
+            if (board.VirtualLevel >= depth) {
                 float existingScore = 0;
                 //if(moveScores.TryGetValue(boardHash,out existingScore)) {
                 //    return existingScore;
@@ -151,8 +154,6 @@ namespace ParallelChess.AI {
                 boardHash = HashBoard.ApplyMove(board, move, boardHash);
                 Board.MakeMove(board, move);
 
-                movesEvaluated++;
-
                 board.VirtualLevel++;
 
                 var attacked = Board.Attacked(board, board.GetKingPosition(myTurn), myTurn);
@@ -164,7 +165,7 @@ namespace ParallelChess.AI {
                     continue;
                 }
                 foundValidMove = true;
-                var moveScore = MinMaxInternal(board, depth, !maximizing, min, max);
+                var moveScore = MinMax(board, depth, !maximizing, min, max);
                 board.VirtualLevel--;
                 Board.UndoMove(board, move);
                 boardHash = HashBoard.ApplyMove(board, move, boardHash);

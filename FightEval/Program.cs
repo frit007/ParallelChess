@@ -1,13 +1,26 @@
 ﻿using ParallelChess;
+using ParallelChess.AI.worker;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using static ParallelChess.AI.MinMaxAI;
 
 namespace FightEval {
     class Program {
-        static void Main(string[] args) {
-            Console.WriteLine("");
+
+        public static void Main(string[] args) {
+            MainAsync(args).GetAwaiter().GetResult();
+        }
+
+        public static async Task MainAsync(string[] args) {
+            Board.initThreadStaticVariables();
+            var ai = new AIWorkerManager();
+            ai.spawnWorkers(4);
             var board = Chess.LoadBoardFromFen();
             bool hasCheated = false;
+            int difficulty = 5;
+            bool debug = true;
             do {
                 Console.WriteLine(Chess.AsciiBoard(board));
                 var moves = Board.GetMoves(board);
@@ -24,7 +37,7 @@ namespace FightEval {
                 }
                 do {
                     try {
-                        Console.WriteLine("Make a move (eksample: \"A1 A3)\"");
+                        Console.WriteLine("Make a move (example: \"A1 A3)\"");
                         var readLine = Console.ReadLine().ToUpper().Split(" ");
                         
 
@@ -36,11 +49,12 @@ namespace FightEval {
  - Cheat [depth=5]   * uses eval to find best available move(at least according to AI)
  - moves             * lists all available moves
  - board             * Draw the board
+ - debug [y/n=y]       * enable / disable debugging
+ - difficulty [number=5]    * sets difficulty (above 6 is not recommended because it is slow)
+ - switch            * Switch sides
  - [from=D5]         * list moves for a specific field
  - [from=E2] [to=e4] * play a move
- - [from=E7] [to=e8] [promotion=Q/R/B/N] * play a move and choose which piece you want to promote to"
-
-);
+ - [from=E7] [to=e8] [promotion=Q/R/B/N] * play a move and choose which piece you want to promote to");
                                 continue;
                             case "MOVES":
                                 Console.WriteLine("All available moves");
@@ -53,13 +67,41 @@ namespace FightEval {
                             case "BOARD":
                                 Console.WriteLine(Chess.AsciiBoard(board));
                                 continue;
+                            case "BOTEZ_GAMBIT":
+                                Console.WriteLine("https://www.youtube.com/watch?v=RetIukw56T0");
+                                throw new NotImplementedException("not implemented yet, finds a way to somehow lose the queen");
+                                continue;
+                            case "DIFFICULTY":
+                                difficulty = 5;
+                                if (readLine.Length > 1) {
+                                    difficulty = int.Parse(readLine[1]);
+                                }
+                                Console.WriteLine($"AI will now look {difficulty} moves ahead");
+                                continue;
+                            case "SWITCH":
+                                goto switchSides; // the almighty goto to skip current move and the the ai make the next move, which also switches sides as a side effect
+                            case "DEBUG":
+                                debug = true;
+                                if (readLine.Length > 1 && readLine[1] == "N") {
+                                    debug = false;
+                                }
+                                continue;
                             case "CHEAT":
+                                Console.WriteLine("NOTE everything after the best move is probably not accurate");
                                 int depth = 5;
                                 if (readLine.Length > 1) {
                                     depth = int.Parse(readLine[1]);
                                 }
+
                                 hasCheated = true;
-                                var cheatMoves = ParallelChess.AI.MinMaxAI.MinMax(board, depth);
+
+                                List<BestMove> cheatMoves;
+                                using (var progressbar = new ProgressBar()) {
+                                    cheatMoves = await ai.analyzeBoard(board, depth, (progress) => {
+                                        progressbar.Report((double)((double)progress.progress / (double)progress.total));
+                                    });
+                                }
+                                //var cheatMoves = ParallelChess.AI.MinMaxAI.MinMaxList(board, depth);
                                 foreach (var cheat in cheatMoves) {
                                     Console.WriteLine($" - {MoveHelper.ReadableMove(cheat.move)} (score: {cheat.score})");
                                 }
@@ -111,9 +153,10 @@ namespace FightEval {
                     }
 
                 } while(true);
+                
                 Console.WriteLine("Moved to");
                 Console.WriteLine(Chess.AsciiBoard(board));
-                moves = Board.GetMoves(board);
+                switchSides:  moves = Board.GetMoves(board);
                 winner = Board.detectWinner(board, moves);
                 if (winner == Winner.WINNER_WHITE) {
                     if (hasCheated) {
@@ -130,7 +173,22 @@ namespace FightEval {
                 }
 
                 Console.WriteLine("AI Finding move...");
-                var bestMove = ParallelChess.AI.MinMaxAI.MinMax(board, 5)[0];
+                //var bestMove = ParallelChess.AI.MinMaxAI.MinMaxList(board, 5)[0];
+
+                if (debug) {
+                    await ai.analyzeBoard(board, difficulty, (progress) => {
+                        Console.WriteLine($"{progress.progress}/{progress.total} foundScore: {progress.foundScore} on move {MoveHelper.ReadableMove(progress.move.move.move)}, found by {progress.move.solvedByThread}");
+                    });
+                } else {
+                    using (var progressbar = new ProgressBar()) {
+                        await ai.analyzeBoard(board, difficulty, (progress) => {
+                            progressbar.Report((double)((double)progress.progress / (double)progress.total));
+                        });
+                    }
+                }
+
+
+                var bestMove = ai.GetBestMove();
 
                 Board.MakeMove(board, bestMove.move);
 
