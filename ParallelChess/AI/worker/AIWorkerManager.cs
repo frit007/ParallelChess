@@ -18,9 +18,9 @@ namespace ParallelChess.AI.worker {
                 number = Environment.ProcessorCount;
             }
             for (int i = 0; i < number; i++) {
+                var worker = new AIWorker();
                 new Thread(() => {
                     Board.initThreadStaticVariables();
-                    var worker = new AIWorker();
 
                     lock (stateLock) {
                         workers.Add(worker);
@@ -41,6 +41,9 @@ namespace ParallelChess.AI.worker {
             foreach (var worker in workers) {
                 worker.kill();
             }
+            lock (stateLock) {
+                workers.Clear();
+            }
         }
 
         public BestMove GetBestMove() {
@@ -59,30 +62,34 @@ namespace ParallelChess.AI.worker {
 
             // the idea here is that every worker gets the complete list of moves to try but they start at different points
             // the goal is to find the best move as soon as possible as possible and then share it to all other threads
-            // therefor the workers are given one of what is believed to be the best move in order
-            for (int workerIndex = 0; workerIndex < workerMoves.Count; workerIndex++) {
-                for (int i = 0; i < moves.Count; i++) {
-                    var move = moves[(workerIndex + i) % moves.Count];
-                    workerMoves[workerIndex].Add(move.move);
-                }
+            // therefor the moves are sorted first and then given out so the first worker
+            // worker 1: 1,4,7,10,     
+            // worker 2: 2,5,8,11,
+            // worker 3: 3,6,9,12,
+            for (int i = 0; i < moves.Count; i++) {
+                var move = moves[i];
+                workerMoves[i % workerMoves.Count].Add(move.move);
             }
 
             CancellationTokenSource cancelationSource = new CancellationTokenSource();
             var cancelationtoken = cancelationSource.Token;
-            
+
+            int moveCount = moves.Count;
+
             for (int i = 0; i < workers.Count; i++) {
                 var worker = workers[i];
                 var aiTask = new AITask() {
                     taskId = i,
-                    board = board,
-                    moves = workerMoves[i],
+                    board = Board.CreateCopyBoard(board),
+                    moves = workerMoves,
                     depth = depth,
                     onMoveComplete = (solvedMove) => {
-                        int moveCount = workerMoves.First().Count;
                         int count = 0;
+                        bool isNew = false;
                         lock (stateLock) {
-                            var exists = solvedMoves.Count(move => move.move.Equals(solvedMove.move));
+                            var exists = solvedMoves.Count(move => move.move.move.Equals(solvedMove.move.move));
                             if (exists == 0) {
+                                isNew = true;
                                 solvedMoves.Add(solvedMove);
                                 foreach (var otherWorker in workers) {
                                     if (worker != otherWorker) {
@@ -96,7 +103,7 @@ namespace ParallelChess.AI.worker {
                             }
 
                         }
-                        if(onProgress != null) {
+                        if(onProgress != null && isNew) {
                             onProgress(new AIProgress() {
                                 foundScore = solvedMove.move.score,
                                 total = moveCount,

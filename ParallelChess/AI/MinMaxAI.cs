@@ -8,18 +8,18 @@ namespace ParallelChess.AI {
     // use alpha beta prunning to reduce the amount of notes searched, in best case scenario this can remove over half of the searched nodes
     public class MinMaxAI {
         //public static long movesEvaluated = 0;
-        public struct BestMove {
+        public class BestMove {
             public Move move;
             public float score;
         }
 
         // To avoid creating too many lists and destroying them have a list ready for each depth layer which is then cleared
         //[ThreadStatic]
-        public static List<Move>[] layeredLists = new List<Move>[100];
+        public List<Move>[] layeredLists = new List<Move>[100];
         //[ThreadStatic]
-        private static ulong boardHash = 0;
+        private ulong boardHash = 0;
         //[ThreadStatic]
-        private static Dictionary<ulong, float> moveScores = new Dictionary<ulong, float>();
+        private Dictionary<ulong, float> moveScores = new Dictionary<ulong, float>();
 
         public MinMaxAI() {
             layeredLists = new List<Move>[100];

@@ -78,7 +78,7 @@ namespace ParallelChessTests.AI.Worker {
 
             var ai = new AIWorkerManager();
 
-            ai.spawnWorkers(4);
+            ai.spawnWorkers(1);
             ai.analyzeBoard(board, 3).GetAwaiter().GetResult();
             //BestMove foundMove = MinMaxAI.MinMaxList(board, 3)[0];
 
@@ -90,7 +90,7 @@ namespace ParallelChessTests.AI.Worker {
         }
 
         [Test]
-        [Category("slowtest")]
+        [Category("slow")]
         public static void FourWorkersfindMateIn3() {
             /*
              * Starting position (White to play)

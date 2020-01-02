@@ -109,7 +109,7 @@ namespace ParallelChessTests.AI.Easy {
         }
 
         [Test]
-        [Category("slowtest")]
+        [Category("slow")]
         public static void findMateIn2() {
             /*
              * Starting position (White to play)
@@ -136,7 +136,7 @@ namespace ParallelChessTests.AI.Easy {
         }
 
         [Test]
-        [Category("slowtest")]
+        [Category("slow")]
         public static void findMateIn3() {
             /*
              * Starting position (White to play)
@@ -299,7 +299,7 @@ namespace ParallelChessTests.AI.Easy {
         }
 
         [Test]
-        [Category("slowtest")]
+        [Category("slow")]
         public void MinMaxDoesNotChangeAnything() {
             /*
              * Starting position (White to play)
