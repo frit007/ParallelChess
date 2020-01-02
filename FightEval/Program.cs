@@ -16,7 +16,10 @@ namespace FightEval {
         public static async Task MainAsync(string[] args) {
             Board.initThreadStaticVariables();
             var ai = new AIWorkerManager();
-            ai.spawnWorkers(4);
+            var stack = new Stack<Move>();
+
+            ai.spawnWorkers(3);
+
             var board = Chess.LoadBoardFromFen();
             bool hasCheated = false;
             int difficulty = 5;
@@ -26,9 +29,11 @@ namespace FightEval {
                 var moves = Board.GetMoves(board);
                 var winner = Board.detectWinner(board, moves);
                 if(winner == Winner.WINNER_WHITE) {
+                    Console.WriteLine("you lost even though you cheated? :D");
                     Console.WriteLine("White wins");
                     break;
                 } else if(winner == Winner.WINNER_BLACK) {
+                    Console.WriteLine("you lost even though you cheated? :D");
                     Console.WriteLine("Black wins");
                     break;
                 } else if(winner == Winner.DRAW) {
@@ -45,15 +50,17 @@ namespace FightEval {
                             case "":
                             case "HELP":
                                 Console.WriteLine(@"Available commands are:
- - help              * help
- - Cheat [depth=5]   * uses eval to find best available move(at least according to AI)
- - moves             * lists all available moves
- - board             * Draw the board
- - debug [y/n=y]       * enable / disable debugging
+ - help                     * help
+ - Cheat [depth=5]          * uses eval to find best available move(at least according to AI)
+ - moves                    * lists all available moves
+ - board                    * Draw the board
+ - debug [y/n=y]            * enable / disable debugging
  - difficulty [number=5]    * sets difficulty (above 6 is not recommended because it is slow)
- - switch            * Switch sides
- - [from=D5]         * list moves for a specific field
- - [from=E2] [to=e4] * play a move
+ - switch                   * Switch sides
+ - undo                     * Undo the last move
+ - workers [workerCount=2]  * Specify how many worker threads the computer should use (should be less than the amount of processors you have)
+ - [from=D5]                * list moves for a specific field
+ - [from=E2] [to=e4]        * play a move
  - [from=E7] [to=e8] [promotion=Q/R/B/N] * play a move and choose which piece you want to promote to");
                                 continue;
                             case "MOVES":
@@ -84,7 +91,34 @@ namespace FightEval {
                                 debug = true;
                                 if (readLine.Length > 1 && readLine[1] == "N") {
                                     debug = false;
+                                    Console.WriteLine("disabled debug");
+                                } else {
+                                    Console.WriteLine("enabled debug");
                                 }
+                                continue;
+                            case "WORKERS":
+                                ai.killWorkers();
+                                int workerCount = 2;
+                                if (readLine.Length > 1) {
+                                    workerCount = int.Parse(readLine[1]);
+                                }
+                                Console.WriteLine($"Using {workerCount} workers");
+                                ai.spawnWorkers(workerCount);
+                                continue;
+                            case "UNDO":
+                                hasCheated = true;
+                                if(stack.Count != 0) {
+                                    Board.UndoMove(board,stack.Pop());
+                                } else {
+                                    Console.WriteLine("There is not history to undo, sorry");
+                                    continue;
+                                }
+
+                                if (stack.Count != 0) {
+                                    Board.UndoMove(board, stack.Pop());
+                                }
+                                Console.WriteLine("Undo done (cheater :p)");
+                                Console.WriteLine(Chess.AsciiBoard(board));
                                 continue;
                             case "CHEAT":
                                 Console.WriteLine("NOTE everything after the best move is probably not accurate");
@@ -144,6 +178,7 @@ namespace FightEval {
                         }
                         var moveMade = Chess.MakeMove(board, fromPosition, toPosition, promotion);
                         if (MoveHelper.isValidMove(moveMade)) {
+                            stack.Push(moveMade);
                             break;
                         } else {
                             Console.WriteLine("invalid Move");
@@ -165,6 +200,9 @@ namespace FightEval {
                     Console.WriteLine("White wins");
                     break;
                 } else if (winner == Winner.WINNER_BLACK) {
+                    if (hasCheated) {
+                        Console.WriteLine("Cheater :D");
+                    }
                     Console.WriteLine("Black wins");
                     break;
                 } else if (winner == Winner.DRAW) {
@@ -177,7 +215,7 @@ namespace FightEval {
 
                 if (debug) {
                     await ai.analyzeBoard(board, difficulty, (progress) => {
-                        Console.WriteLine($"{progress.progress}/{progress.total} foundScore: {progress.foundScore} on move {MoveHelper.ReadableMove(progress.move.move.move)}, found by {progress.move.solvedByThread}");
+                        Console.WriteLine($"{progress.progress}/{progress.total} foundScore: {progress.foundScore} on move {MoveHelper.ReadableMove(progress.move.move.move)}, found by {progress.move.taskId}");
                     });
                 } else {
                     using (var progressbar = new ProgressBar()) {
@@ -189,7 +227,7 @@ namespace FightEval {
 
 
                 var bestMove = ai.GetBestMove();
-
+                stack.Push(bestMove.move);
                 Board.MakeMove(board, bestMove.move);
 
                 Console.WriteLine($"AI found move with score {bestMove.score}");
