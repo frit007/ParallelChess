@@ -19,21 +19,24 @@ namespace ParallelChess.AI.worker {
             }
             for (int i = 0; i < number; i++) {
                 var worker = new AIWorker();
-                new Thread(() => {
-                    Board.initThreadStaticVariables();
 
-                    lock (stateLock) {
-                        workers.Add(worker);
-                    }
+                Thread thread = new Thread(() => {
+                    Board.initThreadStaticVariables();
                     worker.WaitForTask();
-                }).Start();
+                });
+                thread.Start();
+                lock (stateLock) {
+                    workers.Add(worker);
+                }
             }
         }
-
+        int totalFound = 0;
+        int totalMoves = 0;
         public class AIProgress{
             public int total;
             public int progress;
             public float foundScore;
+            public int depth;
             public SolvedMove move;
         }
 
@@ -52,11 +55,55 @@ namespace ParallelChess.AI.worker {
 
         public async Task<List<BestMove>> analyzeBoard(BoardState board, int depth, Action<AIProgress> onProgress = null) {
             Board.initThreadStaticVariables();
+            var minmax = new MinMaxAI();
+            // get shallow minMax to figure out a initial ordering, because at low depth the thread overhead is going to cost more than it gains
+            var moves = minmax.MinMaxList(board, 2);
+
+            var combinedMoves = moves.ToList();
+            var oldMoves = new List<BestMove>();
+            totalFound = 0;
+            totalMoves = (depth - 2) * moves.Count; 
+
+
+            for (int currentDepth = 3; currentDepth <= depth; currentDepth++) {
+                moves = await delegateToWorkers(board, combinedMoves, currentDepth, onProgress);
+
+
+                combinedMoves.Clear();
+
+                for (int i = 0; i < moves.Count; i++) {
+                    // mix the last 2 move orders to try and find the best more as early as possible
+                    BestMove nextMove;
+                    if (oldMoves.Count > 0) {
+                        nextMove = oldMoves[i];
+                        if (combinedMoves.Find(existingMove => existingMove.move.Equals(nextMove.move)) == null) {
+                            combinedMoves.Add(nextMove);
+                        }
+                    }
+
+                    nextMove = moves[i];
+                    if (combinedMoves.Find(existingMove => existingMove.move.Equals(nextMove.move)) == null) {
+                        combinedMoves.Add(nextMove);
+                    }
+
+                }
+                oldMoves = moves.ToList();
+            }
+
+            return moves;
+        }
+
+        private async Task<List<BestMove>> delegateToWorkers(BoardState board, List<BestMove> moves, int depth, Action<AIProgress> onProgress = null) {
+            Board.initThreadStaticVariables();
 
             solvedMoves.Clear();
-            var minmax = new MinMaxAI();
+            //var minmax = new MinMaxAI();
             // get shallow minMax to figure out a initial ordering, which will be used to share out 
-            var moves = minmax.MinMaxList(board, 2);
+            //var moves = minmax.MinMaxList(board, 2);
+            //var moves = Board.GetMoves(board)
+            //    .Where(move => Board.IsLegalMove(board, move))
+            //    .Select(move => new BestMove() { move = move, score = 10 })
+            //    .ToList();
             // create a list of moves foreach worker
             List<List<Move>> workerMoves = workers.Select((worker) => new List<Move>()).ToList();
 
@@ -65,7 +112,7 @@ namespace ParallelChess.AI.worker {
             // therefor the moves are sorted first and then given out so the first worker
             // worker 1: 1,4,7,10,     
             // worker 2: 2,5,8,11,
-            // worker 3: 3,6,9,12,
+            // worker 3: 3,6,9,12, 
             for (int i = 0; i < moves.Count; i++) {
                 var move = moves[i];
                 workerMoves[i % workerMoves.Count].Add(move.move);
@@ -103,12 +150,14 @@ namespace ParallelChess.AI.worker {
                             }
 
                         }
-                        if(onProgress != null && isNew) {
+                        if (onProgress != null && isNew) {
+                            totalFound++;
                             onProgress(new AIProgress() {
                                 foundScore = solvedMove.move.score,
-                                total = moveCount,
-                                progress = count,
-                                move = solvedMove
+                                total = totalMoves,
+                                progress = totalFound,
+                                move = solvedMove,
+                                depth = depth
                             });
                         }
                     }
@@ -119,13 +168,14 @@ namespace ParallelChess.AI.worker {
             try {
                 var task = new Task(() => {
                     // max wait for 3 minutes
-                    Task.Delay(1000*60*3);
+                    Task.Delay(1000 * 60 * 3);
+                    cancelationSource.Cancel();
                 });
                 task.Wait(cancelationtoken);
             } catch (OperationCanceledException) {
                 // intentional cancel
             }
-            
+
 
             return solvedMoves.Select(move => move.move).OrderBy(move => move.score).Reverse().ToList();
         }

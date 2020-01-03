@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -34,6 +35,8 @@ namespace ParallelChess.AI {
             public float max;
             //public ulong boardHash;
             public int taskId;
+            public long durationMS;
+            public float startFromMin;
         }
         internal void WaitForTask() {
             AITask aiTask;
@@ -60,6 +63,7 @@ namespace ParallelChess.AI {
         ulong boardHash = 0;
 
         float bestScore = float.MinValue;
+
         // start by solving your own threads problems 
         // afterwards start solving moves that belong to other that have not been started yet
         // if there are only started moves left then start working a move that is already beeing worked on (they might have a worse starting minimum score)
@@ -85,7 +89,10 @@ namespace ParallelChess.AI {
 
             // ------------ start working on this threads moves ------------------
             foreach (var move in moves) {
-                lastSolvedMove = MinMaxMove(aiTask, move, lastSolvedMove);
+                // check that the other threads have not begun the next move yet
+                if (!alreadySolved.Contains(move) && !begunMoves.Contains(move)) {
+                    lastSolvedMove = MinMaxMove(aiTask, move, lastSolvedMove);
+                }
             }
 
             // ------------ start searching for other threads unfinished work --------------
@@ -129,6 +136,8 @@ namespace ParallelChess.AI {
                 lastSolvedMove.startingMove = move;
                 aiTask.onMoveComplete(lastSolvedMove);
             }
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             boardHash = HashBoard.ApplyMove(aiTask.board, move, boardHash);
             ulong currentBoardHash = boardHash;
             lock (stateLock) {
@@ -142,7 +151,7 @@ namespace ParallelChess.AI {
                 }
             }
             Board.MakeMove(aiTask.board, move);
-
+            var startedFromMin = min;
             var detectWinnerMoves = Board.GetMoves(aiTask.board);
             // check for winner
             var winner = Board.detectWinner(aiTask.board, detectWinnerMoves);
@@ -161,10 +170,12 @@ namespace ParallelChess.AI {
 
                     min = Math.Max(score, min);
                 }
+                stopWatch.Stop();
                 return new SolvedMove() {
+                    startFromMin = min,
                     min = min,
                     max = max,
-
+                    durationMS = stopWatch.ElapsedMilliseconds,
                     move = new BestMove() {
                         move = move,
                         score = score
@@ -184,7 +195,7 @@ namespace ParallelChess.AI {
             boardHash = HashBoard.ApplyMove(aiTask.board, move, boardHash);
             lock (stateLock) {
                 if (alreadySolved.Contains(move)) {
-                    //Console.WriteLine($"collision! refound found move! {MoveHelper.ReadableMove(move)}");
+                    Console.WriteLine($"collision! refound found move! {MoveHelper.ReadableMove(move)}");
                     // if the hash has board has already been analyzed before this thread managed to do it, then skip
                     return null;
                 }
@@ -202,11 +213,12 @@ namespace ParallelChess.AI {
             // outside of stateLock because otherwise it will trigger will trigger the lock in moveSolved
             Thread t = Thread.CurrentThread;
 
-
+            stopWatch.Stop();
             return new SolvedMove() {
+                startFromMin = startedFromMin,
                 min = min,
                 max = max,
-
+                durationMS = stopWatch.ElapsedMilliseconds,
                 move = new BestMove() {
                     move = move,
                     score = moveScore

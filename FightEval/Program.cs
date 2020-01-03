@@ -43,7 +43,8 @@ namespace FightEval {
                 do {
                     try {
                         Console.WriteLine("Make a move (example: \"A1 A3)\"");
-                        var readLine = Console.ReadLine().ToUpper().Split(" ");
+                        var readLineOriginal = Console.ReadLine();
+                        var readLine = readLineOriginal.ToUpper().Split(" ").ToList();
                         
 
                         switch (readLine[0]) {
@@ -57,6 +58,7 @@ namespace FightEval {
  - debug [y/n=y]            * enable / disable debugging
  - difficulty [number=5]    * sets difficulty (above 6 is not recommended because it is slow)
  - switch                   * Switch sides
+ - fen [fen]                * load Forsyth-Edwards Notation 
  - undo                     * Undo the last move
  - workers [workerCount=2]  * Specify how many worker threads the computer should use (should be less than the amount of processors you have)
  - [from=D5]                * list moves for a specific field
@@ -80,16 +82,24 @@ namespace FightEval {
                                 continue;
                             case "DIFFICULTY":
                                 difficulty = 5;
-                                if (readLine.Length > 1) {
+                                if (readLine.Count() > 1) {
                                     difficulty = int.Parse(readLine[1]);
                                 }
                                 Console.WriteLine($"AI will now look {difficulty} moves ahead");
                                 continue;
                             case "SWITCH":
                                 goto switchSides; // the almighty goto to skip current move and the the ai make the next move, which also switches sides as a side effect
+                            case "FEN":
+                                var fenList = readLineOriginal.Split(" ").ToList();
+                                fenList.RemoveAt(0);
+                                var fen = String.Join(" ", fenList);
+                                board = Chess.LoadBoardFromFen(fen);
+                                Console.WriteLine($"Loaded board {fen}");
+                                Console.WriteLine(Chess.AsciiBoard(board));
+                                continue;
                             case "DEBUG":
                                 debug = true;
-                                if (readLine.Length > 1 && readLine[1] == "N") {
+                                if (readLine.Count() > 1 && readLine[1] == "N") {
                                     debug = false;
                                     Console.WriteLine("disabled debug");
                                 } else {
@@ -99,7 +109,7 @@ namespace FightEval {
                             case "WORKERS":
                                 ai.killWorkers();
                                 int workerCount = 2;
-                                if (readLine.Length > 1) {
+                                if (readLine.Count() > 1) {
                                     workerCount = int.Parse(readLine[1]);
                                 }
                                 Console.WriteLine($"Using {workerCount} workers");
@@ -123,7 +133,7 @@ namespace FightEval {
                             case "CHEAT":
                                 Console.WriteLine("NOTE everything after the best move is probably not accurate");
                                 int depth = 5;
-                                if (readLine.Length > 1) {
+                                if (readLine.Count() > 1) {
                                     depth = int.Parse(readLine[1]);
                                 }
 
@@ -145,7 +155,7 @@ namespace FightEval {
                         }
 
                         var fromPosition = Board.AlgebraicPosition(readLine[0]);
-                        if (readLine.Length == 1) {
+                        if (readLine.Count() == 1) {
                             var positionMoves = Board.GetMovesForPosition(board, fromPosition);
                             Console.WriteLine(Chess.AsciiBoard(board, positionMoves));
                             Console.WriteLine("Legal moves:");
@@ -157,7 +167,7 @@ namespace FightEval {
                         }
                         var toPosition = Board.AlgebraicPosition(readLine[1]);
                         var promotion = Piece.EMPTY;
-                        if (readLine.Length > 2) {
+                        if (readLine.Count() > 2) {
                             switch (readLine[2]) {
                                 case "Q":
                                     promotion = Piece.QUEEN;
@@ -215,7 +225,7 @@ namespace FightEval {
 
                 if (debug) {
                     await ai.analyzeBoard(board, difficulty, (progress) => {
-                        Console.WriteLine($"{progress.progress}/{progress.total} foundScore: {progress.foundScore} on move {MoveHelper.ReadableMove(progress.move.move.move)}, found by {progress.move.taskId}");
+                        Console.WriteLine($"[depth {progress.depth}] {progress.progress}/{progress.total} foundScore: {progress.foundScore} on move {MoveHelper.ReadableMove(progress.move.move.move)}, found by worker {progress.move.taskId} {{ duration {progress.move.durationMS}ms }} began from score {progress.move.startFromMin}");
                     });
                 } else {
                     using (var progressbar = new ProgressBar()) {

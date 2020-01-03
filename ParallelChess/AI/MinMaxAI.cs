@@ -45,7 +45,6 @@ namespace ParallelChess.AI {
             
             var moves = Board.GetMoves(board, moveList);
 
-            // TODO we need something threadstatic?
             var winner = Board.detectWinner(board, moves);
 
             foreach (var move in moves) {

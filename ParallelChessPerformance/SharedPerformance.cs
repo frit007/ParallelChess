@@ -12,9 +12,10 @@ namespace ParallelChessPerformance {
     public class SharedPerformance {
 
         //String fen = "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 4 3";
-        String fen = "r1b2rk1/ppq1bppp/2nppn2/8/2B1PP2/1NN1B3/PPP3PP/R2Q1RK1 w - - 0 1";
+        [Params("r1b2rk1/ppq1bppp/2nppn2/8/2B1PP2/1NN1B3/PPP3PP/R2Q1RK1 w - - 0 1", "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 4 3")]
+        public String fen = "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 4 3";
 
-        [Params(1,2,3,4,5)]
+        [Params(5)]
         public int depth { get; set; }
 
         BoardState board;
@@ -24,31 +25,31 @@ namespace ParallelChessPerformance {
             board = Chess.LoadBoardFromFen(fen);
         }
 
-        [Benchmark]
-        public void solvePositionJustMinMax() {
-            var minmax = new MinMaxAI();
-            minmax.MinMaxList(board, depth);
-        }
+        //[Benchmark]
+        //public void solvePositionJustMinMax() {
+        //    var minmax = new MinMaxAI();
+        //    minmax.MinMaxList(board, depth);
+        //}
 
-        [Benchmark]
-        public void solvePosition1Worker() {
-            var ai = new AIWorkerManager();
-            ai.spawnWorkers(1);
-            Task.Run(async () => {
-                await ai.analyzeBoard(board, depth);
-            }).GetAwaiter().GetResult();
-            ai.killWorkers();
-        }
+        //[Benchmark]
+        //public void solvePosition1Worker() {
+        //    var ai = new AIWorkerManager();
+        //    ai.spawnWorkers(1);
+        //    Task.Run(async () => {
+        //        await ai.analyzeBoard(board, depth);
+        //    }).GetAwaiter().GetResult();
+        //    ai.killWorkers();
+        //}
 
-        [Benchmark]
-        public void solvePosition2Worker() {
-            var ai = new AIWorkerManager();
-            ai.spawnWorkers(2);
-            Task.Run(async () => {
-                await ai.analyzeBoard(board, depth);
-            }).GetAwaiter().GetResult();
-            ai.killWorkers();
-        }
+        //[Benchmark]
+        //public void solvePosition2Worker() {
+        //    var ai = new AIWorkerManager();
+        //    ai.spawnWorkers(2);
+        //    Task.Run(async () => {
+        //        await ai.analyzeBoard(board, depth);
+        //    }).GetAwaiter().GetResult();
+        //    ai.killWorkers();
+        //}
 
         [Benchmark]
         public void solvePosition3Worker() {
@@ -60,14 +61,14 @@ namespace ParallelChessPerformance {
             ai.killWorkers();
         }
 
-        [Benchmark]
-        public void solvePosition4Worker() {
-            var ai = new AIWorkerManager();
-            ai.spawnWorkers(4);
-            Task.Run(async () => {
-                await ai.analyzeBoard(board, depth);
-            }).GetAwaiter().GetResult();
-            ai.killWorkers();
-        }
+        //[Benchmark]
+        //public void solvePosition4Worker() {
+        //    var ai = new AIWorkerManager();
+        //    ai.spawnWorkers(4);
+        //    Task.Run(async () => {
+        //        await ai.analyzeBoard(board, depth);
+        //    }).GetAwaiter().GetResult();
+        //    ai.killWorkers();
+        //}
     }
 }
