@@ -13,17 +13,34 @@ namespace FightEval {
             MainAsync(args).GetAwaiter().GetResult();
         }
 
+        public static bool botezGambit(BoardState board, Stack<Move> movesMade) {
+
+            var moves = Board.GetMoves(board);
+
+            foreach (var move in moves) {
+                if((board.GetPiece(move.fromPosition) & Piece.PIECE_MASK) == Piece.QUEEN) {
+                    if(Board.Attacked(board, move.targetPosition, board.IsWhiteTurn)) {
+                        Board.MakeMove(board, move);
+                        movesMade.Push(move);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public static async Task MainAsync(string[] args) {
             Board.initThreadStaticVariables();
             var ai = new AIWorkerManager();
-            var stack = new Stack<Move>();
+            var movesMade = new Stack<Move>();
 
             ai.spawnWorkers(3);
 
             var board = Chess.LoadBoardFromFen();
             bool hasCheated = false;
             int difficulty = 5;
-            bool debug = true;
+            bool debug = false;
             do {
                 Console.WriteLine(Chess.AsciiBoard(board));
                 var moves = Board.GetMoves(board);
@@ -58,6 +75,7 @@ namespace FightEval {
  - debug [y/n=y]            * enable / disable debugging
  - difficulty [number=5]    * sets difficulty (above 6 is not recommended because it is slow)
  - switch                   * Switch sides
+ - botez gambit             * the best gambit
  - fen [fen]                * load Forsyth-Edwards Notation 
  - undo                     * Undo the last move
  - workers [workerCount=2]  * Specify how many worker threads the computer should use (should be less than the amount of processors you have)
@@ -76,9 +94,18 @@ namespace FightEval {
                             case "BOARD":
                                 Console.WriteLine(Chess.AsciiBoard(board));
                                 continue;
+                            case "BOTEZ": // alias fall through 
                             case "BOTEZ_GAMBIT":
-                                Console.WriteLine("https://www.youtube.com/watch?v=RetIukw56T0");
-                                throw new NotImplementedException("not implemented yet, finds a way to somehow lose the queen");
+                                if (botezGambit(board, movesMade)) {
+                                    Console.WriteLine("Botez gambit found!");
+                                    Console.WriteLine(Chess.AsciiBoard(board));
+                                    goto switchSides;
+                                } else {
+                                    Console.WriteLine("Botez gambit unavailable");
+                                    continue;
+                                }
+                                //Console.WriteLine("https://www.youtube.com/watch?v=RetIukw56T0");
+                                //throw new NotImplementedException("not implemented yet, finds a way to somehow lose the queen");
                                 continue;
                             case "DIFFICULTY":
                                 difficulty = 5;
@@ -117,15 +144,15 @@ namespace FightEval {
                                 continue;
                             case "UNDO":
                                 hasCheated = true;
-                                if(stack.Count != 0) {
-                                    Board.UndoMove(board,stack.Pop());
+                                if(movesMade.Count != 0) {
+                                    Board.UndoMove(board,movesMade.Pop());
                                 } else {
                                     Console.WriteLine("There is not history to undo, sorry");
                                     continue;
                                 }
 
-                                if (stack.Count != 0) {
-                                    Board.UndoMove(board, stack.Pop());
+                                if (movesMade.Count != 0) {
+                                    Board.UndoMove(board, movesMade.Pop());
                                 }
                                 Console.WriteLine("Undo done (cheater :p)");
                                 Console.WriteLine(Chess.AsciiBoard(board));
@@ -188,7 +215,7 @@ namespace FightEval {
                         }
                         var moveMade = Chess.MakeMove(board, fromPosition, toPosition, promotion);
                         if (MoveHelper.isValidMove(moveMade)) {
-                            stack.Push(moveMade);
+                            movesMade.Push(moveMade);
                             break;
                         } else {
                             Console.WriteLine("invalid Move");
@@ -237,7 +264,7 @@ namespace FightEval {
 
 
                 var bestMove = ai.GetBestMove();
-                stack.Push(bestMove.move);
+                movesMade.Push(bestMove.move);
                 Board.MakeMove(board, bestMove.move);
 
                 Console.WriteLine($"AI found move with score {bestMove.score}");

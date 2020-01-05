@@ -30,13 +30,14 @@ namespace ParallelChess.AI {
 
         public class SolvedMove {
             public BestMove move;
-            public Move startingMove;
+            public Move startSolvingMove;
             public float min;
             public float max;
-            //public ulong boardHash;
             public int taskId;
-            public long durationMS;
+
+            // debug information
             public float startFromMin;
+            public long durationMS;
         }
         internal void WaitForTask() {
             AITask aiTask;
@@ -111,7 +112,6 @@ namespace ParallelChess.AI {
             } while (availableMoves.Count() > 0);
 
             // ------------ start searching for other threads begun but unfinished work --------------
-
             do {
                 availableMoves = aiTask.moves.SelectMany((threadsMoves) => {
                     return threadsMoves.Where(move => !alreadySolved.Contains(move));
@@ -133,7 +133,7 @@ namespace ParallelChess.AI {
         // should only be called by MinMaxWorker, since it initializes a bunch of stuff
         private SolvedMove MinMaxMove(AITask aiTask, Move move, SolvedMove lastSolvedMove) {
             if (lastSolvedMove != null) {
-                lastSolvedMove.startingMove = move;
+                lastSolvedMove.startSolvingMove = move;
                 aiTask.onMoveComplete(lastSolvedMove);
             }
             Stopwatch stopWatch = new Stopwatch();
@@ -195,7 +195,7 @@ namespace ParallelChess.AI {
             boardHash = HashBoard.ApplyMove(aiTask.board, move, boardHash);
             lock (stateLock) {
                 if (alreadySolved.Contains(move)) {
-                    Console.WriteLine($"collision! refound found move! {MoveHelper.ReadableMove(move)}");
+                    //Console.WriteLine($"collision! refound found move! {MoveHelper.ReadableMove(move)}");
                     // if the hash has board has already been analyzed before this thread managed to do it, then skip
                     return null;
                 }
@@ -243,7 +243,7 @@ namespace ParallelChess.AI {
                 //if (solvedMove.max < max) {
                 //    max = solvedMove.max;
                 //}
-                begunMoves.Add(solvedMove.startingMove);
+                begunMoves.Add(solvedMove.startSolvingMove);
                 alreadySolved.Add(solvedMove.move.move);
             }
         }

@@ -74,7 +74,7 @@ namespace ParallelChess.AI.worker {
                 for (int i = 0; i < moves.Count; i++) {
                     // mix the last 2 move orders to try and find the best more as early as possible
                     BestMove nextMove;
-                    if (oldMoves.Count > 0) {
+                    if (oldMoves.Count > i) {
                         nextMove = oldMoves[i];
                         if (combinedMoves.Find(existingMove => existingMove.move.Equals(nextMove.move)) == null) {
                             combinedMoves.Add(nextMove);
