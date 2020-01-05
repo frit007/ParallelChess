@@ -123,54 +123,56 @@ namespace ParallelChess.AI.worker {
 
             int moveCount = moves.Count;
 
-            for (int i = 0; i < workers.Count; i++) {
-                var worker = workers[i];
-                var aiTask = new AITask() {
-                    taskId = i,
-                    board = Board.CreateCopyBoard(board),
-                    moves = workerMoves,
-                    depth = depth,
-                    onMoveComplete = (solvedMove) => {
-                        int count = 0;
-                        bool isNew = false;
-                        lock (stateLock) {
-                            var exists = solvedMoves.Count(move => move.move.move.Equals(solvedMove.move.move));
-                            if (exists == 0) {
-                                isNew = true;
-                                solvedMoves.Add(solvedMove);
-                                foreach (var otherWorker in workers) {
-                                    if (worker != otherWorker) {
-                                        otherWorker.moveSolved(solvedMove);
-                                    }
-                                }
-                                count = solvedMoves.Count;
-                                if (solvedMoves.Count >= moveCount) {
-                                    cancelationSource.Cancel();
-                                }
-                            }
 
-                        }
-                        if (onProgress != null && isNew) {
-                            totalFound++;
-                            onProgress(new AIProgress() {
-                                foundScore = solvedMove.move.score,
-                                total = totalMoves,
-                                progress = totalFound,
-                                move = solvedMove,
-                                depth = depth
-                            });
-                        }
-                    }
-                };
-                worker.tasks.Enqueue(aiTask);
-            }
 
             try {
                 var task = new Task(() => {
+                    for (int i = 0; i < workers.Count; i++) {
+                        var worker = workers[i];
+                        var aiTask = new AITask() {
+                            taskId = i,
+                            board = Board.CreateCopyBoard(board),
+                            moves = workerMoves,
+                            depth = depth,
+                            onMoveComplete = (solvedMove) => {
+                                int count = 0;
+                                bool isNew = false;
+                                lock (stateLock) {
+                                    var exists = solvedMoves.Count(move => move.move.move.Equals(solvedMove.move.move));
+                                    if (exists == 0) {
+                                        isNew = true;
+                                        solvedMoves.Add(solvedMove);
+                                        foreach (var otherWorker in workers) {
+                                            if (worker != otherWorker) {
+                                                otherWorker.moveSolved(solvedMove);
+                                            }
+                                        }
+                                        count = solvedMoves.Count;
+                                        if (solvedMoves.Count >= moveCount) {
+                                            cancelationSource.Cancel();
+                                        }
+                                    }
+
+                                }
+                                if (onProgress != null && isNew) {
+                                    totalFound++;
+                                    onProgress(new AIProgress() {
+                                        foundScore = solvedMove.move.score,
+                                        total = totalMoves,
+                                        progress = totalFound,
+                                        move = solvedMove,
+                                        depth = depth
+                                    });
+                                }
+                            }
+                        };
+                        worker.tasks.Enqueue(aiTask);
+                    }
                     // max wait for 3 minutes
-                    Task.Delay(1000 * 60 * 3);
+                    Task.Delay(1000 * 60 * 3).Wait();
                     cancelationSource.Cancel();
                 });
+                task.Start();
                 task.Wait(cancelationtoken);
             } catch (OperationCanceledException) {
                 // intentional cancel

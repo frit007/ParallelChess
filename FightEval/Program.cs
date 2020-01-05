@@ -1,4 +1,5 @@
 ﻿using ParallelChess;
+using ParallelChess.AI;
 using ParallelChess.AI.worker;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,7 @@ namespace FightEval {
  - botez gambit             * the best gambit
  - fen [fen]                * load Forsyth-Edwards Notation 
  - undo                     * Undo the last move
+ - eval                     * get the current evaluation of the board
  - workers [workerCount=2]  * Specify how many worker threads the computer should use (should be less than the amount of processors you have)
  - [from=D5]                * list moves for a specific field
  - [from=E2] [to=e4]        * play a move
@@ -116,6 +118,11 @@ namespace FightEval {
                                 continue;
                             case "SWITCH":
                                 goto switchSides; // the almighty goto to skip current move and the the ai make the next move, which also switches sides as a side effect
+                            case "EVAL":
+                                var evalMoves = Board.GetMoves(board).Where(move => Board.IsLegalMove(board, move)).ToList();
+                                var score = EvalBoard.evalBoard(board, evalMoves);
+                                Console.WriteLine($"current score is: {score}");
+                                continue;
                             case "FEN":
                                 var fenList = readLineOriginal.Split(" ").ToList();
                                 fenList.RemoveAt(0);
@@ -177,6 +184,29 @@ namespace FightEval {
                                     Console.WriteLine($" - {MoveHelper.ReadableMove(cheat.move)} (score: {cheat.score})");
                                 }
                                 continue;
+
+                            case "CHEAT2":
+                                Console.WriteLine("NOTE everything after the best move is probably not accurate");
+                                int depth2 = 5;
+                                if (readLine.Count() > 1) {
+                                    depth2 = int.Parse(readLine[1]);
+                                }
+
+                                hasCheated = true;
+
+                                
+                                //using (var progressbar = new ProgressBar()) {
+                                //    cheatMoves2 = await ai.analyzeBoard(board, depth2, (progress) => {
+                                //        progressbar.Report((double)((double)progress.progress / (double)progress.total));
+                                //    });
+                                //}
+                                var minmax = new MinMaxAI();
+                                List<BestMove> cheatMoves2 = minmax.MinMaxList(board, depth2);
+                                //var cheatMoves = ParallelChess.AI.MinMaxAI.MinMaxList(board, depth);
+                                foreach (var cheat in cheatMoves2) {
+                                    Console.WriteLine($" - {MoveHelper.ReadableMove(cheat.move)} (score: {cheat.score})");
+                                }
+                                continue;
                             default:
                                 break;
                         }
@@ -191,6 +221,7 @@ namespace FightEval {
                                     Console.WriteLine($" - {MoveHelper.ReadableMove(move)}");
                                 }
                             }
+                            continue;
                         }
                         var toPosition = Board.AlgebraicPosition(readLine[1]);
                         var promotion = Piece.EMPTY;

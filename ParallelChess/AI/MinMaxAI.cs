@@ -14,11 +14,11 @@ namespace ParallelChess.AI {
         }
 
         // To avoid creating too many lists and destroying them have a list ready for each depth layer which is then cleared
-        //[ThreadStatic]
+        
         public List<Move>[] layeredLists = new List<Move>[100];
-        //[ThreadStatic]
+        
         private ulong boardHash = 0;
-        //[ThreadStatic]
+
         private Dictionary<ulong, float> moveScores = new Dictionary<ulong, float>();
 
         public MinMaxAI() {

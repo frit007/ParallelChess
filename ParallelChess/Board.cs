@@ -276,7 +276,7 @@ namespace ParallelChess {
         //           (-1,-2),(1,-2),
         //};
 
-        public static int[] directKingMoves = {
+        public static int[] kingMoves = {
             BoardStateOffset.ROW_OFFSET * 1 + 1,
             BoardStateOffset.ROW_OFFSET * -1 + 1,
             BoardStateOffset.ROW_OFFSET * 1 + -1,
@@ -287,21 +287,21 @@ namespace ParallelChess {
             -1
         };
 
-        public static int[] directStraightMoves = {
+        public static int[] straightMoves = {
             BoardStateOffset.ROW_OFFSET,
             -BoardStateOffset.ROW_OFFSET,
             1,
             -1
         };
 
-        public static int[] directSlantedMoves = {
+        public static int[] slantedMoves = {
             BoardStateOffset.ROW_OFFSET * 1 + 1,
             BoardStateOffset.ROW_OFFSET * -1 + 1,
             BoardStateOffset.ROW_OFFSET * 1 + -1,
             BoardStateOffset.ROW_OFFSET * -1 + -1,
         };
 
-        public static int[] directKnightMoves = {
+        public static int[] knightMoves = {
                    -1 + BoardStateOffset.ROW_OFFSET * 2 , 1 + BoardStateOffset.ROW_OFFSET * 2,
             -2 + BoardStateOffset.ROW_OFFSET * 1,              2 + BoardStateOffset.ROW_OFFSET * 1,
             -2 + BoardStateOffset.ROW_OFFSET * -1,              2 + BoardStateOffset.ROW_OFFSET * -1,
@@ -311,7 +311,7 @@ namespace ParallelChess {
         public static bool Attacked(BoardState board, int position, byte pretendToBeWhite) {
             int theirColor = pretendToBeWhite ^ 1;
             Piece theirColorPiece = (Piece)theirColor;
-            foreach (var move in directSlantedMoves) {
+            foreach (var move in slantedMoves) {
                 int relativePosition = position;
                 // king filter is used to allow kings to attack one square
                 // they are disabled are the first rotation
@@ -340,7 +340,7 @@ namespace ParallelChess {
                 } while (true);
             }
 
-            foreach (var move in directStraightMoves) {
+            foreach (var move in straightMoves) {
                 int relativePosition = position;
                 // king filter is used to allow kings to attack one square
                 // they are disabled are the first square
@@ -369,7 +369,7 @@ namespace ParallelChess {
                 } while (true);
             }
 
-            foreach (var move in directKnightMoves) {
+            foreach (var move in knightMoves) {
                 int relativePosition = position + move;
 
                 if ((relativePosition & 0x88) == 0) {
@@ -568,7 +568,7 @@ namespace ParallelChess {
 
                     break;
                 case Piece.KING:
-                    foreach (var relativeMove in directKingMoves) {
+                    foreach (var relativeMove in kingMoves) {
                         int move = relativeMove + fromPosition;
                         if ((move & 0x88) == 0) {
                             var moveOption = CanITakeSquare(board, move);
@@ -615,7 +615,7 @@ namespace ParallelChess {
 
                     break;
                 case Piece.KNIGHT:
-                    foreach (var relativeMove in directKnightMoves) {
+                    foreach (var relativeMove in knightMoves) {
                         int move = fromPosition + relativeMove;
                         if ((move & 0x88) == 0) {
                             var moveOption = CanITakeSquare(board, move);
@@ -626,14 +626,14 @@ namespace ParallelChess {
                     }
                     break;
                 case Piece.QUEEN:
-                    WalkRelativePaths(board, fromPosition, directSlantedMoves, moves);
-                    WalkRelativePaths(board, fromPosition, directStraightMoves, moves);
+                    WalkRelativePaths(board, fromPosition, slantedMoves, moves);
+                    WalkRelativePaths(board, fromPosition, straightMoves, moves);
                     break;
                 case Piece.ROOK:
-                    WalkRelativePaths(board, fromPosition, directStraightMoves, moves);
+                    WalkRelativePaths(board, fromPosition, straightMoves, moves);
                     break;
                 case Piece.BISHOP:
-                    WalkRelativePaths(board, fromPosition, directSlantedMoves, moves);
+                    WalkRelativePaths(board, fromPosition, slantedMoves, moves);
                     break;
                 case Piece.EMPTY:
                     break;
