@@ -58,6 +58,10 @@ namespace ParallelChess.AI.worker {
             var minmax = new MinMaxAI();
             // get shallow minMax to figure out a initial ordering, because at low depth the thread overhead is going to cost more than it gains
             var moves = minmax.MinMaxList(board, 2);
+            
+            solvedMoves = moves.Select(move => new SolvedMove() { 
+                move = move,
+            }).ToList();
 
             var combinedMoves = moves.ToList();
             var oldMoves = new List<BestMove>();

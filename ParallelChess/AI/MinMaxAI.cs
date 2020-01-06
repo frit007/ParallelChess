@@ -108,7 +108,7 @@ namespace ParallelChess.AI {
 
             if (board.VirtualLevel >= depth) {
                 float existingScore = 0;
-                //if(moveScores.TryGetValue(boardHash,out existingScore)) {
+                //if (moveScores.TryGetValue(boardHash, out existingScore)) {
                 //    return existingScore;
                 //}
                 float score;
@@ -131,10 +131,25 @@ namespace ParallelChess.AI {
                 }
 
                 score = EvalBoard.evalBoard(board, moves);
-                if(!maximizing) {
-                    // if the score is not for the optimized player flip the score.
-                    score *= -1;
+
+                if (((board.IsWhiteTurn^depth) & 1) != 1) {
+                    score *= 1;
+                } else {
+                    //Console.WriteLine("anylysing white");
                 }
+                if (maximizing) {
+                    score *= 1;
+                }
+                //if (maximizing != board.IsWhiteTurnBool) {
+                //    score *= 1;
+                //}
+                //if (!maximizing) {
+                //    // if the score is not for the optimized player flip the score.
+                //    score *= -1;
+                //}
+                //if (board.IsWhiteTurnBool) {
+                //    score *= 1;
+                //}
                 //moveScores.Add(boardHash, score);
                 return score;
             }

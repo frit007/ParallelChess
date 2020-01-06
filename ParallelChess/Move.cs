@@ -86,6 +86,8 @@ namespace ParallelChess {
         public byte previousEnpassant;
         public byte previousHalfMove;
         public int filler;
+
+        public string readable { get { return MoveHelper.ReadableMove(this); } }
     }
 
     public static class MoveHelper {
