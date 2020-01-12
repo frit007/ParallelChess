@@ -132,14 +132,18 @@ namespace ParallelChess.AI {
 
                 score = EvalBoard.evalBoard(board, moves);
 
-                if (((board.IsWhiteTurn^depth) & 1) != 1) {
-                    score *= 1;
+                int isWhite = ((board.IsWhiteTurn ^ depth) & 1);
+                //Console.WriteLine($"depth {depth} a: {a}");
+                //Console.WriteLine($"score {score}");
+                if (isWhite != 1) {
+                    // if black started the query then optimize for black
+                    score *= -1;
                 } else {
                     //Console.WriteLine("anylysing white");
                 }
-                if (maximizing) {
-                    score *= 1;
-                }
+                //if (maximizing) {
+                //    score *= 1;
+                //}
                 //if (maximizing != board.IsWhiteTurnBool) {
                 //    score *= 1;
                 //}
@@ -190,7 +194,7 @@ namespace ParallelChess.AI {
                         bestMove = moveScore;
                     }
                     min = Math.Max(moveScore, min);
-                    if (min >= max) {
+                    if (min > max) {
                         return bestMove;
                     }
                 } else {
@@ -198,7 +202,7 @@ namespace ParallelChess.AI {
                         bestMove = moveScore;
                     }
                     max = Math.Min(moveScore, max);
-                    if (min >= max) {
+                    if (min > max) {
                         return bestMove;
                     }
                 }

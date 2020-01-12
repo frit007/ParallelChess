@@ -214,13 +214,24 @@ namespace ParallelChessTests.AI.Worker {
 
 
         [Test]
-        public static void findMate() {
+        public static void findValidMove() {
             var board = Chess.LoadBoardFromFen();
 
             var ai = new AIWorkerManager();
 
             ai.spawnWorkers(1);
             ai.analyzeBoard(board, 2).GetAwaiter().GetResult();
+            Assert.IsTrue(MoveHelper.isValidMove(ai.GetBestMove().move));
+        }
+
+        [Test]
+        public static void CompleteTest() {
+            // for some reason this board would not return a answer when on difficulty 6
+            var board = Chess.LoadBoardFromFen("rnb1kbnr/pppp1ppp/4p3/8/3PP2q/8/PPP2PPP/RNBQKBNR w KQkq - 1 3");
+            var ai = new AIWorkerManager();
+
+            ai.spawnWorkers(1);
+            ai.analyzeBoard(board, 6).GetAwaiter().GetResult();
             Assert.IsTrue(MoveHelper.isValidMove(ai.GetBestMove().move));
         }
     }

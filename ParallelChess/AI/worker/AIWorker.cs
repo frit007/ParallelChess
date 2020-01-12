@@ -166,6 +166,7 @@ namespace ParallelChess.AI {
                     score = 0;
                 }
                 lock (stateLock) {
+
                     alreadySolved.Add(move);
 
                     min = Math.Max(score, min);
@@ -244,6 +245,7 @@ namespace ParallelChess.AI {
                 //    max = solvedMove.max;
                 //}
                 begunMoves.Add(solvedMove.startSolvingMove);
+                
                 alreadySolved.Add(solvedMove.move.move);
             }
         }

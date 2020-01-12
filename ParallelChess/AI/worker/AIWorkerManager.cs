@@ -12,6 +12,8 @@ namespace ParallelChess.AI.worker {
         List<AIWorker> workers = new List<AIWorker>();
         private object stateLock = new object();
         public List<SolvedMove> solvedMoves = new List<SolvedMove>();
+        public int workId;
+        Random random = new Random();
 
         public void spawnWorkers(int? number = null) {
             if(number == null) {
@@ -99,7 +101,10 @@ namespace ParallelChess.AI.worker {
 
         private async Task<List<BestMove>> delegateToWorkers(BoardState board, List<BestMove> moves, int depth, Action<AIProgress> onProgress = null) {
             Board.initThreadStaticVariables();
-
+            int workerWorkId = random.Next();
+            lock (stateLock) {
+                workId = workerWorkId;
+            }
             solvedMoves.Clear();
             //var minmax = new MinMaxAI();
             // get shallow minMax to figure out a initial ordering, which will be used to share out 
@@ -128,7 +133,7 @@ namespace ParallelChess.AI.worker {
             int moveCount = moves.Count;
 
 
-
+            object alreadyCompletedLock = new object();
             try {
                 var task = new Task(() => {
                     for (int i = 0; i < workers.Count; i++) {
@@ -142,6 +147,10 @@ namespace ParallelChess.AI.worker {
                                 int count = 0;
                                 bool isNew = false;
                                 lock (stateLock) {
+                                    if(workId != workerWorkId) {
+                                        // if the worker returned to late then refuse the task
+                                        return;
+                                    }
                                     var exists = solvedMoves.Count(move => move.move.move.Equals(solvedMove.move.move));
                                     if (exists == 0) {
                                         isNew = true;
@@ -176,8 +185,18 @@ namespace ParallelChess.AI.worker {
                     Task.Delay(1000 * 60 * 3).Wait();
                     cancelationSource.Cancel();
                 });
+
                 task.Start();
+                //while (!alreadyComplete) {
+                //    Task.Delay(10).GetAwaiter().GetResult();
+                //}
+                //lock(alreadyCompleteLock) {
+                //    wasComplated = alreadyComplete;
+                //}
+                //if(!wasComplated) {
+
                 task.Wait(cancelationtoken);
+                //}
             } catch (OperationCanceledException) {
                 // intentional cancel
             }

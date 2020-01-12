@@ -110,11 +110,13 @@ namespace FightEval {
                                 //throw new NotImplementedException("not implemented yet, finds a way to somehow lose the queen");
                                 continue;
                             case "DIFFICULTY":
-                                difficulty = 5;
                                 if (readLine.Count() > 1) {
                                     difficulty = int.Parse(readLine[1]);
+                                    Console.WriteLine($"AI will now look {difficulty} moves ahead");
+                                } else {
+                                    Console.WriteLine($"Current difficulty is {difficulty}");
+                                    continue;
                                 }
-                                Console.WriteLine($"AI will now look {difficulty} moves ahead");
                                 continue;
                             case "SWITCH":
                                 goto switchSides; // the almighty goto to skip current move and the the ai make the next move, which also switches sides as a side effect
@@ -179,7 +181,7 @@ namespace FightEval {
                                         progressbar.Report((double)((double)progress.progress / (double)progress.total));
                                     });
                                 }
-                                //var cheatMoves = ParallelChess.AI.MinMaxAI.MinMaxList(board, depth);
+
                                 foreach (var cheat in cheatMoves) {
                                     Console.WriteLine($" - {MoveHelper.ReadableMove(cheat.move)} (score: {cheat.score})");
                                 }
