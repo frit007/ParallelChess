@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ParallelChess.AI.worker;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,25 +21,9 @@ namespace ParallelChess.AI {
 
         public bool alive = true;
         AITask currentTask;
-        public class AITask {
-            public int taskId;
-            public BoardState board;
-            public List<List<Move>> moves;
-            public int depth;
-            public Action<SolvedMove> onMoveComplete;
-        }
 
-        public class SolvedMove {
-            public BestMove move;
-            public Move startSolvingMove;
-            public float min;
-            public float max;
-            public int taskId;
 
-            // debug information
-            public float startFromMin;
-            public long durationMS;
-        }
+
         internal void WaitForTask() {
             AITask aiTask;
             bool amIAlive = true;
@@ -70,7 +55,7 @@ namespace ParallelChess.AI {
         // if there are only started moves left then start working a move that is already beeing worked on (they might have a worse starting minimum score)
         internal void MinMaxWorker(AITask aiTask) {
             currentTask = aiTask;
-            BoardState board = aiTask.board; 
+            Board board = aiTask.board; 
             List< Move> moves = aiTask.moves[aiTask.taskId];
             int depth = aiTask.depth;
             Action<SolvedMove> onMoveComplete = aiTask.onMoveComplete;
@@ -150,18 +135,16 @@ namespace ParallelChess.AI {
                     bestScore = min;
                 }
             }
-            Board.MakeMove(aiTask.board, move);
+            BoardHelper.MakeMove(aiTask.board, move);
             var startedFromMin = min;
-            var detectWinnerMoves = Board.GetMoves(aiTask.board);
+            var detectWinnerMoves = BoardHelper.GetMoves(aiTask.board);
             // check for winner
-            var winner = Board.detectWinner(aiTask.board, detectWinnerMoves);
+            var winner = BoardHelper.detectWinner(aiTask.board, detectWinnerMoves);
             if (winner != Winner.NONE) {
                 float score = 0;
                 if ((winner == Winner.WINNER_WHITE || winner == Winner.WINNER_BLACK)) {
-
                     // if a checkmate is found then no deeper moves matter since we are going to play that move
                     score = float.MaxValue - aiTask.board.VirtualLevel;
-
                 } else if (winner == Winner.DRAW) {
                     score = 0;
                 }
@@ -177,22 +160,40 @@ namespace ParallelChess.AI {
                     min = min,
                     max = max,
                     durationMS = stopWatch.ElapsedMilliseconds,
-                    move = new BestMove() {
+                    move = new EvaluatedMove() {
                         move = move,
                         score = score
                     },
                     taskId = currentTask.taskId,
                 };
-                //boardHash = HashBoard.ApplyMove(aiTask.board, move, boardHash);
-                //return;
+            }
+            if(aiTask.tiedPositions.Contains(currentBoardHash)) {
+                float score = 0;
+                lock (stateLock) {
+
+                    alreadySolved.Add(move);
+
+                    min = Math.Max(score, min);
+                }
+                return new SolvedMove() {
+                    startFromMin = min,
+                    min = min,
+                    max = max,
+                    durationMS = stopWatch.ElapsedMilliseconds,
+                    taskId = currentTask.taskId,
+                    move = new EvaluatedMove() {
+                        move= move,
+                        score = score,
+                    },
+                };
             }
 
 
             aiTask.board.VirtualLevel++;
             var minmax = new MinMaxAI();
-            var moveScore = minmax.MinMax(aiTask.board, aiTask.depth, false, min, max);
+            var moveScore = minmax.MinMax(aiTask.board, aiTask.depth, aiTask.tiedPositions, false, min, max);
             aiTask.board.VirtualLevel--;
-            Board.UndoMove(aiTask.board, move);
+            BoardHelper.UndoMove(aiTask.board, move);
             boardHash = HashBoard.ApplyMove(aiTask.board, move, boardHash);
             lock (stateLock) {
                 if (alreadySolved.Contains(move)) {
@@ -220,7 +221,7 @@ namespace ParallelChess.AI {
                 min = min,
                 max = max,
                 durationMS = stopWatch.ElapsedMilliseconds,
-                move = new BestMove() {
+                move = new EvaluatedMove() {
                     move = move,
                     score = moveScore
                 },

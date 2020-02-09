@@ -46,8 +46,8 @@ namespace ParallelChess {
         //  - This is used for declaring stalemate
         // 6. Fullmove number
         //  - Counts how many full moves have been made
-        public static BoardState LoadBoardFromFen(String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-            BoardState board = new BoardState() {
+        public static Board LoadBoardFromFen(String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+            Board board = new Board() {
                 bytes = new byte[BoardStateOffset.BOARD_STATE_SIZE]
             };
 
@@ -109,7 +109,7 @@ namespace ParallelChess {
                 board.EnPassantTarget = EnPassant.NO_ENPASSANT;
             } else {
                 //Board.SetEnPassantAttackedSquare(board, Board.AlgebraicPosition(enPassantAttackedSquare));
-                board.EnPassantTarget = (byte) Board.AlgebraicPosition(enPassantAttackedSquare);
+                board.EnPassantTarget = (byte) BoardHelper.ArrayPosition(enPassantAttackedSquare);
             }
 
             //Board.SetHalfTurnCounter(board, int.Parse(halfMoveClock));
@@ -121,7 +121,7 @@ namespace ParallelChess {
             return board;
         }
 
-        public static String BoardToFen(BoardState board) {
+        public static String BoardToFen(Board board) {
             StringBuilder fen = new StringBuilder();
 
             for (int row = 7; row >= 0; row--) {
@@ -170,7 +170,7 @@ namespace ParallelChess {
                 }
             }
             fen.Append(" ");
-            fen.Append(board.EnPassantTarget != EnPassant.NO_ENPASSANT ? Board.ReadablePosition(board.EnPassantTarget) : "-");
+            fen.Append(board.EnPassantTarget != EnPassant.NO_ENPASSANT ? BoardHelper.ReadablePosition(board.EnPassantTarget) : "-");
             fen.Append(" ");
             fen.Append(board.HalfTurnCounter);
             fen.Append(" ");
@@ -179,11 +179,11 @@ namespace ParallelChess {
             return fen.ToString();
         }
 
-        public static String AsciiBoard(BoardState board, List<Move> moves = null, bool displayCount = false) {
+        public static String AsciiBoard(Board board, List<Move> moves = null, bool displayCount = false) {
             if(moves == null) {
                 moves = new List<Move>();
             }
-            moves = moves.Where(move => Board.IsLegalMove(board, move)).ToList();
+            moves = moves.Where(move => BoardHelper.IsLegalMove(board, move)).ToList();
 
             StringBuilder ascii = new StringBuilder();
 
@@ -216,47 +216,62 @@ namespace ParallelChess {
             return ascii.ToString();
         }
 
-        public static Move FindMove(BoardState board, int from , int to) {
-            List<Move> moves = Board.GetMovesForPosition(board, from);
+        public static Move FindMove(Board board, int from , int to) {
+            List<Move> moves = BoardHelper.GetMovesForPosition(board, from);
 
             Move targetPosition = moves.FindTargetPosition(to);
             if (!MoveHelper.isValidMove(targetPosition)) {
                 throw new Exception("Move not found");
             }
-            if(!Board.IsLegalMove(board, targetPosition)) {
+            if(!BoardHelper.IsLegalMove(board, targetPosition)) {
                 throw new Exception("Illegal move");
             }
 
             return targetPosition;
         }
 
-        public static Move FindMove(BoardState board, int from, int to, Piece promotion) {
-            List<Move> moves = Board.GetMovesForPosition(board, from);
+        public static Move FindMove(Board board, int from, int to, Piece promotion) {
+            List<Move> moves = BoardHelper.GetMovesForPosition(board, from);
 
             Move targetPosition = moves.FindTargetPosition(to, promotion);
             if (!MoveHelper.isValidMove(targetPosition)) {
                 throw new Exception("Move not found");
             }
 
-            if (!Board.IsLegalMove(board, targetPosition)) {
+            if (!BoardHelper.IsLegalMove(board, targetPosition)) {
                 throw new Exception("Illegal move");
             }
 
             return targetPosition;
         }
 
-        public static Move MakeMove(BoardState board, int from, int to) {
+        public static Move MakeMove(Board board, int from, int to) {
             Move targetPosition = FindMove(board, from, to);
 
-            Board.MakeMove(board, targetPosition);
+            BoardHelper.MakeMove(board, targetPosition);
 
             return targetPosition;
         }
 
-        public static Move MakeMove(BoardState board, int from, int to, Piece promotion) {
+        public static Move MakeMove(Board board, string san) {
+            List<Move> moves = BoardHelper.GetMoves(board)
+                .Where(move => BoardHelper.IsLegalMove(board, move))
+                .ToList();
+
+            foreach (var move in moves) {
+                if(board.StandardAlgebraicNotation(move) == san.Trim()) {
+                    BoardHelper.MakeMove(board, move);
+                    return move;
+                }
+            }
+
+            throw new Exception("Move not found!");
+        }
+
+        public static Move MakeMove(Board board, int from, int to, Piece promotion) {
             Move targetPosition = FindMove(board, from, to, promotion);
 
-            Board.MakeMove(board, targetPosition);
+            BoardHelper.MakeMove(board, targetPosition);
 
             return targetPosition;
         }

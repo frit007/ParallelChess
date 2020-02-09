@@ -8,7 +8,7 @@ namespace AsciiCommentGenerator {
             Console.WriteLine("Please enter a FEN");
 
             var fen = Console.ReadLine();
-            BoardState board = Chess.LoadBoardFromFen(fen);
+            Board board = Chess.LoadBoardFromFen(fen);
 
             var color = board.IsWhiteTurnBool ? "White" : "Black";
             
@@ -57,13 +57,13 @@ namespace AsciiCommentGenerator {
                     };
                 }
 
-                Chess.MakeMove(board, Board.AlgebraicPosition(split[0]), Board.AlgebraicPosition(split[1]), promotionPiece);
+                Chess.MakeMove(board, BoardHelper.ArrayPosition(split[0]), BoardHelper.ArrayPosition(split[1]), promotionPiece);
                 Console.WriteLine($"{split[0]} -> {split[1]} {promotion}");
                 Console.WriteLine($"{Chess.AsciiBoard(board)}");
             }
             Console.WriteLine(" */\n" +
                 $"var board = Chess.LoadBoardFromFen(\"{fen}\");\n\n"+
-                $"var moves = Board.GetMoves(board);");
+                $"var moves = BoardHelper.GetMoves(board);");
 
             foreach (var move in moves) {
                 var split = move.Split(" ");

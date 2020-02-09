@@ -8,7 +8,7 @@ namespace ParallelChessTests.BaseChess {
     class FenTest {
         [Test]
         public void SimpleFenTest() {
-            BoardState board = Chess.LoadBoardFromFen();
+            Board board = Chess.LoadBoardFromFen();
 
             //Piece piece = Board.GetPiece(board, BoardOffset.A1);
             //Piece piece = board.A1;
@@ -20,7 +20,7 @@ namespace ParallelChessTests.BaseChess {
 
         [Test]
         public void loadEnpassantSquare() {
-            BoardState board = Chess.LoadBoardFromFen("4k3/8/8/PpP5/8/8/8/4K3 b - b6 0 1");
+            Board board = Chess.LoadBoardFromFen("4k3/8/8/PpP5/8/8/8/4K3 b - b6 0 1");
 
             Assert.AreEqual(BoardStateOffset.B6, board.EnPassantTarget);
         }

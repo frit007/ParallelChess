@@ -24,9 +24,9 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("rnbqkbnr/1ppppQp1/8/8/2BPP3/p6p/PPP2PPP/RNB1K1NR b KQkq - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.WINNER_WHITE, winner);
         }
@@ -49,9 +49,9 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("1k2Q3/pppp1ppp/8/8/8/8/8/2K5 b - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.WINNER_WHITE, winner);
         }
@@ -74,9 +74,9 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/2ppp3/8/8/8/8/2PPP3/3K1q2 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.WINNER_BLACK, winner);
         }
@@ -99,9 +99,9 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/2ppp3/8/8/8/2r1r3/5r2/3K4 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.DRAW, winner);
         }
@@ -124,9 +124,9 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/8/8/3K4 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.DRAW, winner);
         }
@@ -149,9 +149,9 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/5B2/8/3K4 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.DRAW, winner);
         }
@@ -174,9 +174,9 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/5N2/8/3K4 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.DRAW, winner);
         }
@@ -198,10 +198,10 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/4NN2/8/3K4 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.NONE, winner);
         }
@@ -223,10 +223,10 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/4NB2/8/3K4 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.NONE, winner);
         }
@@ -248,10 +248,10 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/8/4P3/3K4 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
 
-            var winner = Board.detectWinner(board,moves);
+            var winner = BoardHelper.detectWinner(board,moves);
 
             Assert.AreEqual(Winner.NONE, winner);
         }
@@ -274,9 +274,9 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/8/4b3/8/4B3/8/8/3K4 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.DRAW, winner);
         }
@@ -299,9 +299,9 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/8/5b2/8/4B3/8/8/3K4 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.NONE, winner);
         }
@@ -348,18 +348,18 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/2ppp1R1/8/8/8/8/7r/3K4 w - - 48 2");
 
-            var moves = Board.GetMoves(board);
-            var winner = Board.detectWinner(board, moves);
+            var moves = BoardHelper.GetMoves(board);
+            var winner = BoardHelper.detectWinner(board, moves);
             Assert.AreEqual(Winner.NONE, winner);
 
             Chess.MakeMove(board, BoardStateOffset.G7, BoardStateOffset.G2, Piece.EMPTY);
-            moves = Board.GetMoves(board);
-            winner = Board.detectWinner(board, moves);
+            moves = BoardHelper.GetMoves(board);
+            winner = BoardHelper.detectWinner(board, moves);
             Assert.AreEqual(Winner.NONE, winner);
             
             Chess.MakeMove(board, BoardStateOffset.H2, BoardStateOffset.H7, Piece.EMPTY);
-            moves = Board.GetMoves(board);
-            winner = Board.detectWinner(board, moves);
+            moves = BoardHelper.GetMoves(board);
+            winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.DRAW, winner);
         }
@@ -406,18 +406,18 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/2ppp1R1/8/8/8/8/7r/3K4 w - - 48 2");
 
-            var moves = Board.GetMoves(board);
-            var winner = Board.detectWinner(board, moves);
+            var moves = BoardHelper.GetMoves(board);
+            var winner = BoardHelper.detectWinner(board, moves);
             Assert.AreEqual(Winner.NONE, winner);
 
             Chess.MakeMove(board, BoardStateOffset.G7, BoardStateOffset.G2, Piece.EMPTY);
-            moves = Board.GetMoves(board);
-            winner = Board.detectWinner(board, moves);
+            moves = BoardHelper.GetMoves(board);
+            winner = BoardHelper.detectWinner(board, moves);
             Assert.AreEqual(Winner.NONE, winner);
 
             Chess.MakeMove(board, BoardStateOffset.D7, BoardStateOffset.D6, Piece.EMPTY);
-            moves = Board.GetMoves(board);
-            winner = Board.detectWinner(board, moves);
+            moves = BoardHelper.GetMoves(board);
+            winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.NONE, winner);
         }

@@ -18,7 +18,7 @@ namespace ParallelChessPerformance {
         [Params(5)]
         public int depth { get; set; }
 
-        BoardState board;
+        Board board;
 
         [GlobalSetup]
         public void setup() {

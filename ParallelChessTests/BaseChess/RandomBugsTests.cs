@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ParallelChessTests.BaseChess {
     class RandomBugsTests {
-        public void everyThingIsEqual(BoardState original, BoardState copy) {
+        public void everyThingIsEqual(Board original, Board copy) {
             for (int i = 0; i < BoardStateOffset.BOARD_STATE_SIZE; i++) {
                 Assert.AreEqual(original.bytes[i], copy.bytes[i], $"The boards are not equal at offset {i}");
             }
@@ -43,10 +43,10 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("rkr5/ppp2ppp/8/4N3/8/8/8/2K5 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
             Chess.MakeMove(board, BoardStateOffset.C1, BoardStateOffset.C2, Piece.EMPTY);
 
-            var winner = Board.detectWinner(board, moves);
+            var winner = BoardHelper.detectWinner(board, moves);
 
             Assert.AreEqual(Winner.NONE, winner);
         }
@@ -68,13 +68,13 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              */
             var board = Chess.LoadBoardFromFen("6k1/8/8/8/8/5nBN/3B1PPP/5RKR w - - 0 1");
-            var original = Board.CreateCopyBoard(board);
+            var original = BoardHelper.CreateCopyBoard(board);
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var move = Chess.MakeMove(board, BoardStateOffset.G2, BoardStateOffset.F3);
 
-            Board.UndoMove(board, move);
+            BoardHelper.UndoMove(board, move);
 
             everyThingIsEqual(original, board);
         }
@@ -95,9 +95,9 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              */
             var board = Chess.LoadBoardFromFen("6k1/8/8/8/8/5nBN/3B1PPP/5RKR w - - 0 1");
-            var original = Board.CreateCopyBoard(board);
+            var original = BoardHelper.CreateCopyBoard(board);
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             //board.IsWhiteTurn ^= 1;
             //moves.Clear();

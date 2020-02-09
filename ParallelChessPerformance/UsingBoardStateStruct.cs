@@ -10,8 +10,8 @@ namespace ParallelChessPerformance {
     class UsingBoardStateStruct {
         [Benchmark]
         public void MakeAMove() {
-            BoardState board = Chess.LoadBoardFromFen();
-            BoardState boardState = new BoardState();
+            Board board = Chess.LoadBoardFromFen();
+            Board boardState = new Board();
             unsafe {
 
                 for (int i = 0; i < BoardStateOffset.BOARD_STATE_SIZE; i++) {

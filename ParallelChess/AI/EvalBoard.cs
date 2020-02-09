@@ -64,7 +64,7 @@ namespace ParallelChess.AI {
             attackedFields = new AttackedField[BoardStateOffset.BOARD_STATE_SIZE];
         }
 
-        public static float evalBoard(BoardState board, List<Move> myMoves) {
+        public static float evalBoard(Board board, List<Move> myMoves) {
             float score = 0;
 
             Array.Clear(attackedFields, 0, attackedFields.Length);
@@ -109,7 +109,7 @@ namespace ParallelChess.AI {
             return score;
         }
 
-        private static float evaluateAttackingBonuses(BoardState board) {
+        private static float evaluateAttackingBonuses(Board board) {
             float score = 0;
             for (int row = 0; row < 8 * BoardStateOffset.ROW_OFFSET; row += BoardStateOffset.ROW_OFFSET) {
                 for (int column = 0; column < 8; column++) {
@@ -138,7 +138,7 @@ namespace ParallelChess.AI {
 
         // get bonus for defending or attacking a square
         // there is not bonus for directly defending the king, because you can't trade the king
-        private static float attackSquare(BoardState board, Piece attacker, int attackedPositon) {
+        private static float attackSquare(Board board, Piece attacker, int attackedPositon) {
             var attackerValue = PieceValues[(int)attacker];
 
             byte pieceColor = (byte)(attacker & Piece.IS_WHITE);
@@ -161,7 +161,7 @@ namespace ParallelChess.AI {
             return (1-(attackerValue/10)) * colorMultiplier;
         }
 
-        private static float walkAttackSquare(BoardState board, Piece attacker, int position, int direction) {
+        private static float walkAttackSquare(Board board, Piece attacker, int position, int direction) {
             float score = 0;
             do {
                 position += direction;
@@ -178,7 +178,7 @@ namespace ParallelChess.AI {
             } while (true);
         }
 
-        private static float fillAttackedPieces(BoardState board, int position) {
+        private static float fillAttackedPieces(Board board, int position) {
             float score = 0;
 
             var piece = board.GetPiece(position);
@@ -203,7 +203,7 @@ namespace ParallelChess.AI {
                     }
                     break;
                 case Piece.KNIGHT:
-                    foreach (var relativePosition in Board.knightMoves) {
+                    foreach (var relativePosition in BoardHelper.knightMoves) {
                         if (((position + relativePosition) & 0x88) == 0) {
                             score += attackSquare(board, piece, position + relativePosition);
                         }
@@ -211,25 +211,25 @@ namespace ParallelChess.AI {
                     break;
                 case Piece.KING:
                     // at the moment we do not account for castling options
-                    foreach (var relativePosition in Board.kingMoves) {
+                    foreach (var relativePosition in BoardHelper.kingMoves) {
                         score += attackSquare(board, piece, position + relativePosition);
                     }
                     break;
                 case Piece.ROOK:
-                    foreach (var relativePosition in Board.straightMoves) {
+                    foreach (var relativePosition in BoardHelper.straightMoves) {
                         score += walkAttackSquare(board, piece, position, relativePosition);
                     }
                     break;
                 case Piece.BISHOP:
-                    foreach (var relativePosition in Board.slantedMoves) {
+                    foreach (var relativePosition in BoardHelper.slantedMoves) {
                         score += walkAttackSquare(board, piece, position, relativePosition);
                     }
                     break;
                 case Piece.QUEEN:
-                    foreach (var relativePosition in Board.straightMoves) {
+                    foreach (var relativePosition in BoardHelper.straightMoves) {
                         score += walkAttackSquare(board, piece, position, relativePosition);
                     }
-                    foreach (var relativePosition in Board.straightMoves) {
+                    foreach (var relativePosition in BoardHelper.straightMoves) {
                         score += walkAttackSquare(board, piece, position, relativePosition);
                     }
                     break;
@@ -289,7 +289,7 @@ namespace ParallelChess.AI {
         //}
 
 
-        public static unsafe float countAttackedFields(BoardState board, IEnumerable<Move> myMoves, IEnumerable<Move> theirMoves) {
+        public static unsafe float countAttackedFields(Board board, IEnumerable<Move> myMoves, IEnumerable<Move> theirMoves) {
             float score = 0;
 
             AttackedField* attackedFields = stackalloc AttackedField[BoardStateOffset.BOARD_STATE_SIZE];
@@ -328,7 +328,7 @@ namespace ParallelChess.AI {
                     return score;
         }
 
-        public static float countPieceValues(BoardState board) {
+        public static float countPieceValues(Board board) {
             float score = 0;
             for (int row = 0; row < 8 * BoardStateOffset.ROW_OFFSET; row += BoardStateOffset.ROW_OFFSET) {
                 for (int column = 0; column < 8; column++) {

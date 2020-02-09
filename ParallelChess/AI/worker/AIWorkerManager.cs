@@ -23,7 +23,7 @@ namespace ParallelChess.AI.worker {
                 var worker = new AIWorker();
 
                 Thread thread = new Thread(() => {
-                    Board.initThreadStaticVariables();
+                    BoardHelper.initThreadStaticVariables();
                     worker.WaitForTask();
                 });
                 thread.Start();
@@ -34,13 +34,7 @@ namespace ParallelChess.AI.worker {
         }
         int totalFound = 0;
         int totalMoves = 0;
-        public class AIProgress{
-            public int total;
-            public int progress;
-            public float foundScore;
-            public int depth;
-            public SolvedMove move;
-        }
+
 
         public void killWorkers() {
             foreach (var worker in workers) {
@@ -51,12 +45,49 @@ namespace ParallelChess.AI.worker {
             }
         }
 
-        public BestMove GetBestMove() {
+        public EvaluatedMove GetBestMove() {
             return solvedMoves.OrderBy(move => move.move.score).Reverse().ToList().First().move;
         }
 
-        public async Task<List<BestMove>> analyzeBoard(BoardState board, int depth, Action<AIProgress> onProgress = null) {
-            Board.initThreadStaticVariables();
+        public HashSet<ulong> findTiedBoard(Board board, Stack<Move> history) {
+            Dictionary<ulong, int> occurredPositions = new Dictionary<ulong, int>();
+            HashSet<ulong> tiedPositions = new HashSet<ulong>();
+
+            // take copies so we do not modify the original collection
+            var boardCopy = BoardHelper.CreateCopyBoard(board);
+            Stack<Move> historyCopy = new Stack<Move>(history);
+            var hash = HashBoard.hash(board);
+            while (historyCopy.Count != 0) {
+                if(!occurredPositions.ContainsKey(hash)) {
+                    occurredPositions.Add(hash, 0);
+                }
+                // count how many times the position has occured
+                occurredPositions[hash]++;
+                var move = historyCopy.Pop();
+                BoardHelper.UndoMove(boardCopy, move);
+                hash = HashBoard.ApplyMove(board, move, hash);
+            }
+
+            foreach (var position in occurredPositions) {
+                if (position.Value >= 2) {
+                    // when a position occurs 3 times 
+                    tiedPositions.Add(position.Key);
+                }
+            }
+
+            return tiedPositions;
+        }
+
+        public async Task<List<EvaluatedMove>> analyzeBoard(Board board, int depth, Stack<Move> history = null, Action<AIProgress> onProgress = null) {
+            BoardHelper.initThreadStaticVariables();
+
+            HashSet<ulong> tiedBoards;
+            if (history != null) {
+                tiedBoards = this.findTiedBoard(board, history);
+            } else {
+                tiedBoards = new HashSet<ulong>();
+            }
+
             var minmax = new MinMaxAI();
             // get shallow minMax to figure out a initial ordering, because at low depth the thread overhead is going to cost more than it gains
             var moves = minmax.MinMaxList(board, 2);
@@ -66,20 +97,20 @@ namespace ParallelChess.AI.worker {
             }).ToList();
 
             var combinedMoves = moves.ToList();
-            var oldMoves = new List<BestMove>();
+            var oldMoves = new List<EvaluatedMove>();
             totalFound = 0;
             totalMoves = (depth - 2) * moves.Count; 
 
 
             for (int currentDepth = 3; currentDepth <= depth; currentDepth++) {
-                moves = await delegateToWorkers(board, combinedMoves, currentDepth, onProgress);
+                moves = await delegateToWorkers(board, combinedMoves, currentDepth, tiedBoards, onProgress);
 
 
                 combinedMoves.Clear();
 
                 for (int i = 0; i < moves.Count; i++) {
                     // mix the last 2 move orders to try and find the best more as early as possible
-                    BestMove nextMove;
+                    EvaluatedMove nextMove;
                     if (oldMoves.Count > i) {
                         nextMove = oldMoves[i];
                         if (combinedMoves.Find(existingMove => existingMove.move.Equals(nextMove.move)) == null) {
@@ -99,8 +130,8 @@ namespace ParallelChess.AI.worker {
             return moves;
         }
 
-        private async Task<List<BestMove>> delegateToWorkers(BoardState board, List<BestMove> moves, int depth, Action<AIProgress> onProgress = null) {
-            Board.initThreadStaticVariables();
+        private async Task<List<EvaluatedMove>> delegateToWorkers(Board board, List<EvaluatedMove> moves, int depth, HashSet<ulong> tiedBoards, Action<AIProgress> onProgress = null) {
+            BoardHelper.initThreadStaticVariables();
             int workerWorkId = random.Next();
             lock (stateLock) {
                 workId = workerWorkId;
@@ -140,9 +171,10 @@ namespace ParallelChess.AI.worker {
                         var worker = workers[i];
                         var aiTask = new AITask() {
                             taskId = i,
-                            board = Board.CreateCopyBoard(board),
+                            board = BoardHelper.CreateCopyBoard(board),
                             moves = workerMoves,
                             depth = depth,
+                            tiedPositions = tiedBoards,
                             onMoveComplete = (solvedMove) => {
                                 int count = 0;
                                 bool isNew = false;

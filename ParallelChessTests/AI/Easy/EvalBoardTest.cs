@@ -25,7 +25,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("4k3/2q5/8/8/8/8/8/4K3 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var score = EvalBoard.evalBoard(board, moves);
 
@@ -50,7 +50,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("4k3/8/8/8/8/8/2Q5/4K3 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var score = EvalBoard.evalBoard(board, moves);
 
@@ -75,7 +75,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var threatendBoard = Chess.LoadBoardFromFen("4k3/8/8/8/4p3/3p4/2Q5/4K3 w - - 0 1");
 
-            var threatendMoves = Board.GetMoves(threatendBoard);
+            var threatendMoves = BoardHelper.GetMoves(threatendBoard);
             var threatendScore = EvalBoard.evalBoard(threatendBoard, threatendMoves);
 
             /*
@@ -94,7 +94,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("4k3/8/8/8/8/8/2Q5/4K3 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var score = EvalBoard.evalBoard(board, moves);
 
@@ -119,7 +119,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var threatendBoard = Chess.LoadBoardFromFen("4k3/2q5/3P4/4P3/8/8/8/4K3 w - - 0 1");
 
-            var threatendMoves = Board.GetMoves(threatendBoard);
+            var threatendMoves = BoardHelper.GetMoves(threatendBoard);
 
             var threatendScore = EvalBoard.evalBoard(threatendBoard, threatendMoves);
 
@@ -139,7 +139,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("4k3/2q5/8/8/8/8/8/4K3 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var score = EvalBoard.evalBoard(board, moves);
 
@@ -147,6 +147,7 @@ namespace ParallelChessTests.AI.Easy {
         }
 
         [Test]
+        [Category("slow")]
         public void pawnsShouldBeEqual() {
             /*
              * Starting position (White to play)
@@ -164,7 +165,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("4k3/2p5/8/8/8/8/2P5/4K3 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var score = EvalBoard.evalBoard(board, moves);
 

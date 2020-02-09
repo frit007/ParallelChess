@@ -68,48 +68,48 @@ namespace ParallelChessPerformance {
 
         [Benchmark]
         public void PawnPerformanceTest() {
-            BoardState board = Chess.LoadBoardFromFen();
+            Board board = Chess.LoadBoardFromFen();
 
             for (int i = 0; i < 1000000; i++) {
-                Board.GetMovesForPosition(board, BoardStateOffset.E2);
+                BoardHelper.GetMovesForPosition(board, BoardStateOffset.E2);
             }
         }
 
         [Benchmark]
         public void GetAllMoves() {
-            BoardState board = Chess.LoadBoardFromFen();
+            Board board = Chess.LoadBoardFromFen();
             List<Move> moves = new List<Move>();
             for (int i = 0; i < 1000000; i++) {
                 moves.Clear();
-                moves = Board.GetMoves(board, moves);
+                moves = BoardHelper.GetMoves(board, moves);
             }
         }
 
         [Benchmark]
         public void MakeAllMoves() {
-            BoardState board = Chess.LoadBoardFromFen();
-            BoardState virtualBoard = Board.CreateCopyBoard(board);
+            Board board = Chess.LoadBoardFromFen();
+            Board virtualBoard = BoardHelper.CreateCopyBoard(board);
             List<Move> moves = new List<Move>();
             for (int i = 0; i < 1000000; i++) {
                 moves.Clear();
-                moves = Board.GetMoves(board, moves);
+                moves = BoardHelper.GetMoves(board, moves);
                 foreach (var move in moves) {
-                    Board.CopyBoard(board, virtualBoard);
-                    Board.MakeMove(virtualBoard, move);
+                    BoardHelper.CopyBoard(board, virtualBoard);
+                    BoardHelper.MakeMove(virtualBoard, move);
                 }
             }
         }
 
         [Benchmark]
         public void FindValidMoves() {
-            BoardState board = Chess.LoadBoardFromFen();
-            BoardState virtualBoard = Board.CreateCopyBoard(board);
+            Board board = Chess.LoadBoardFromFen();
+            Board virtualBoard = BoardHelper.CreateCopyBoard(board);
             List<Move> moves = new List<Move>();
             for (int i = 0; i < 1000000; i++) {
                 moves.Clear();
-                moves = Board.GetMoves(board, moves);
+                moves = BoardHelper.GetMoves(board, moves);
                 foreach (var move in moves) {
-                    Board.IsLegalMove(virtualBoard, move);
+                    BoardHelper.IsLegalMove(virtualBoard, move);
                 }
             }
         }
@@ -120,18 +120,18 @@ namespace ParallelChessPerformance {
             int count = 4;
             for (int i = 0; i < count; i++) {
                 var thread = new Thread(() => {
-                    Board.initThreadStaticVariables();
+                    BoardHelper.initThreadStaticVariables();
 
                     for (int i = 0; i < (1000000 / count); i++) {
-                        BoardState board = Chess.LoadBoardFromFen();
-                        BoardState virtualBoard = Board.CreateCopyBoard(board);
+                        Board board = Chess.LoadBoardFromFen();
+                        Board virtualBoard = BoardHelper.CreateCopyBoard(board);
                         List<Move> moves = new List<Move>();
                         moves.Clear();
-                        moves = Board.GetMoves(board, moves);
+                        moves = BoardHelper.GetMoves(board, moves);
                         foreach (var move in moves) {
                             //Board.CopyBoard(board, virtualBoard);
                             //Board.MakeMove(virtualBoard, move);
-                            Board.IsLegalMove(virtualBoard, move);
+                            BoardHelper.IsLegalMove(virtualBoard, move);
                         }
                     }
                 });
@@ -147,38 +147,38 @@ namespace ParallelChessPerformance {
 
         [Benchmark]
         public void KnightPerformanceTest() {
-            BoardState board = Chess.LoadBoardFromFen();
+            Board board = Chess.LoadBoardFromFen();
 
             for (int i = 0; i < 1000000; i++) {
-                Board.GetMovesForPosition(board, BoardStateOffset.B1);
+                BoardHelper.GetMovesForPosition(board, BoardStateOffset.B1);
             }
         }
 
         [Benchmark]
         public void KingPerformanceTest() {
-            BoardState board = Chess.LoadBoardFromFen();
+            Board board = Chess.LoadBoardFromFen();
 
             for (int i = 0; i < 1000000; i++) {
-                Board.GetMovesForPosition(board, BoardStateOffset.E1);
+                BoardHelper.GetMovesForPosition(board, BoardStateOffset.E1);
             }
         }
 
         [Benchmark]
         public void QueenPerformanceTest() {
-            BoardState board = Chess.LoadBoardFromFen();
+            Board board = Chess.LoadBoardFromFen();
 
             for (int i = 0; i < 1000000; i++) {
-                Board.GetMovesForPosition(board, BoardStateOffset.D1);
+                BoardHelper.GetMovesForPosition(board, BoardStateOffset.D1);
             }
         }
 
         [Benchmark]
         public void QueenWorstCasePerformanceTest() {
             // Basically a board where the queen stands in the midle of the board which means she has to check the entire board.
-            BoardState board = Chess.LoadBoardFromFen("r2qk2r/8/8/3Q4/8/8/8/R3K2R w KQkq - 0 1");
+            Board board = Chess.LoadBoardFromFen("r2qk2r/8/8/3Q4/8/8/8/R3K2R w KQkq - 0 1");
 
             for (int i = 0; i < 1000000; i++) {
-                Board.GetMovesForPosition(board, BoardStateOffset.D5);
+                BoardHelper.GetMovesForPosition(board, BoardStateOffset.D5);
             }
         }
 
@@ -199,13 +199,13 @@ namespace ParallelChessPerformance {
             +---------------+
              A B C D E F G H
              */
-            BoardState board = Chess.LoadBoardFromFen("rnbqkb1r/1p3ppp/p2p1n2/4p3/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 1 6");
+            Board board = Chess.LoadBoardFromFen("rnbqkb1r/1p3ppp/p2p1n2/4p3/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 1 6");
             List<Move> moves = new List<Move>();
             for (int i = 0; i < 1000000; i++) {
                 moves.Clear();
-                moves = Board.GetMoves(board, moves);
+                moves = BoardHelper.GetMoves(board, moves);
                 foreach (var move in moves) {
-                    Board.IsLegalMove(board, move);
+                    BoardHelper.IsLegalMove(board, move);
                 }
             }
         }

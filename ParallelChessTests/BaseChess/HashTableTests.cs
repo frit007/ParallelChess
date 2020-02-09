@@ -8,10 +8,10 @@ using ParallelChess.AI;
 namespace ParallelChessTests.BaseChess {
     class HashTableTests {
 
-        private BoardState incrementalUpdate(string fen, int fromPosition, int toPosition) {
+        private Board incrementalUpdate(string fen, int fromPosition, int toPosition) {
             var board = Chess.LoadBoardFromFen(fen);
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var boardHash = HashBoard.hash(board);
 
@@ -19,7 +19,7 @@ namespace ParallelChessTests.BaseChess {
 
             var nextBoardHash = HashBoard.ApplyMove(board, move, boardHash);
 
-            Board.MakeMove(board, move);
+            BoardHelper.MakeMove(board, move);
 
             var expectedHash = HashBoard.hash(board);
 
@@ -73,13 +73,13 @@ namespace ParallelChessTests.BaseChess {
 
             var boardHash = HashBoard.hash(board);
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var move = moves.FindTargetPosition(BoardStateOffset.F5);
 
             var nextBoardHash = HashBoard.ApplyMove(board, move, boardHash);
 
-            Board.MakeMove(board, move);
+            BoardHelper.MakeMove(board, move);
 
             var expectedHash = HashBoard.hash(board);
 
@@ -116,7 +116,7 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq - 2 2");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var boardHash = HashBoard.hash(board);
 
@@ -124,7 +124,7 @@ namespace ParallelChessTests.BaseChess {
 
             var nextBoardHash = HashBoard.ApplyMove(board, move, boardHash);
 
-            Board.MakeMove(board, move);
+            BoardHelper.MakeMove(board, move);
 
             var expectedHash = HashBoard.hash(board);
 
@@ -382,7 +382,7 @@ namespace ParallelChessTests.BaseChess {
             */
             var board = Chess.LoadBoardFromFen("r3k2r/8/8/2pP4/8/8/8/R3K2R w KQkq c6 0 2");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var boardHash = HashBoard.hash(board);
 
@@ -390,8 +390,8 @@ namespace ParallelChessTests.BaseChess {
 
             var nextBoardHash = HashBoard.ApplyMove(board, move, boardHash);
 
-            Board.MakeMove(board, move);
-            Board.UndoMove(board, move);
+            BoardHelper.MakeMove(board, move);
+            BoardHelper.UndoMove(board, move);
             var previousHash = HashBoard.ApplyMove(board, move, nextBoardHash);
 
             Assert.AreEqual(boardHash, previousHash);

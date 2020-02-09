@@ -13,7 +13,7 @@ namespace ParallelChessTests.AI.Worker {
 
             var ai = new AIWorkerManager();
 
-            Board.initThreadStaticVariables();
+            BoardHelper.initThreadStaticVariables();
             ai.spawnWorkers(1);
             ai.analyzeBoard(board, 2).GetAwaiter().GetResult();
             Assert.IsTrue(MoveHelper.isValidMove(ai.GetBestMove().move));
@@ -39,7 +39,7 @@ namespace ParallelChessTests.AI.Worker {
              */
             var board = Chess.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var ai = new AIWorkerManager();
 
@@ -74,7 +74,7 @@ namespace ParallelChessTests.AI.Worker {
              */
             var board = Chess.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
 
-            var moves = Board.GetMoves(board);
+            var moves = BoardHelper.GetMoves(board);
 
             var ai = new AIWorkerManager();
 
@@ -225,6 +225,7 @@ namespace ParallelChessTests.AI.Worker {
         }
 
         [Test]
+        [Category("slow")]
         public static void CompleteTest() {
             // for some reason this board would not return a answer when on difficulty 6
             var board = Chess.LoadBoardFromFen("rnb1kbnr/pppp1ppp/4p3/8/3PP2q/8/PPP2PPP/RNBQKBNR w KQkq - 1 3");

@@ -23,43 +23,43 @@ namespace ParallelChess {
 
     //    // ----------- TARGET POSITION ----------
     //    TARGET_POS_START = 0b0000_0000_0000_0000__0000_0000_0000_0000,
-    //    TARGET_POS_MASK =  0b0000_0000_0000_0000__0000_0000_0111_1111,
+    //    TARGET_POS_MASK = 0b0000_0000_0000_0000__0000_0000_0111_1111,
     //    TARGET_BIT_OFFSET = 0,
 
     //    // ----------- FROM POSITION ----------
     //    FROM_POS_START = 0b0000_0000_0000_0000__0000_0000_1000_0000,
-    //    FROM_POS_MASK =  0b0000_0000_0000_0000__0011_1111_1000_0000,
+    //    FROM_POS_MASK = 0b0000_0000_0000_0000__0011_1111_1000_0000,
     //    FROM_POS_BIT_OFFSET = 7,
 
     //    // ----------- CAPTURED PIECE ----------
     //    CAPTURED_START = 0b0000_0000_0000_0000__0100_0000_0000_0000,
-    //    CAPTURED_MASK =  0b0000_0000_0000_0011__1100_0000_0000_0000,
+    //    CAPTURED_MASK = 0b0000_0000_0000_0011__1100_0000_0000_0000,
     //    CAPTURED_BIT_OFFSET = 14,
 
     //    // ----------- PROMOTION PIECE ----------
     //    PROMOTION_START = 0b0000_0000_0000_0100__0000_0000_0000_0000,
-    //    PROMOTION_MASK =  0b0000_0000_0011_1100__0000_0000_0000_0000,
+    //    PROMOTION_MASK = 0b0000_0000_0011_1100__0000_0000_0000_0000,
     //    PROMOTION_BIT_OFFSET = 18,
 
     //    // ----------- ENPASANT BOOL ----------
-    //    ENPASSANT =       0b0000_0000_0100_0000__0000_0000_0000_0000,
+    //    ENPASSANT = 0b0000_0000_0100_0000__0000_0000_0000_0000,
     //    ENPASSANT_BIT_OFFSET = 23,
 
     //    // ----------- BIG PAWN MOVE BOOL ----------
-    //    BIG_PAWN_MOVE =   0b0000_0000_1000_0000__0000_0000_0000_0000,
+    //    BIG_PAWN_MOVE = 0b0000_0000_1000_0000__0000_0000_0000_0000,
     //    BIG_PAWN_MOVE_BIT_OFFSET = 24,
 
     //    // ---------- CASTLING ----------
-    //    CASTLING =        0b0000_0001_0000_0000__0000_0000_0000_0000,
+    //    CASTLING = 0b0000_0001_0000_0000__0000_0000_0000_0000,
     //    CASTLING_BIT_OFFSET = 25,
 
     //    // ---------- PAWN MOVE ----------
-    //    PAWN_MOVE =       0b0000_0010_0000_0000__0000_0000_0000_0000,
+    //    PAWN_MOVE = 0b0000_0010_0000_0000__0000_0000_0000_0000,
     //    PAWN_BIT_OFFSET = 26,
 
     //    // ---------- PREVIOUS CASTLING BITS ----------
     //    PREVIOUS_CASTLING_BITS_START = 0b0000_0100_0000_0000__0000_0000_0000_0000,
-    //    PREVIOUS_CASTLING_BITS_MASK =  0b0011_1100_0000_0000__0000_0000_0000_0000,
+    //    PREVIOUS_CASTLING_BITS_MASK = 0b0011_1100_0000_0000__0000_0000_0000_0000,
     //    PREVIOUS_CASTLING_BITS_OFFSET = 27,
 
     //    EMPTY = 0,
@@ -85,13 +85,12 @@ namespace ParallelChess {
         public byte previousCastlingBits;
         public byte previousEnpassant;
         public byte previousHalfMove;
-        public int filler;
 
         public string readable { get { return MoveHelper.ReadableMove(this); } }
     }
 
     public static class MoveHelper {
-        public static Move CreateMove(int targetPosition, int fromPosition, Piece capturedPiece, Piece promotion, MoveFlags moveFlags, BoardState board) {
+        public static Move CreateMove(int targetPosition, int fromPosition, Piece capturedPiece, Piece promotion, MoveFlags moveFlags, Board board) {
             return new Move() {
                 targetPosition = (byte) targetPosition,
                 fromPosition = (byte) fromPosition,
@@ -174,8 +173,10 @@ namespace ParallelChess {
         public static string ReadableMove(Move move) {
             var fromPosition = move.fromPosition;
             var toPosition = move.targetPosition;
-            return $"from: {Board.ReadablePosition(fromPosition)} to: {Board.ReadablePosition(toPosition)}";
+            return $"from: {BoardHelper.ReadablePosition(fromPosition)} to: {BoardHelper.ReadablePosition(toPosition)}";
         }
+
+
     }
 
 

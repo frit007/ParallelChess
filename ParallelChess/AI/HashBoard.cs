@@ -72,7 +72,7 @@ namespace ParallelChess.AI {
         }
 
 
-        public static ulong ApplyMove(BoardState board, Move move, ulong boardHash) {
+        public static ulong ApplyMove(Board board, Move move, ulong boardHash) {
             var fromPiece = board.GetPiece(move.fromPosition);
             var toPiece = board.GetPiece(move.targetPosition);
             var toPosition = move.targetPosition;
@@ -191,7 +191,7 @@ namespace ParallelChess.AI {
         //    return boardHash;
         //}
 
-        public static ulong hash(BoardState board) {
+        public static ulong hash(Board board) {
             ulong hash = 0;
             for (int column = 0; column < 8; column++) {
                 for (int row = 0; row < 8 * BoardStateOffset.ROW_OFFSET; row += BoardStateOffset.ROW_OFFSET) {

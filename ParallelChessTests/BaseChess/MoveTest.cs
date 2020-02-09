@@ -8,7 +8,7 @@ namespace ParallelChessTests.BaseChess {
     class MoveTest {
         private int fromPosition = BoardStateOffset.E2;
         private int toPosition = BoardStateOffset.E4;
-        Move DoubleMove() => MoveHelper.CreateMove(toPosition, fromPosition, Piece.EMPTY, Piece.EMPTY, MoveFlags.ENPASSANT, new BoardState() { bytes = new byte[BoardStateOffset.BOARD_STATE_SIZE]});
+        Move DoubleMove() => MoveHelper.CreateMove(toPosition, fromPosition, Piece.EMPTY, Piece.EMPTY, MoveFlags.ENPASSANT, new Board() { bytes = new byte[BoardStateOffset.BOARD_STATE_SIZE]});
 
         [Test]
         public void CheckFromPosition() {

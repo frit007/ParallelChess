@@ -72,19 +72,19 @@ namespace ParallelChessTests.BaseChess {
                 +---------------+
                  A B C D E F G H
              */
-            BoardState board = Chess.LoadBoardFromFen("4k3/4q3/8/8/8/8/2N5/3QK3 w - - 0 1");
+            Board board = Chess.LoadBoardFromFen("4k3/4q3/8/8/8/8/2N5/3QK3 w - - 0 1");
 
-            List<Move> moves = Board.GetMovesForPosition(board, BoardStateOffset.C2);
+            List<Move> moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.C2);
 
             Assert.AreEqual(5, moves.Count, "The knight should have 5 move options");
             //Move move = moves.FindTargetPosition(BoardStateOffset.E3);
 
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E3)), "Knight can move to E3 to protect the king");
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E3)), "Knight can move to E3 to protect the king");
 
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.D4)), "Knight cannot move here because the king is under attack");
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.B4)), "Knight cannot move here because the king is under attack");
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.A3)), "Knight cannot move here because the king is under attack");
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.A1)), "Knight cannot move here because the king is under attack");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.D4)), "Knight cannot move here because the king is under attack");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.B4)), "Knight cannot move here because the king is under attack");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.A3)), "Knight cannot move here because the king is under attack");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.A1)), "Knight cannot move here because the king is under attack");
         }
 
         [Test]
@@ -116,21 +116,21 @@ namespace ParallelChessTests.BaseChess {
                 +---------------+
                  A B C D E F G H
              */
-            BoardState board = Chess.LoadBoardFromFen("4k3/8/8/8/7q/3N4/8/3QK3 w - - 0 1");
+            Board board = Chess.LoadBoardFromFen("4k3/8/8/8/7q/3N4/8/3QK3 w - - 0 1");
 
-            List<Move> moves = Board.GetMovesForPosition(board, BoardStateOffset.D3);
+            List<Move> moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.D3);
 
             Assert.AreEqual(7, moves.Count, "The knight should have 7 move options");
             Move move = moves.FindTargetPosition(BoardStateOffset.E3);
 
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.F2)), "Knight can move to E3 to protect the king");
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.F2)), "Knight can move to E3 to protect the king");
 
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.F4)), "Knight cannot move To F4 because the king is under attack");
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E5)), "Knight cannot move To E3 because the king is under attack");
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C5)), "Knight cannot move To C4 because the king is under attack");
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.B4)), "Knight cannot move To B3 because the king is under attack");
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.B2)), "Knight cannot move To B1 because the king is under attack");
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C1)), "Knight cannot move To C1 because the king is under attack");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.F4)), "Knight cannot move To F4 because the king is under attack");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E5)), "Knight cannot move To E3 because the king is under attack");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C5)), "Knight cannot move To C4 because the king is under attack");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.B4)), "Knight cannot move To B3 because the king is under attack");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.B2)), "Knight cannot move To B1 because the king is under attack");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C1)), "Knight cannot move To C1 because the king is under attack");
         }
 
         [Test]
@@ -162,23 +162,23 @@ namespace ParallelChessTests.BaseChess {
               +---------------+
                A B C D E F G H
             */
-            BoardState board = Chess.LoadBoardFromFen("r3qk1r/8/8/3Q4/8/8/7R/R3K3 w Qkq - 0 1");
+            Board board = Chess.LoadBoardFromFen("r3qk1r/8/8/3Q4/8/8/7R/R3K3 w Qkq - 0 1");
 
-            List<Move> moves = Board.GetMovesForPosition(board, BoardStateOffset.D5);
+            List<Move> moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.D5);
 
             Assert.AreEqual(27, moves.Count);
 
             // valid moves
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E4)));
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E5)));
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E6)));
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E4)));
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E5)));
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E6)));
 
             // invalid moves
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.A8)));
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.G2)));
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.A2)));
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.G8)));
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.F3)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.A8)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.G2)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.A2)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.G8)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.F3)));
             // ... there are more invalid moves
         }
 
@@ -211,14 +211,14 @@ namespace ParallelChessTests.BaseChess {
              +---------------+
               A B C D E F G H
               */
-            BoardState board = Chess.LoadBoardFromFen("6k1/5ppp/8/8/8/2Q2n2/8/4K3 w - - 0 1");
+            Board board = Chess.LoadBoardFromFen("6k1/5ppp/8/8/8/2Q2n2/8/4K3 w - - 0 1");
 
-            List<Move> moves = Board.GetMovesForPosition(board, BoardStateOffset.C3);
+            List<Move> moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.C3);
 
             Assert.AreEqual(21, moves.Count());
 
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.F3)), "Can protect the king against Knight");
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C8)), "The king is under attack from Knight on F3");
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.F3)), "Can protect the king against Knight");
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C8)), "The king is under attack from Knight on F3");
         }
 
         [Test]
@@ -250,13 +250,13 @@ namespace ParallelChessTests.BaseChess {
              +---------------+
               A B C D E F G H
             */
-            BoardState board = Chess.LoadBoardFromFen("6k1/5ppp/8/8/8/8/8/2Q1K3 w - - 0 1");
+            Board board = Chess.LoadBoardFromFen("6k1/5ppp/8/8/8/8/8/2Q1K3 w - - 0 1");
 
-            var moves = Board.GetMovesForPosition(board, BoardStateOffset.C1);
+            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.C1);
 
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.A1)));
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C8)));
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C3)));
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.A1)));
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C8)));
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C3)));
         }
 
         [Test]
@@ -288,17 +288,17 @@ namespace ParallelChessTests.BaseChess {
              +---------------+
               A B C D E F G H
               */
-            BoardState board = Chess.LoadBoardFromFen("8/8/8/8/8/5k2/8/1r3K2 w - - 0 1");
+            Board board = Chess.LoadBoardFromFen("8/8/8/8/8/5k2/8/1r3K2 w - - 0 1");
 
-            var moves = Board.GetMovesForPosition(board, BoardStateOffset.F1);
+            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.F1);
 
             Assert.AreEqual(5, moves.Count());
 
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E1)));
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E2)));
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.F2)));
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.G1)));
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.G2)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E1)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E2)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.F2)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.G1)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.G2)));
         }
 
         [Test]
@@ -332,10 +332,10 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("2k5/1ppp4/8/8/4Q3/8/4p3/5K2 w - - 0 1");
 
-            var moves = Board.GetMovesForPosition(board, BoardStateOffset.E4);
+            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.E4);
 
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E2)));
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E8)));
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E2)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.E8)));
         }
 
         [Test]
@@ -369,10 +369,10 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("3k4/2P5/2q5/8/8/8/4PPP1/5K2 b - - 0 1");
 
-            var moves = Board.GetMovesForPosition(board, BoardStateOffset.C6);
+            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.C6);
 
-            Assert.IsTrue(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C7)));
-            Assert.IsFalse(Board.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C1)));
+            Assert.IsTrue(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C7)));
+            Assert.IsFalse(BoardHelper.IsLegalMove(board, moves.FindTargetPosition(BoardStateOffset.C1)));
         }
     }
 }
