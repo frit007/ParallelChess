@@ -1,0 +1,65 @@
+<div>
+  <div class="chess-board">
+    <div
+      *ngFor="let tile of tiles; index as i"
+      [class]="'tile ' + tile.background"
+      (dragover)="onDragoverHighlightTile($event, i)"
+    >
+      <span *ngIf="tile.showText" class="tile-name">{{ tile.location }}</span>
+    </div>
+
+    <ng-container *ngFor="let piece of pieces">
+      <img
+        draggable="true"
+        (dragstart)="onPieceDragStart(piece, $event)"
+        (dragend)="onPieceDragStop(piece, $event)"
+        [ngClass]="{
+          piece: true,
+          selected: piece == selectedPiece,
+          white: piece.isWhite
+        }"
+        [src]="piece.image"
+        [ngStyle]="{
+          transform:
+            'translate(' + piece.column * 100 + '%,' + -piece.row * 100 + '%)'
+        }"
+      />
+      <!-- class="piece" -->
+    </ng-container>
+    <!-- move options -->
+    <ng-container *ngIf="selectedPiece != null">
+      <!-- (dragEnd)="onPieceDragStop(piece, $event)" -->
+      <img
+        *ngFor="let droptarget of selectedPiece.options"
+        (drop)="onDropPiece($event, droptarget)"
+        (dragover)="allowDrop($event, droptarget)"
+        class="drop-target"
+        src="/assets/images/possibilityDot.svg"
+        [ngStyle]="{
+          transform:
+            'translate(' +
+            droptarget.column * 100 +
+            '%,' +
+            -droptarget.row * 100 +
+            '%)'
+        }"
+      />
+    </ng-container>
+
+    <!-- drag highlight -->
+    <ng-container *ngIf="selectedPiece != null">
+      <img
+        class="tile-highlight"
+        src="/assets/images/softBorder.svg"
+        [ngStyle]="{
+          transform:
+            'translate(' +
+            dragHighlightSquare.column * 100 +
+            '%,' +
+            -dragHighlightSquare.row * 100 +
+            '%)'
+        }"
+      />
+    </ng-container>
+  </div>
+</div>

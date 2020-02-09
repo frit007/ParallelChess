@@ -1,0 +1,81 @@
+.chess-board {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  place-items: start;
+}
+
+.tile {
+  width: 100%;
+}
+
+.white-tile {
+  //   background: rgba(125, 135, 150);
+  background: var(--tile-bg-white);
+}
+
+.black-tile {
+  //   background: rgb(232, 235, 239);
+  background: var(--tile-bg-black);
+}
+
+.tile-name {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+}
+
+.chess-board>::before {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 0;
+  padding-bottom: 100%;
+}
+
+.piece {
+  position: absolute;
+  width: 12.5%;
+  height: 12.5%;
+  transition: transform 100ms;
+  cursor: pointer;
+  cursor: grab;
+  bottom: 0px;
+}
+
+.piece.selected {
+  filter: opacity(1%);
+}
+
+.piece.black {}
+
+.piece.white {
+  // filter: invert();
+  filter: invert(73%) sepia(62%) saturate(420%) hue-rotate(22deg) brightness(94%) contrast(93%);
+}
+
+.drop-target {
+  position: absolute;
+  width: 12.5%;
+  height: 12.5%;
+  bottom: 0px;
+  // filter: invert()
+}
+
+.tile-highlight {
+  position: absolute;
+  pointer-events: none;
+  width: 12.5%;
+  height: 12.5%;
+  bottom: 0px;
+}
