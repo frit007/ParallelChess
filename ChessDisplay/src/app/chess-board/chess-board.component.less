@@ -35,7 +35,7 @@
                                   supported by Chrome, Opera and Firefox */
 }
 
-.chess-board>::before {
+.chess-board > ::before {
   content: "";
   display: inline-block;
   width: 1px;
@@ -47,7 +47,7 @@
   position: absolute;
   width: 12.5%;
   height: 12.5%;
-  transition: transform 100ms;
+  transition: transform 300ms;
   cursor: pointer;
   cursor: grab;
   bottom: 0px;
@@ -57,19 +57,11 @@
   filter: opacity(1%);
 }
 
-.piece.black {}
-
-.piece.white {
-  // filter: invert();
-  filter: invert(73%) sepia(62%) saturate(420%) hue-rotate(22deg) brightness(94%) contrast(93%);
-}
-
 .drop-target {
   position: absolute;
   width: 12.5%;
   height: 12.5%;
   bottom: 0px;
-  // filter: invert()
 }
 
 .tile-highlight {

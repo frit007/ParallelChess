@@ -8,7 +8,7 @@
       <span *ngIf="tile.showText" class="tile-name">{{ tile.location }}</span>
     </div>
 
-    <ng-container *ngFor="let piece of pieces">
+    <ng-container *ngFor="let piece of pieces; trackBy: trackById">
       <img
         draggable="true"
         (dragstart)="onPieceDragStart(piece, $event)"
@@ -16,7 +16,7 @@
         [ngClass]="{
           piece: true,
           selected: piece == selectedPiece,
-          white: piece.isWhite
+          'piece-white': piece.isWhite
         }"
         [src]="piece.image"
         [ngStyle]="{

@@ -389,11 +389,9 @@ namespace ParallelChess {
             if(((MoveFlags)move.moveFlags & MoveFlags.CASTLING) == MoveFlags.CASTLING) {
                 if (move.targetPosition < move.fromPosition) {
                     // castle queen side
-                    //san += "O-O-O";
                     san.Append("O-O-O");
                 } else {
                     // castle king side
-                    //san += "O-O";
                     san.Append("O-O");
                 }
             } else {
@@ -445,7 +443,7 @@ namespace ParallelChess {
                             //san += (fromRow + 1).ToString();
                             san.Append(Convert.ToChar('a' + (fromColumn)));
                             san.Append((fromRow + 1).ToString());
-                        } else if (sameRows) {
+                        } else if (sameColumns) {
                             //san += (fromRow + 1).ToString();
                             san.Append((fromRow + 1).ToString());
                         } else {

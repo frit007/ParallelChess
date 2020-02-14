@@ -53,7 +53,7 @@ namespace ChessApi.Controllers
 
             return new GameProgress() {
                 GameId = game.Id,
-                State = chessService.BoardToState(board)
+                State = chessService.BoardToState(board),
             };
         }
 
@@ -67,7 +67,24 @@ namespace ChessApi.Controllers
 
             var board = chessService.ReplayMoves(game.Moves.ToList());
 
+            var boardState = chessService.BoardToState(board);
+            
             var move = Chess.MakeMove(board, play.SAN);
+
+            if (boardState.whiteWins || boardState.isDraw || boardState.blackWins) {
+                var moveRow = new Models.Move() {
+                    SAN = play.SAN,
+                    Game = game,
+                    CreatedAt = DateTime.Now
+                };
+                context.Move.Add(moveRow);
+
+                context.SaveChanges();
+                return new GameProgress() {
+                    GameId = id,
+                    State = boardState
+                };
+            }
 
             var aiMove = await chessService.GetAiMove(board);
 

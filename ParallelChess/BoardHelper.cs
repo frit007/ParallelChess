@@ -11,9 +11,7 @@ namespace ParallelChess {
 
     public static class BoardHelper {
         public static void initThreadStaticVariables() {
-            IsValidMoveVirtualBoard = new byte[BoardStateOffset.BOARD_STATE_SIZE];
             EvalBoard.initThreadStaticVariables();
-            //MinMaxAI.initThreadStaticVariables();
         }
 
         public const int A_COLUMN = 0;
@@ -202,19 +200,19 @@ namespace ParallelChess {
         //        && targetRow == expectedRow;
         //}
 
-        //public static bool (int  & 0x88p == 0osition) {
-        //    // ------------0x88-------------
-        //    // 0x88 is method used checking if location is out of bound very fast
-        //    // it is done by creating an array and leaving every second row blank.
-        //    // We can then check if a position is in a invalid row by anding a position with 0x88
-        //    // for example if you tried to move one right from H3(39) + 1 = 40. 40 is a invalid position 
-        //    // which can be caught by checking 0x88 & 40 = 8. Any invalid position will result in a non zero value
-        //    // the potential disadvantage to this approach is that the boardState is larger, which will take longer to copy and 
-        //    // might mean that the array is no longer cached in CPU cache.
-        //    return (0x88 & position) == 0;
-        //}
+        public static bool IsValidPosition(int position) {
+            // ------------0x88-------------
+            // 0x88 is method used checking if location is out of bound very fast
+            // it is done by creating an array and leaving every second row blank.
+            // We can then check if a position is in a invalid row by anding a position with 0x88
+            // for example if you tried to move one right from H3(39) + 1 = 40. 40 is a invalid position 
+            // which can be caught by checking 0x88 & 40 = 8. Any invalid position will result in a non zero value
+            // the potential disadvantage to this approach is that the boardState is larger, which will take longer to copy and 
+            // might mean that the array is no longer cached in CPU cache.
+            return (0x88 & position) == 0;
+        }
 
-        public static int RelativePosition(int position, int relativeColumn, int relativeRow) {
+    public static int RelativePosition(int position, int relativeColumn, int relativeRow) {
             return position + relativeRow * BoardStateOffset.ROW_OFFSET + relativeColumn;
         }
 
@@ -250,26 +248,6 @@ namespace ParallelChess {
                 return MoveOption.CAPTURE;
             }
         }
-
-        //public static (int column, int row)[] kingMoves = {
-        //    (-1, 1), (0, 1), (1, 1),
-        //    (-1, 0),         (0, 1),
-        //    (-1,-1), (0,-1), (1,-1)
-        //};
-
-        //public static (int column, int row)[] slantedMoves = {
-        //    (1,1),(1,-1),(-1,1),(-1,-1)
-        //};
-        //public static (int column, int row)[] straightMoves = {
-        //    (1,0),(-1,0),(0,1),(0,-1)
-        //};
-
-        //public static (int column, int row)[] knightMoves = {
-        //           (-1,2), (1,2),
-        //    (-2,1),              (2,1),
-        //    (-2,-1),             (2,-1),
-        //           (-1,-2),(1,-2),
-        //};
 
         public static int[] kingMoves = {
             BoardStateOffset.ROW_OFFSET * 1 + 1,
@@ -313,7 +291,7 @@ namespace ParallelChess {
                 bool isFirstPosition = true;
                 do {
                     relativePosition += move;
-                    if ((relativePosition & 0x88) == 0) {
+                    if (IsValidPosition(relativePosition)) {
                         var piece = board.GetPiece(relativePosition);
                         if (piece != Piece.EMPTY) {
                             Piece enemySlantedAttacked = (theirColorPiece | Piece.ATTACKS_SLANTED);
@@ -342,7 +320,7 @@ namespace ParallelChess {
                 bool isFirstPosition = true;
                 do {
                     relativePosition += move;
-                    if ((relativePosition & 0x88) == 0) {
+                    if (IsValidPosition(relativePosition)) {
                         var piece = board.GetPiece(relativePosition);
                         if (piece != Piece.EMPTY) {
                             Piece enemySlantedAttacked = (theirColorPiece | Piece.ATTACKS_STRAIGHT);
@@ -367,7 +345,7 @@ namespace ParallelChess {
             foreach (var move in knightMoves) {
                 int relativePosition = position + move;
 
-                if ((relativePosition & 0x88) == 0) {
+                if (IsValidPosition(relativePosition)) {
                     var piece = board.GetPiece(relativePosition);
                     Piece enemySlantedAttacked = (theirColorPiece | Piece.KNIGHT);
                     if ((piece & (Piece.PIECE_MASK | Piece.IS_WHITE)) == enemySlantedAttacked) {
@@ -378,14 +356,14 @@ namespace ParallelChess {
 
             int leftPawnPosition = position - BoardStateOffset.ROW_OFFSET - 1 + BoardStateOffset.ROW_OFFSET * pretendToBeWhite * 2;
             int rightPawnPosition = position - BoardStateOffset.ROW_OFFSET + 1 + BoardStateOffset.ROW_OFFSET * pretendToBeWhite * 2;
-            if ((leftPawnPosition & 0x88) == 0) {
+            if (IsValidPosition(leftPawnPosition)) {
                 Piece leftPawn = board.GetPiece(leftPawnPosition);
                 if (leftPawn == (theirColorPiece | Piece.PAWN)) {
                     return true;
                 }
             }
 
-            if ((rightPawnPosition & 0x88) == 0) {
+            if (IsValidPosition(rightPawnPosition)) {
                 Piece rightPawn = board.GetPiece(rightPawnPosition);
                 if (rightPawn == (theirColorPiece | Piece.PAWN)) {
                     return true;
@@ -446,7 +424,7 @@ namespace ParallelChess {
                 int move = fromPosition;
                 do {
                     move += relativePosition;
-                    if ((move & 0x88) == 0) {
+                    if (IsValidPosition(move)) {
                         var moveOption = CanITakeSquare(board, move);
                         if (moveOption == MoveOption.NO_FIGHT) {
                             AddMove(board, fromPosition, move, MoveFlags.EMPTY, moves);
@@ -462,14 +440,6 @@ namespace ParallelChess {
                 } while (true);
             }
         }
-
-        [ThreadStatic]
-        private static byte[] IsValidMoveVirtualBoard = new byte[BoardStateOffset.BOARD_STATE_SIZE];
-
-        //private static ThreadLocal<byte[]> IsValidMoveVirtualBoard = new ThreadLocal<byte[]>(() => {
-        //    return new byte[BoardStateOffset.BOARD_STATE_SIZE];
-        //});
-
 
         public static bool IsLegalMove(Board board, Move move) {
             byte myTurn = board.IsWhiteTurn;
@@ -565,22 +535,13 @@ namespace ParallelChess {
                 case Piece.KING:
                     foreach (var relativeMove in kingMoves) {
                         int move = relativeMove + fromPosition;
-                        if ((move & 0x88) == 0) {
+                        if (IsValidPosition(move)) {
                             var moveOption = CanITakeSquare(board, move);
                             if (moveOption != MoveOption.INVALID) {
                                 AddMove(board, fromPosition, move, MoveFlags.EMPTY, moves);
                             }
                         }
                     }
-                    //foreach (var relativeMove in kingMoves) {
-                    //    int move = RelativePosition(fromPosition, relativeMove.column, relativeMove.row);
-                    //    if ((0x88 & move) == 0) {
-                    //        var moveOption = CanITakeSquare(board, move);
-                    //        if (moveOption != MoveOption.INVALID) {
-                    //            AddMove(board, fromPosition, move, Move.EMPTY, moves);
-                    //        }
-                    //    }
-                    //}
                     byte isWhite = board.IsWhiteTurn;
                     // check if they are allowed to castle
                     // 1. Check history if rook or king has moved. This information is stored in the castlingBit
@@ -612,7 +573,7 @@ namespace ParallelChess {
                 case Piece.KNIGHT:
                     foreach (var relativeMove in knightMoves) {
                         int move = fromPosition + relativeMove;
-                        if ((move & 0x88) == 0) {
+                        if (IsValidPosition(move)) {
                             var moveOption = CanITakeSquare(board, move);
                             if (moveOption != MoveOption.INVALID) {
                                 AddMove(board, fromPosition, move, MoveFlags.EMPTY, moves);

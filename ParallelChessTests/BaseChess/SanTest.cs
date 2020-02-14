@@ -483,5 +483,41 @@ namespace ParallelChessTests.BaseChess {
             Assert.AreEqual("d5", board.StandardAlgebraicNotation(move));
         }
 
+        [Test]
+        public void differentiateBetweenRookMoves() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |_ _ _ k _ _ _ _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |R _ _ _ _ _ _ R| 2
+            |_ _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+            A2 -> D2
+            +---------------+
+            |_ _ _ k _ _ _ _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ R _ _ _ R| 2
+            |_ _ _ K _ _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/8/R6R/3K4 w - - 0 1");
+
+            var moves = BoardHelper.GetMoves(board);
+            var move = moves.FindTargetPosition(BoardStateOffset.A2, BoardStateOffset.D2);
+
+            Assert.AreEqual("Rad2+", board.StandardAlgebraicNotation(move));
+        }
+
     }
 }

@@ -48,7 +48,16 @@ namespace ChessApi.Services {
                     }
                 }
             }
+            var winner = BoardHelper.detectWinner(board, moves);
+            if(winner == Winner.DRAW) {
+                chessState.isDraw = true;
+            } else if(winner == Winner.WINNER_BLACK) {
+                chessState.blackWins = true;
+            } else if(winner == Winner.WINNER_WHITE) {
+                chessState.whiteWins = true;
+            }
 
+            chessState.fen = Chess.BoardToFen(board);
 
             return chessState;
         }
@@ -68,8 +77,8 @@ namespace ChessApi.Services {
         }
 
         public async Task<Move> GetAiMove(Board board) {
-
             var ai = new AIWorkerManager();
+
             ai.spawnWorkers(3);
 
             var cheatMoves = await ai.analyzeBoard(board, 5, new Stack<Move>());

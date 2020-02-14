@@ -23,5 +23,11 @@ namespace ChessApi.Services {
 
     public class ChessState {
         public List<ChessPiece> pieces { get; set; } = new List<ChessPiece>();
+
+        public bool blackWins {get;set;} = false;
+        public bool isDraw { get; set; } = false;
+        public bool whiteWins { get; set; } = false;
+
+        public string fen { get; set; } = "";
     }
 }

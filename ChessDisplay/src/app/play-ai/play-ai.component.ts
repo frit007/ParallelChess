@@ -11,24 +11,31 @@ export class PlayAiComponent implements OnInit {
 
   private state: ChessState;
   private gameId;
+  private winningMessage;
 
   ngOnInit() {
     this.startGame();
   }
 
   startGame() {
-    this.playAi.startGame().subscribe(progress => {
-      // console.log("state", state);
-      this.state = progress.state;
-      this.gameId = progress.gameId;
-    });
+    this.playAi.startGame().subscribe(this.onNewState.bind(this));
+  }
+
+  onNewState(progress) {
+    this.state = progress.state;
+    this.gameId = progress.gameId;
+    if (this.state.whiteWins) {
+      this.winningMessage = "White won!";
+    } else if (this.state.isDraw) {
+      this.winningMessage = "It is a draw!";
+    } else if (this.state.blackWins) {
+      this.winningMessage = "Black won!";
+    }
   }
 
   madeMove(move) {
-    console.log(move);
-    this.playAi.playMove(this.gameId, move).subscribe(progress => {
-      this.state = progress.state;
-      this.gameId = progress.gameId;
-    });
+    this.playAi
+      .playMove(this.gameId, move)
+      .subscribe(this.onNewState.bind(this));
   }
 }
