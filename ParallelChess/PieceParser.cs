@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace ParallelChess {
-    public static class PieceParse {
+    public static class PieceParser {
         public static Piece FromChar(char c) {
             char lowercaseCharacter = Char.ToLower(c);
             // black pieces are represented with lowercase characters
