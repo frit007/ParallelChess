@@ -67,7 +67,7 @@ namespace ChessApi.Services {
         }
 
         public Board ReplayMoves(List<string> san) {
-            Board board = Board.LoadBoardFromFen();
+            Board board = BoardFactory.LoadBoardFromFen();
 
             foreach (var move in san) {
                 board.MakeMove(move);

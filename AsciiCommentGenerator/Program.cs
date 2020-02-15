@@ -8,7 +8,7 @@ namespace AsciiCommentGenerator {
             Console.WriteLine("Please enter a FEN");
 
             var fen = Console.ReadLine();
-            Board board = Board.LoadBoardFromFen(fen);
+            Board board = BoardFactory.LoadBoardFromFen(fen);
 
             var color = board.IsWhiteTurnBool ? "White" : "Black";
             
@@ -62,7 +62,7 @@ namespace AsciiCommentGenerator {
                 Console.WriteLine($"{ChessOutput.AsciiBoard(board)}");
             }
             Console.WriteLine(" */\n" +
-                $"var board = Board.LoadBoardFromFen(\"{fen}\");\n\n"+
+                $"var board = BoardFactory.LoadBoardFromFen(\"{fen}\");\n\n"+
                 $"var moves = BoardHelper.GetMoves(board);");
 
             foreach (var move in moves) {

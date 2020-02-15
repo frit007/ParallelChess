@@ -25,7 +25,7 @@ namespace ParallelChessTests.AI.Easy {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("1k6/pppp1ppp/8/4Q3/8/8/8/2K5 w - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("1k6/pppp1ppp/8/4Q3/8/8/8/2K5 w - - 0 1");
 
             var moves = board.GetMoves();
             var bestMove = moves.FindTargetPosition(BoardStateOffset.E8);
@@ -55,7 +55,7 @@ namespace ParallelChessTests.AI.Easy {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("rkr5/ppp2ppp/8/4N3/8/8/8/2K5 w - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("rkr5/ppp2ppp/8/4N3/8/8/8/2K5 w - - 0 1");
 
             var moves = board.GetMoves();
             //var minmax = new MinMaxAI();
@@ -111,7 +111,7 @@ namespace ParallelChessTests.AI.Easy {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("6k1/8/8/3r4/8/4p1p1/4P1P1/2N3K1 w - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("6k1/8/8/3r4/8/4p1p1/4P1P1/2N3K1 w - - 0 1");
 
             var moves = board.GetMoves();
             var aiWorkers = new AIWorkerManager();
@@ -140,7 +140,7 @@ namespace ParallelChessTests.AI.Easy {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
 
             var moves = board.GetMoves();
 
@@ -230,7 +230,7 @@ namespace ParallelChessTests.AI.Easy {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("r1b1n2r/1q1nNpbk/1p1p2p1/p2NpPPp/2P1P2P/3BB3/PP6/R2QK2R w - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("r1b1n2r/1q1nNpbk/1p1p2p1/p2NpPPp/2P1P2P/3BB3/PP6/R2QK2R w - - 0 1");
 
             var aiWorkers = new AIWorkerManager();
             aiWorkers.spawnWorkers(3);
@@ -259,7 +259,7 @@ namespace ParallelChessTests.AI.Easy {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("B7/5PRp/4N2k/3p2p1/8/4P1P1/P5K1/8 b - - 0 2");
+            var board = BoardFactory.LoadBoardFromFen("B7/5PRp/4N2k/3p2p1/8/4P1P1/P5K1/8 b - - 0 2");
 
             var moves = board.GetMoves();
 
@@ -289,7 +289,7 @@ namespace ParallelChessTests.AI.Easy {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("7k/pRp3p1/PpP3P1/1P4p1/8/8/8/8 b - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("7k/pRp3p1/PpP3P1/1P4p1/8/8/8/8 b - - 0 1");
 
             var moves = board.GetMoves();
 

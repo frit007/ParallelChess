@@ -9,7 +9,7 @@ namespace ParallelChessTests.AI.Worker {
     class AIWorkerTest {
         [Test]
         public static void simple1Workers() {
-            var board = Board.LoadBoardFromFen();
+            var board = BoardFactory.LoadBoardFromFen();
 
             var ai = new AIWorkerManager();
 
@@ -37,7 +37,7 @@ namespace ParallelChessTests.AI.Worker {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
 
             var moves = board.GetMoves();
 
@@ -48,7 +48,7 @@ namespace ParallelChessTests.AI.Worker {
             //BestMove foundMove = MinMaxAI.MinMaxList(board, 3)[0];
 
             Assert.AreEqual(BoardStateOffset.F6, ai.GetBestMove().move.targetPosition);
-            //var board = Board.LoadBoardFromFen();
+            //var board = BoardFactory.LoadBoardFromFen();
 
 
             Assert.IsTrue(MoveHelper.isValidMove(ai.GetBestMove().move));
@@ -72,7 +72,7 @@ namespace ParallelChessTests.AI.Worker {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
 
             var moves = board.GetMoves();
 
@@ -83,7 +83,7 @@ namespace ParallelChessTests.AI.Worker {
             //BestMove foundMove = MinMaxAI.MinMaxList(board, 3)[0];
 
             Assert.AreEqual(BoardStateOffset.F6, ai.GetBestMove().move.targetPosition);
-            //var board = Board.LoadBoardFromFen();
+            //var board = BoardFactory.LoadBoardFromFen();
 
 
             Assert.IsTrue(MoveHelper.isValidMove(ai.GetBestMove().move));
@@ -166,7 +166,7 @@ namespace ParallelChessTests.AI.Worker {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("r1b1n2r/1q1nNpbk/1p1p2p1/p2NpPPp/2P1P2P/3BB3/PP6/R2QK2R w - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("r1b1n2r/1q1nNpbk/1p1p2p1/p2NpPPp/2P1P2P/3BB3/PP6/R2QK2R w - - 0 1");
 
             var ai = new AIWorkerManager();
 
@@ -183,7 +183,7 @@ namespace ParallelChessTests.AI.Worker {
 
         [Test]
         public static void simple2Workers() {
-            var board = Board.LoadBoardFromFen();
+            var board = BoardFactory.LoadBoardFromFen();
 
             var ai = new AIWorkerManager();
             ai.spawnWorkers(2);
@@ -193,7 +193,7 @@ namespace ParallelChessTests.AI.Worker {
 
         [Test]
         public static void simple4Workers() {
-            var board = Board.LoadBoardFromFen();
+            var board = BoardFactory.LoadBoardFromFen();
 
             var ai = new AIWorkerManager();
             ai.spawnWorkers(4);
@@ -203,7 +203,7 @@ namespace ParallelChessTests.AI.Worker {
 
         [Test]
         public static void simple4WorkersDepth5() {
-            var board = Board.LoadBoardFromFen();
+            var board = BoardFactory.LoadBoardFromFen();
 
             var ai = new AIWorkerManager();
 
@@ -215,7 +215,7 @@ namespace ParallelChessTests.AI.Worker {
 
         [Test]
         public static void findValidMove() {
-            var board = Board.LoadBoardFromFen();
+            var board = BoardFactory.LoadBoardFromFen();
 
             var ai = new AIWorkerManager();
 
@@ -228,7 +228,7 @@ namespace ParallelChessTests.AI.Worker {
         [Category("slow")]
         public static void CompleteTest() {
             // for some reason this board would not return a answer when on difficulty 6
-            var board = Board.LoadBoardFromFen("rnb1kbnr/pppp1ppp/4p3/8/3PP2q/8/PPP2PPP/RNBQKBNR w KQkq - 1 3");
+            var board = BoardFactory.LoadBoardFromFen("rnb1kbnr/pppp1ppp/4p3/8/3PP2q/8/PPP2PPP/RNBQKBNR w KQkq - 1 3");
             var ai = new AIWorkerManager();
 
             ai.spawnWorkers(1);

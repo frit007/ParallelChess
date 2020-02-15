@@ -9,7 +9,7 @@ namespace ParallelChessTests.BaseChess {
     class HashTableTests {
 
         private Board incrementalUpdate(string fen, int fromPosition, int toPosition) {
-            var board = Board.LoadBoardFromFen(fen);
+            var board = BoardFactory.LoadBoardFromFen(fen);
 
             var moves = board.GetMoves();
 
@@ -35,8 +35,8 @@ namespace ParallelChessTests.BaseChess {
 
         [Test]
         public void hashDifferentBoards() {
-            var first = Board.LoadBoardFromFen("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 2 2");
-            var second = Board.LoadBoardFromFen("rnbqkbnr/pppp1ppp/8/4p3/2B1PP2/8/PPPP2PP/RNBQK1NR b KQkq - 2 2");
+            var first = BoardFactory.LoadBoardFromFen("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 2 2");
+            var second = BoardFactory.LoadBoardFromFen("rnbqkbnr/pppp1ppp/8/4p3/2B1PP2/8/PPPP2PP/RNBQK1NR b KQkq - 2 2");
             
             Assert.AreNotEqual(HashBoard.hash(first), HashBoard.hash(second));
         }
@@ -69,7 +69,7 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 2 2");
+            var board = BoardFactory.LoadBoardFromFen("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR b KQkq - 2 2");
 
             var boardHash = HashBoard.hash(board);
 
@@ -114,7 +114,7 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            var board = Board.LoadBoardFromFen("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq - 2 2");
+            var board = BoardFactory.LoadBoardFromFen("rnbqkbnr/pppp1ppp/8/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq - 2 2");
 
             var moves = board.GetMoves();
 
@@ -380,7 +380,7 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
             */
-            var board = Board.LoadBoardFromFen("r3k2r/8/8/2pP4/8/8/8/R3K2R w KQkq c6 0 2");
+            var board = BoardFactory.LoadBoardFromFen("r3k2r/8/8/2pP4/8/8/8/R3K2R w KQkq c6 0 2");
 
             var moves = board.GetMoves();
 

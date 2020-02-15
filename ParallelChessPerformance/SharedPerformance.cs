@@ -22,7 +22,7 @@ namespace ParallelChessPerformance {
 
         [GlobalSetup]
         public void setup() {
-            board = Board.LoadBoardFromFen(fen);
+            board = BoardFactory.LoadBoardFromFen(fen);
         }
 
         //[Benchmark]

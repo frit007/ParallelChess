@@ -10,7 +10,7 @@ namespace ParallelChessPerformance {
     public class GetMovePerformance {
         //[Benchmark]
         //public void PawnMoveFromStart() {
-        //    byte[] board = Board.LoadBoardFromFen();
+        //    byte[] board = BoardFactory.LoadBoardFromFen();
 
         //    var moves = Board.GetMovesForPosition(board, BoardOffset.C2);
         //}
@@ -68,7 +68,7 @@ namespace ParallelChessPerformance {
 
         //[Benchmark]
         //public void PawnPerformanceTest() {
-        //    Board board = Board.LoadBoardFromFen();
+        //    Board board = BoardFactory.LoadBoardFromFen();
 
         //    for (int i = 0; i < 1000000; i++) {
         //        BoardHelper.GetMovesForPosition(board, BoardStateOffset.E2);
@@ -77,7 +77,7 @@ namespace ParallelChessPerformance {
 
         //[Benchmark]
         //public void GetAllMoves() {
-        //    Board board = Board.LoadBoardFromFen();
+        //    Board board = BoardFactory.LoadBoardFromFen();
         //    List<Move> moves = new List<Move>();
         //    for (int i = 0; i < 1000000; i++) {
         //        moves.Clear();
@@ -87,7 +87,7 @@ namespace ParallelChessPerformance {
 
         //[Benchmark]
         //public void MakeAllMoves() {
-        //    Board board = Board.LoadBoardFromFen();
+        //    Board board = BoardFactory.LoadBoardFromFen();
         //    Board virtualBoard = BoardHelper.CreateCopyBoard(board);
         //    List<Move> moves = new List<Move>();
         //    for (int i = 0; i < 1000000; i++) {
@@ -102,7 +102,7 @@ namespace ParallelChessPerformance {
 
         //[Benchmark]
         //public void FindValidMoves() {
-        //    Board board = Board.LoadBoardFromFen();
+        //    Board board = BoardFactory.LoadBoardFromFen();
         //    Board virtualBoard = BoardHelper.CreateCopyBoard(board);
         //    List<Move> moves = new List<Move>();
         //    for (int i = 0; i < 1000000; i++) {
@@ -123,7 +123,7 @@ namespace ParallelChessPerformance {
         //            BoardHelper.initThreadStaticVariables();
 
         //            for (int i = 0; i < (1000000 / count); i++) {
-        //                Board board = Board.LoadBoardFromFen();
+        //                Board board = BoardFactory.LoadBoardFromFen();
         //                Board virtualBoard = BoardHelper.CreateCopyBoard(board);
         //                List<Move> moves = new List<Move>();
         //                moves.Clear();
@@ -147,7 +147,7 @@ namespace ParallelChessPerformance {
 
         //[Benchmark]
         //public void KnightPerformanceTest() {
-        //    Board board = Board.LoadBoardFromFen();
+        //    Board board = BoardFactory.LoadBoardFromFen();
 
         //    for (int i = 0; i < 1000000; i++) {
         //        BoardHelper.GetMovesForPosition(board, BoardStateOffset.B1);
@@ -156,7 +156,7 @@ namespace ParallelChessPerformance {
 
         //[Benchmark]
         //public void KingPerformanceTest() {
-        //    Board board = Board.LoadBoardFromFen();
+        //    Board board = BoardFactory.LoadBoardFromFen();
 
         //    for (int i = 0; i < 1000000; i++) {
         //        BoardHelper.GetMovesForPosition(board, BoardStateOffset.E1);
@@ -165,7 +165,7 @@ namespace ParallelChessPerformance {
 
         //[Benchmark]
         //public void QueenPerformanceTest() {
-        //    Board board = Board.LoadBoardFromFen();
+        //    Board board = BoardFactory.LoadBoardFromFen();
 
         //    for (int i = 0; i < 1000000; i++) {
         //        BoardHelper.GetMovesForPosition(board, BoardStateOffset.D1);
@@ -175,7 +175,7 @@ namespace ParallelChessPerformance {
         //[Benchmark]
         //public void QueenWorstCasePerformanceTest() {
         //    // Basically a board where the queen stands in the midle of the board which means she has to check the entire board.
-        //    Board board = Board.LoadBoardFromFen("r2qk2r/8/8/3Q4/8/8/8/R3K2R w KQkq - 0 1");
+        //    Board board = BoardFactory.LoadBoardFromFen("r2qk2r/8/8/3Q4/8/8/8/R3K2R w KQkq - 0 1");
 
         //    for (int i = 0; i < 1000000; i++) {
         //        BoardHelper.GetMovesForPosition(board, BoardStateOffset.D5);
@@ -199,7 +199,7 @@ namespace ParallelChessPerformance {
             +---------------+
              A B C D E F G H
              */
-            Board board = Board.LoadBoardFromFen("rnbqkb1r/1p3ppp/p2p1n2/4p3/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 1 6");
+            Board board = BoardFactory.LoadBoardFromFen("rnbqkb1r/1p3ppp/p2p1n2/4p3/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 1 6");
             List<Move> moves = new List<Move>();
             for (int i = 0; i < 1000000; i++) {
                 moves.Clear();

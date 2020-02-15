@@ -9,7 +9,7 @@ namespace ParallelChessPerformance {
     public class MinMaxPerformance {
         [Benchmark]
         public void MinMaxTest() {
-            var board = Board.LoadBoardFromFen();
+            var board = BoardFactory.LoadBoardFromFen();
             var minmax = new MinMaxAI();
             minmax.MinMaxList(board, 6);
         }

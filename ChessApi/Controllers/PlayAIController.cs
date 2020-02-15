@@ -35,7 +35,7 @@ namespace ChessApi.Controllers
             });
             context.SaveChanges();
 
-            var board = Board.LoadBoardFromFen();
+            var board = BoardFactory.LoadBoardFromFen();
 
             var progress = new GameProgress() {
                 GameId = game.Entity.Id,

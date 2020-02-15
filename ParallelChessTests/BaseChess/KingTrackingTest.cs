@@ -8,7 +8,7 @@ namespace ParallelChessTests.BaseChess {
     class KingTrackingTest {
         [Test]
         public void LoadedFromFEN() {
-            var board = Board.LoadBoardFromFen();
+            var board = BoardFactory.LoadBoardFromFen();
 
             Assert.AreEqual(BoardStateOffset.E1, board.WhiteKingPosition);
             Assert.AreEqual(BoardStateOffset.E8, board.BlackKingPosition);
@@ -42,7 +42,7 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              The board should still know where the black king is
             */
-            var board = Board.LoadBoardFromFen("1k6/6pp/8/8/8/8/6PP/1K6 b - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("1k6/6pp/8/8/8/8/6PP/1K6 b - - 0 1");
 
             board.MakeMove(BoardStateOffset.B8, BoardStateOffset.B7);
 
@@ -78,7 +78,7 @@ namespace ParallelChessTests.BaseChess {
              the board should still know where the white king is
             */
 
-            var board = Board.LoadBoardFromFen("1k6/6pp/8/8/8/8/6PP/1K6 w - - 0 1");
+            var board = BoardFactory.LoadBoardFromFen("1k6/6pp/8/8/8/8/6PP/1K6 w - - 0 1");
 
             board.MakeMove(BoardStateOffset.B1, BoardStateOffset.B2);
 

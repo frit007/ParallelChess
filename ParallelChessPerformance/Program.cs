@@ -10,7 +10,7 @@ namespace ParallelChessPerformance {
         static void Main(string[] args) {
 
             //for (int i = 0; i < 10000000; i++) {
-            //    var board = Board.LoadBoardFromFen();
+            //    var board = BoardFactory.LoadBoardFromFen();
 
             //    var ai = new AIWorkerManager();
 
@@ -20,7 +20,7 @@ namespace ParallelChessPerformance {
             //    Console.WriteLine($"still working: {i}");
             //}
 
-            //var board = Board.LoadBoardFromFen("r1b1n2r/1q1nNpbk/1p1p2p1/p2NpPPp/2P1P2P/3BB3/PP6/R2QK2R w - - 0 1");
+            //var board = BoardFactory.LoadBoardFromFen("r1b1n2r/1q1nNpbk/1p1p2p1/p2NpPPp/2P1P2P/3BB3/PP6/R2QK2R w - - 0 1");
 
             //var moves = Board.GetMoves(board);
 

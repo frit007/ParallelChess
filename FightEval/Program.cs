@@ -40,7 +40,7 @@ namespace FightEval {
 
             ai.spawnWorkers(3);
 
-            var board = Board.LoadBoardFromFen();
+            var board = BoardFactory.LoadBoardFromFen();
             bool hasCheated = false;
             int difficulty = 5;
             bool debug = false;
@@ -131,7 +131,7 @@ namespace FightEval {
                                 var fenList = readLineOriginal.Split(" ").ToList();
                                 fenList.RemoveAt(0);
                                 var fen = String.Join(" ", fenList);
-                                board = Board.LoadBoardFromFen(fen);
+                                board = BoardFactory.LoadBoardFromFen(fen);
                                 Console.WriteLine($"Loaded board {fen}");
                                 Console.WriteLine(ChessOutput.AsciiBoard(board));
                                 continue;

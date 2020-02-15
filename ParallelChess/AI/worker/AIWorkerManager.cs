@@ -54,7 +54,7 @@ namespace ParallelChess.AI.worker {
             HashSet<ulong> tiedPositions = new HashSet<ulong>();
 
             // take copies so we do not modify the original collection
-            var boardCopy = board.CreateCopyBoard();
+            var boardCopy = board.CreateCopy();
             Stack<Move> historyCopy = new Stack<Move>(history);
             var hash = HashBoard.hash(board);
             while (historyCopy.Count != 0) {
@@ -171,7 +171,7 @@ namespace ParallelChess.AI.worker {
                         var worker = workers[i];
                         var aiTask = new AITask() {
                             taskId = i,
-                            board = board.CreateCopyBoard(),
+                            board = board.CreateCopy(),
                             moves = workerMoves,
                             depth = depth,
                             tiedPositions = tiedBoards,
