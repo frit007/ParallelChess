@@ -9,9 +9,9 @@ namespace ParallelChessTests.BaseChess {
 
         [Test]
         public void SimpleBoard() {
-            var board = Chess.LoadBoardFromFen();
+            var board = Board.LoadBoardFromFen();
 
-            string ascii = Chess.AsciiBoard(board);
+            string ascii = ChessOutput.AsciiBoard(board);
 
             Console.WriteLine(ascii);
         }

@@ -72,7 +72,7 @@ namespace ParallelChessTests.BaseChess {
                 +---------------+
                  A B C D E F G H
              */
-            Board board = Chess.LoadBoardFromFen("4k3/4q3/8/8/8/8/2N5/3QK3 w - - 0 1");
+            Board board = Board.LoadBoardFromFen("4k3/4q3/8/8/8/8/2N5/3QK3 w - - 0 1");
 
             List<Move> moves = board.GetMovesForPosition(BoardStateOffset.C2);
 
@@ -116,7 +116,7 @@ namespace ParallelChessTests.BaseChess {
                 +---------------+
                  A B C D E F G H
              */
-            Board board = Chess.LoadBoardFromFen("4k3/8/8/8/7q/3N4/8/3QK3 w - - 0 1");
+            Board board = Board.LoadBoardFromFen("4k3/8/8/8/7q/3N4/8/3QK3 w - - 0 1");
 
             List<Move> moves = board.GetMovesForPosition(BoardStateOffset.D3);
 
@@ -162,7 +162,7 @@ namespace ParallelChessTests.BaseChess {
               +---------------+
                A B C D E F G H
             */
-            Board board = Chess.LoadBoardFromFen("r3qk1r/8/8/3Q4/8/8/7R/R3K3 w Qkq - 0 1");
+            Board board = Board.LoadBoardFromFen("r3qk1r/8/8/3Q4/8/8/7R/R3K3 w Qkq - 0 1");
 
             List<Move> moves = board.GetMovesForPosition(BoardStateOffset.D5);
 
@@ -211,7 +211,7 @@ namespace ParallelChessTests.BaseChess {
              +---------------+
               A B C D E F G H
               */
-            Board board = Chess.LoadBoardFromFen("6k1/5ppp/8/8/8/2Q2n2/8/4K3 w - - 0 1");
+            Board board = Board.LoadBoardFromFen("6k1/5ppp/8/8/8/2Q2n2/8/4K3 w - - 0 1");
 
             List<Move> moves = board.GetMovesForPosition(BoardStateOffset.C3);
 
@@ -250,7 +250,7 @@ namespace ParallelChessTests.BaseChess {
              +---------------+
               A B C D E F G H
             */
-            Board board = Chess.LoadBoardFromFen("6k1/5ppp/8/8/8/8/8/2Q1K3 w - - 0 1");
+            Board board = Board.LoadBoardFromFen("6k1/5ppp/8/8/8/8/8/2Q1K3 w - - 0 1");
 
             var moves = board.GetMovesForPosition(BoardStateOffset.C1);
 
@@ -288,7 +288,7 @@ namespace ParallelChessTests.BaseChess {
              +---------------+
               A B C D E F G H
               */
-            Board board = Chess.LoadBoardFromFen("8/8/8/8/8/5k2/8/1r3K2 w - - 0 1");
+            Board board = Board.LoadBoardFromFen("8/8/8/8/8/5k2/8/1r3K2 w - - 0 1");
 
             var moves = board.GetMovesForPosition(BoardStateOffset.F1);
 
@@ -330,7 +330,7 @@ namespace ParallelChessTests.BaseChess {
              +---------------+
               A B C D E F G H
              */
-            var board = Chess.LoadBoardFromFen("2k5/1ppp4/8/8/4Q3/8/4p3/5K2 w - - 0 1");
+            var board = Board.LoadBoardFromFen("2k5/1ppp4/8/8/4Q3/8/4p3/5K2 w - - 0 1");
 
             var moves = board.GetMovesForPosition(BoardStateOffset.E4);
 
@@ -367,7 +367,7 @@ namespace ParallelChessTests.BaseChess {
              +---------------+
               A B C D E F G H
              */
-            var board = Chess.LoadBoardFromFen("3k4/2P5/2q5/8/8/8/4PPP1/5K2 b - - 0 1");
+            var board = Board.LoadBoardFromFen("3k4/2P5/2q5/8/8/8/4PPP1/5K2 b - - 0 1");
 
             var moves = board.GetMovesForPosition(BoardStateOffset.C6);
 

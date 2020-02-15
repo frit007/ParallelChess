@@ -57,7 +57,7 @@ namespace ParallelChessPerformance {
 
         //[Benchmark]
         //public void evalBoard() {
-        //    var board = Chess.LoadBoardFromFen("r1b1n2r/1q1nNpbk/1p1p2p1/p2NpPPp/2P1P2P/3BB3/PP6/R2QK2R w - - 0 1");
+        //    var board = Board.LoadBoardFromFen("r1b1n2r/1q1nNpbk/1p1p2p1/p2NpPPp/2P1P2P/3BB3/PP6/R2QK2R w - - 0 1");
         //    ParallelChess.AI.MinMaxAI.MinMax(board, 5);
         //}
     }

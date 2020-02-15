@@ -57,7 +57,7 @@ namespace ChessApi.Services {
                 chessState.whiteWins = true;
             }
 
-            chessState.fen = Chess.BoardToFen(board);
+            chessState.fen = board.FEN;
 
             return chessState;
         }
@@ -67,10 +67,10 @@ namespace ChessApi.Services {
         }
 
         public Board ReplayMoves(List<string> san) {
-            Board board = Chess.LoadBoardFromFen();
+            Board board = Board.LoadBoardFromFen();
 
             foreach (var move in san) {
-                Chess.MakeMove(board, move);
+                board.MakeMove(move);
             }
 
             return board;

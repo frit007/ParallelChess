@@ -13,8 +13,123 @@ namespace ParallelChess {
         public static void initThreadStaticVariables() {
             EvalBoard.initThreadStaticVariables();
         }
-        // 
-        //public const int BOARD_STATE_SIZE_IN_BYTES = 75;
+
+
+
+        public const int A_COLUMN = 0;
+        public const int B_COLUMN = 1;
+        public const int C_COLUMN = 2;
+        public const int D_COLUMN = 3;
+        public const int E_COLUMN = 4;
+        public const int F_COLUMN = 5;
+        public const int G_COLUMN = 6;
+        public const int H_COLUMN = 7;
+
+
+        // Loads a board from the FEN notation(Forsyth–Edwards Notation)
+        // Useful for getting to certain chess positions quickly. 
+        // Use the website below to generate positions
+        // https://lichess.org/editor/8/1QQ2QQ1/QqqQQqqQ/QqqqqqqQ/QqqqqqqQ/1QqqqqQ1/2QqqQ2/3QQ3_b_-_-_0_1
+        // FEN consists of 6 parts which are sepperated by space
+        // 1. Position
+        //  - Describes what pieces are at which positions
+        //  - The pieces are described from left to right with a "/" to indicate row changes
+        //  - a single letter is used to represent a piece
+        //    - P = Pawn
+        //    - N = Knight
+        //    - B = Bishop
+        //    - R = Rook
+        //    - Q = Queen
+        //    - K = King
+        //  - Capital letters indicate White pieces, while lowercase letter indicate Black pieces
+        // 2. active color
+        //  - Either "w" or "b", which indicates whose turn it is.
+        // 3. castling options
+        //  - stores information if about who is allowed to castle.
+        //  - Capital letters indicate White side lowercase letters are blacks options
+        //  - the letters K and Q mean queen or kingside castle.
+        //  - If no castling options it is marked with a "-"
+        // 4. En passant target
+        //  - marks which square is current possible to attack with en passant.
+        // 5. Half move clock
+        //  - Stores how many half moves have been made since the last capture or pawn move
+        //  - This is used for declaring stalemate
+        // 6. Fullmove number
+        //  - Counts how many full moves have been made
+        public static Board LoadBoardFromFen(String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+            Board board = new Board() {
+                bytes = new byte[BoardStateOffset.BOARD_STATE_SIZE]
+            };
+
+            var sections = fen.Split(" ");
+
+            if (sections.Length != 6) {
+                throw new ArgumentException("FEN has to contanin 6 sections");
+            }
+
+            string positions = sections[0];
+            string activeColor = sections[1];
+            string castlingOptions = sections[2];
+            string enPassantAttackedSquare = sections[3];
+            string halfMoveClock = sections[4];
+            string fullMoveClock = sections[5];
+
+            int square = BoardStateOffset.A8;
+
+            for (var i = 0; i < positions.Length; i++) {
+                char piece = positions[i];
+                if (piece == '/') {
+                    square -= 24;
+                } else if (Char.IsDigit(piece)) {
+                    square += int.Parse(piece.ToString());
+                } else {
+                    Piece parsedPiece = PieceParse.FromChar(piece);
+                    //Board.PutPiece(board, square, parsedPiece);
+                    board.SetPiece(square, parsedPiece);
+                    if ((parsedPiece & Piece.PIECE_MASK) == Piece.KING) {
+                        //Board.SetKingPosition(board, (parsedPiece & Piece.IS_WHITE) == Piece.IS_WHITE, square);
+                        board.SetKingPosition((int)(parsedPiece & Piece.IS_WHITE), (byte)square);
+                    }
+                    square++;
+                }
+            }
+
+            //Board.SetIsWhitesTurn(board, activeColor == "w");
+            board.IsWhiteTurnBool = activeColor == "w";
+
+            if (castlingOptions.Contains("K")) {
+                //Board.SetCastleBit(board, CastlingBits.WHITE_KING_SIDE_CASTLE, true);
+                board.CastlingBits |= CastlingBits.WHITE_KING_SIDE_CASTLE;
+            }
+            if (castlingOptions.Contains("Q")) {
+                //Board.SetCastleBit(board, CastlingBits.WHITE_QUEEN_SIDE_CASTLE, true);
+                board.CastlingBits |= CastlingBits.WHITE_QUEEN_SIDE_CASTLE;
+            }
+            if (castlingOptions.Contains("k")) {
+                //Board.SetCastleBit(board, CastlingBits.BLACK_KING_SIDE_CASTLE, true);
+                board.CastlingBits |= CastlingBits.BLACK_KING_SIDE_CASTLE;
+            }
+            if (castlingOptions.Contains("q")) {
+                //Board.SetCastleBit(board, CastlingBits.BLACK_QUEEN_SIDE_CASTLE, true);
+                board.CastlingBits |= CastlingBits.BLACK_QUEEN_SIDE_CASTLE;
+            }
+
+            if (enPassantAttackedSquare == "-") {
+                //Board.SetEnPassantAttackedSquare(board, EnPassant.NO_ENPASSANT);
+                board.EnPassantTarget = EnPassant.NO_ENPASSANT;
+            } else {
+                //Board.SetEnPassantAttackedSquare(board, Board.AlgebraicPosition(enPassantAttackedSquare));
+                board.EnPassantTarget = (byte)Board.ArrayPosition(enPassantAttackedSquare);
+            }
+
+            //Board.SetHalfTurnCounter(board, int.Parse(halfMoveClock));
+            board.HalfTurnCounter = (byte)int.Parse(halfMoveClock);
+
+            //Board.SetFullMoveClock(board, int.Parse(fullMoveClock));
+            board.TurnCounter = (short)int.Parse(fullMoveClock);
+
+            return board;
+        }
 
         [FieldOffset(0)]
         public byte[] bytes;
@@ -352,15 +467,11 @@ namespace ParallelChess {
             set { shorts[BoardStateOffset.TURN_COUNTER_FROM_SHORT] = value; } 
         }
 
-        //[FieldOffset(72)]
-        //public byte virtual_level;
         public byte VirtualLevel { 
             get { return bytes[BoardStateOffset.VIRTUAL_LEVEL]; } 
             set { bytes[BoardStateOffset.VIRTUAL_LEVEL] = value; } 
         }
 
-        //[FieldOffset(73)]
-        //public byte isWhitesTurn;
         public byte IsWhiteTurn { 
             get { return bytes[BoardStateOffset.IS_WHITE_TURN]; }
             set { bytes[BoardStateOffset.IS_WHITE_TURN] = value; }
@@ -369,10 +480,164 @@ namespace ParallelChess {
             get { return 0 != bytes[BoardStateOffset.IS_WHITE_TURN]; }
             set { bytes[BoardStateOffset.IS_WHITE_TURN] = (byte)(value ? 1 : 0); }
         }
-        #endregion
+        // Forsyth–Edwards Notation of the current chess board state
         public string FEN {
-            get { return Chess.BoardToFen(this); }
+            get { return ChessOutput.BoardToFen(this); }
         }
+        #endregion
+
+
+        #region MakeMove
+
+        public Move FindMove(int from, int to) {
+            List<Move> moves = GetMovesForPosition(from);
+
+            Move targetPosition = moves.FindTargetPosition(to);
+            if (!MoveHelper.isValidMove(targetPosition)) {
+                throw new Exception("Move not found");
+            }
+            if (!IsLegalMove(targetPosition)) {
+                throw new Exception("Illegal move");
+            }
+
+            return targetPosition;
+        }
+
+        public Move FindMove(int from, int to, Piece promotion) {
+            List<Move> moves = GetMovesForPosition(from);
+
+            Move targetPosition = moves.FindTargetPosition(to, promotion);
+            if (!MoveHelper.isValidMove(targetPosition)) {
+                throw new Exception("Move not found");
+            }
+
+            if (!IsLegalMove(targetPosition)) {
+                throw new Exception("Illegal move");
+            }
+
+            return targetPosition;
+        }
+
+        public Move MakeMove(int from, int to) {
+            Move targetPosition = FindMove(from, to);
+
+            MakeMove(targetPosition);
+
+            return targetPosition;
+        }
+
+        public Move MakeMove(string san) {
+            foreach (var move in GetMoves()) {
+                if (IsLegalMove(move) && StandardAlgebraicNotation(move) == san.Trim()) {
+                    MakeMove(move);
+                    return move;
+                }
+            }
+
+            throw new Exception("Move not found!");
+        }
+
+        public Move MakeMove(int from, int to, Piece promotion) {
+            Move targetPosition = FindMove(from, to, promotion);
+
+            MakeMove(targetPosition);
+
+            return targetPosition;
+        }
+
+        public void MakeMove(Move move) {
+            int toPosition = move.targetPosition;
+            int fromPosition = move.fromPosition;
+            bool isWhitesTurn = IsWhiteTurnBool;
+
+            Piece piece = GetPiece(fromPosition);
+            Piece pieceType = piece & Piece.PIECE_MASK;
+            Piece takenPiece = GetPiece(toPosition);
+            Piece promotion = (Piece)move.promotion;
+            MoveFlags moveFlags = (MoveFlags)move.moveFlags;
+
+            if ((moveFlags & MoveFlags.BIG_PAWN_MOVE) == MoveFlags.BIG_PAWN_MOVE) {
+                // when making a big pawn move mark the square behind the moving pawn vulnerable to 
+                if (isWhitesTurn) {
+                    EnPassantTarget = (byte)(toPosition - BoardStateOffset.ROW_OFFSET);
+                } else {
+                    EnPassantTarget = (byte)(toPosition + BoardStateOffset.ROW_OFFSET);
+                }
+            } else {
+                EnPassantTarget = EnPassant.NO_ENPASSANT;
+            }
+            switch (pieceType) {
+                case Piece.PAWN:
+                    if ((moveFlags & MoveFlags.ENPASSANT) == MoveFlags.ENPASSANT) {
+                        // When taking with enpassant remove the piece
+                        if (isWhitesTurn) {
+                            SetPiece(toPosition - BoardStateOffset.ROW_OFFSET, Piece.EMPTY);
+                        } else {
+                            SetPiece(toPosition + BoardStateOffset.ROW_OFFSET, Piece.EMPTY);
+                        }
+                    }
+
+                    break;
+                case Piece.KING:
+                    if ((moveFlags & MoveFlags.CASTLING) == MoveFlags.CASTLING) {
+                        switch (toPosition) {
+                            case BoardStateOffset.C1:
+                                D1 = A1;
+                                A1 = Piece.EMPTY;
+                                break;
+                            case BoardStateOffset.G1:
+                                F1 = H1;
+                                H1 = Piece.EMPTY;
+                                break;
+                            case BoardStateOffset.C8:
+                                D8 = A8;
+                                A8 = Piece.EMPTY;
+                                break;
+                            case BoardStateOffset.G8:
+                                F8 = H8;
+                                H8 = Piece.EMPTY;
+                                break;
+                        }
+                    }
+                    SetKingPosition(IsWhiteTurn, (byte)toPosition);
+                    break;
+            }
+
+
+            var castleBit = CastlingBits;
+            // remove opportunity to castle based on the position on the board
+            CastlingBits = CastlingBits
+                & CastlingHelper.castleLookup[toPosition]
+                & CastlingHelper.castleLookup[fromPosition];
+
+
+            // move piece to new position
+            if (promotion == Piece.EMPTY) {
+                SetPiece(toPosition, piece);
+            } else {
+                SetPiece(toPosition, promotion | (Piece)IsWhiteTurn);
+            }
+
+            // remove piece from previous position
+            SetPiece(fromPosition, Piece.EMPTY);
+
+            if (pieceType == Piece.PAWN || ((takenPiece & Piece.PIECE_MASK) != Piece.EMPTY)) {
+                HalfTurnCounter = 0;
+            } else {
+                HalfTurnCounter++;
+            }
+
+
+            if (!isWhitesTurn) {
+                // increment fullMoveClock after blacks turn
+                TurnCounter++;
+            }
+
+            // flip turn
+            IsWhiteTurn = (byte)(IsWhiteTurn ^ 1);
+        }
+        #endregion
+
         public string StandardAlgebraicNotation(Move move) {
             var moves = GetMoves();
 
@@ -482,18 +747,6 @@ namespace ParallelChess {
 
             return san.ToString();
         }
-
-
-
-
-        public const int A_COLUMN = 0;
-        public const int B_COLUMN = 1;
-        public const int C_COLUMN = 2;
-        public const int D_COLUMN = 3;
-        public const int E_COLUMN = 4;
-        public const int F_COLUMN = 5;
-        public const int G_COLUMN = 6;
-        public const int H_COLUMN = 7;
 
         public Winner detectWinnerAreThereValidMoves(bool areThereValidMoves) {
             if (!areThereValidMoves) {
@@ -675,13 +928,6 @@ namespace ParallelChess {
         public bool IsPositionEmpty(int position) {
             return GetPiece(position) == Piece.EMPTY;
         }
-
-        public enum MoveOption {
-            INVALID,
-            CAPTURE,
-            NO_FIGHT
-        }
-
         public MoveOption CanITakeSquare(int position) {
             var piece = GetPiece(position);
             if (piece == Piece.EMPTY) {
@@ -696,6 +942,8 @@ namespace ParallelChess {
                 return MoveOption.CAPTURE;
             }
         }
+
+        #region GetMoves
 
         public static int[] kingMoves = {
             BoardStateOffset.ROW_OFFSET * 1 + 1,
@@ -728,99 +976,6 @@ namespace ParallelChess {
             -2 + BoardStateOffset.ROW_OFFSET * -1,              2 + BoardStateOffset.ROW_OFFSET * -1,
                    -1 + BoardStateOffset.ROW_OFFSET * -2 , 1 + BoardStateOffset.ROW_OFFSET * -2,
         };
-
-        public bool Attacked(int position, byte pretendToBeWhite) {
-            int theirColor = pretendToBeWhite ^ 1;
-            Piece theirColorPiece = (Piece)theirColor;
-            foreach (var move in slantedMoves) {
-                int relativePosition = position;
-                // king filter is used to allow kings to attack one square
-                // they are disabled are the first rotation
-                bool isFirstPosition = true;
-                do {
-                    relativePosition += move;
-                    if (IsValidPosition(relativePosition)) {
-                        var piece = GetPiece(relativePosition);
-                        if (piece != Piece.EMPTY) {
-                            Piece enemySlantedAttacked = (theirColorPiece | Piece.ATTACKS_SLANTED);
-                            if ((piece & (Piece.ATTACKS_SLANTED | Piece.IS_WHITE)) == enemySlantedAttacked) {
-                                return true;
-                            }
-                            if (isFirstPosition) {
-                                Piece kingFilter = (theirColorPiece | Piece.KING);
-                                if ((piece & (Piece.PIECE_MASK | Piece.IS_WHITE)) == kingFilter) {
-                                    return true;
-                                }
-                            }
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
-                    isFirstPosition = false;
-                } while (true);
-            }
-
-            foreach (var move in straightMoves) {
-                int relativePosition = position;
-                // king filter is used to allow kings to attack one square
-                // they are disabled are the first square
-                bool isFirstPosition = true;
-                do {
-                    relativePosition += move;
-                    if (IsValidPosition(relativePosition)) {
-                        var piece = GetPiece(relativePosition);
-                        if (piece != Piece.EMPTY) {
-                            Piece enemySlantedAttacked = (theirColorPiece | Piece.ATTACKS_STRAIGHT);
-                            if ((piece & (Piece.ATTACKS_STRAIGHT | Piece.IS_WHITE)) == enemySlantedAttacked) {
-                                return true;
-                            }
-                            if (isFirstPosition) {
-                                Piece kingFilter = (theirColorPiece | Piece.KING);
-                                if ((piece & (Piece.PIECE_MASK | Piece.IS_WHITE)) == kingFilter) {
-                                    return true;
-                                }
-                            }
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
-                    isFirstPosition = false;
-                } while (true);
-            }
-
-            foreach (var move in knightMoves) {
-                int relativePosition = position + move;
-
-                if (IsValidPosition(relativePosition)) {
-                    var piece = GetPiece(relativePosition);
-                    Piece enemySlantedAttacked = (theirColorPiece | Piece.KNIGHT);
-                    if ((piece & (Piece.PIECE_MASK | Piece.IS_WHITE)) == enemySlantedAttacked) {
-                        return true;
-                    }
-                }
-            }
-
-            int leftPawnPosition = position - BoardStateOffset.ROW_OFFSET - 1 + BoardStateOffset.ROW_OFFSET * pretendToBeWhite * 2;
-            int rightPawnPosition = position - BoardStateOffset.ROW_OFFSET + 1 + BoardStateOffset.ROW_OFFSET * pretendToBeWhite * 2;
-            if (IsValidPosition(leftPawnPosition)) {
-                Piece leftPawn = GetPiece(leftPawnPosition);
-                if (leftPawn == (theirColorPiece | Piece.PAWN)) {
-                    return true;
-                }
-            }
-
-            if (IsValidPosition(rightPawnPosition)) {
-                Piece rightPawn = GetPiece(rightPawnPosition);
-                if (rightPawn == (theirColorPiece | Piece.PAWN)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public bool CanICastleQueenSide() {
             CastlingBits castlingBits = CastlingBits;
 
@@ -889,17 +1044,6 @@ namespace ParallelChess {
                     }
                 } while (true);
             }
-        }
-
-        public bool IsLegalMove(Move move) {
-            byte myTurn = IsWhiteTurn;
-            MakeMove(move);
-
-            var notAttacked = !Attacked(GetKingPosition(myTurn), myTurn);
-
-            UndoMove(move);
-
-            return notAttacked;
         }
 
         public List<Move> GetMoves(List<Move> moves = null) {
@@ -1049,6 +1193,111 @@ namespace ParallelChess {
 
             return moves;
         }
+        #endregion
+        public bool Attacked(int position, byte pretendToBeWhite) {
+            int theirColor = pretendToBeWhite ^ 1;
+            Piece theirColorPiece = (Piece)theirColor;
+            foreach (var move in slantedMoves) {
+                int relativePosition = position;
+                // king filter is used to allow kings to attack one square
+                // they are disabled are the first rotation
+                bool isFirstPosition = true;
+                do {
+                    relativePosition += move;
+                    if (IsValidPosition(relativePosition)) {
+                        var piece = GetPiece(relativePosition);
+                        if (piece != Piece.EMPTY) {
+                            Piece enemySlantedAttacked = (theirColorPiece | Piece.ATTACKS_SLANTED);
+                            if ((piece & (Piece.ATTACKS_SLANTED | Piece.IS_WHITE)) == enemySlantedAttacked) {
+                                return true;
+                            }
+                            if (isFirstPosition) {
+                                Piece kingFilter = (theirColorPiece | Piece.KING);
+                                if ((piece & (Piece.PIECE_MASK | Piece.IS_WHITE)) == kingFilter) {
+                                    return true;
+                                }
+                            }
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                    isFirstPosition = false;
+                } while (true);
+            }
+
+            foreach (var move in straightMoves) {
+                int relativePosition = position;
+                // king filter is used to allow kings to attack one square
+                // they are disabled are the first square
+                bool isFirstPosition = true;
+                do {
+                    relativePosition += move;
+                    if (IsValidPosition(relativePosition)) {
+                        var piece = GetPiece(relativePosition);
+                        if (piece != Piece.EMPTY) {
+                            Piece enemySlantedAttacked = (theirColorPiece | Piece.ATTACKS_STRAIGHT);
+                            if ((piece & (Piece.ATTACKS_STRAIGHT | Piece.IS_WHITE)) == enemySlantedAttacked) {
+                                return true;
+                            }
+                            if (isFirstPosition) {
+                                Piece kingFilter = (theirColorPiece | Piece.KING);
+                                if ((piece & (Piece.PIECE_MASK | Piece.IS_WHITE)) == kingFilter) {
+                                    return true;
+                                }
+                            }
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                    isFirstPosition = false;
+                } while (true);
+            }
+
+            foreach (var move in knightMoves) {
+                int relativePosition = position + move;
+
+                if (IsValidPosition(relativePosition)) {
+                    var piece = GetPiece(relativePosition);
+                    Piece enemySlantedAttacked = (theirColorPiece | Piece.KNIGHT);
+                    if ((piece & (Piece.PIECE_MASK | Piece.IS_WHITE)) == enemySlantedAttacked) {
+                        return true;
+                    }
+                }
+            }
+
+            int leftPawnPosition = position - BoardStateOffset.ROW_OFFSET - 1 + BoardStateOffset.ROW_OFFSET * pretendToBeWhite * 2;
+            int rightPawnPosition = position - BoardStateOffset.ROW_OFFSET + 1 + BoardStateOffset.ROW_OFFSET * pretendToBeWhite * 2;
+            if (IsValidPosition(leftPawnPosition)) {
+                Piece leftPawn = GetPiece(leftPawnPosition);
+                if (leftPawn == (theirColorPiece | Piece.PAWN)) {
+                    return true;
+                }
+            }
+
+            if (IsValidPosition(rightPawnPosition)) {
+                Piece rightPawn = GetPiece(rightPawnPosition);
+                if (rightPawn == (theirColorPiece | Piece.PAWN)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        public bool IsLegalMove(Move move) {
+            byte myTurn = IsWhiteTurn;
+            MakeMove(move);
+
+            var notAttacked = !Attacked(GetKingPosition(myTurn), myTurn);
+
+            UndoMove(move);
+
+            return notAttacked;
+        }
+
 
         public void UndoMove(Move move) {
             int targetPosition = move.targetPosition;
@@ -1107,99 +1356,6 @@ namespace ParallelChess {
             // switch turn back to whites turn
             IsWhiteTurn = (byte)ourColor;
         }
-
-        public void MakeMove(Move move) {
-            int toPosition = move.targetPosition;
-            int fromPosition = move.fromPosition;
-            bool isWhitesTurn = IsWhiteTurnBool;
-
-            Piece piece = GetPiece(fromPosition);
-            Piece pieceType = piece & Piece.PIECE_MASK;
-            Piece takenPiece = GetPiece(toPosition);
-            Piece promotion = (Piece)move.promotion;
-            MoveFlags moveFlags = (MoveFlags)move.moveFlags;
-
-            if ((moveFlags & MoveFlags.BIG_PAWN_MOVE) == MoveFlags.BIG_PAWN_MOVE) {
-                // when making a big pawn move mark the square behind the moving pawn vulnerable to 
-                if (isWhitesTurn) {
-                    EnPassantTarget = (byte)(toPosition - BoardStateOffset.ROW_OFFSET);
-                } else {
-                    EnPassantTarget = (byte)(toPosition + BoardStateOffset.ROW_OFFSET);
-                }
-            } else {
-                EnPassantTarget = EnPassant.NO_ENPASSANT;
-            }
-            switch (pieceType) {
-                case Piece.PAWN:
-                    if ((moveFlags & MoveFlags.ENPASSANT) == MoveFlags.ENPASSANT) {
-                        // When taking with enpassant remove the piece
-                        if (isWhitesTurn) {
-                            SetPiece(toPosition - BoardStateOffset.ROW_OFFSET, Piece.EMPTY);
-                        } else {
-                            SetPiece(toPosition + BoardStateOffset.ROW_OFFSET, Piece.EMPTY);
-                        }
-                    }
-
-                    break;
-                case Piece.KING:
-                    if ((moveFlags & MoveFlags.CASTLING) == MoveFlags.CASTLING) {
-                        switch (toPosition) {
-                            case BoardStateOffset.C1:
-                                D1 = A1;
-                                A1 = Piece.EMPTY;
-                                break;
-                            case BoardStateOffset.G1:
-                                F1 = H1;
-                                H1 = Piece.EMPTY;
-                                break;
-                            case BoardStateOffset.C8:
-                                D8 = A8;
-                                A8 = Piece.EMPTY;
-                                break;
-                            case BoardStateOffset.G8:
-                                F8 = H8;
-                                H8 = Piece.EMPTY;
-                                break;
-                        }
-                    }
-                    SetKingPosition(IsWhiteTurn, (byte)toPosition);
-                    break;
-            }
-
-
-            var castleBit = CastlingBits;
-            // remove opportunity to castle based on the position on the board
-            CastlingBits = CastlingBits
-                & CastlingHelper.castleLookup[toPosition]
-                & CastlingHelper.castleLookup[fromPosition];
-
-
-            // move piece to new position
-            if (promotion == Piece.EMPTY) {
-                SetPiece(toPosition, piece);
-            } else {
-                SetPiece(toPosition, promotion | (Piece)IsWhiteTurn);
-            }
-
-            // remove piece from previous position
-            SetPiece(fromPosition, Piece.EMPTY);
-
-            if (pieceType == Piece.PAWN || ((takenPiece & Piece.PIECE_MASK) != Piece.EMPTY)) {
-                HalfTurnCounter = 0;
-            } else {
-                HalfTurnCounter++;
-            }
-
-
-            if (!isWhitesTurn) {
-                // increment fullMoveClock after blacks turn
-                TurnCounter++;
-            }
-
-            // flip turn
-            IsWhiteTurn = (byte)(IsWhiteTurn ^ 1);
-        }
-
 
 
     }

@@ -40,12 +40,12 @@ namespace FightEval {
 
             ai.spawnWorkers(3);
 
-            var board = Chess.LoadBoardFromFen();
+            var board = Board.LoadBoardFromFen();
             bool hasCheated = false;
             int difficulty = 5;
             bool debug = false;
             do {
-                Console.WriteLine(Chess.AsciiBoard(board));
+                Console.WriteLine(ChessOutput.AsciiBoard(board));
                 var moves = board.GetMoves();
                 var winner = board.detectWinner(moves);
                 if(winner == Winner.WINNER_WHITE) {
@@ -93,16 +93,16 @@ namespace FightEval {
                                 foreach (var move in allMoves) {
                                     Console.WriteLine($" - {MoveHelper.ReadableMove(move)}");
                                 }
-                                Console.WriteLine(Chess.AsciiBoard(board, allMoves, true));
+                                Console.WriteLine(ChessOutput.AsciiBoard(board, allMoves, true));
                                 continue;
                             case "BOARD":
-                                Console.WriteLine(Chess.AsciiBoard(board));
+                                Console.WriteLine(ChessOutput.AsciiBoard(board));
                                 continue;
                             case "BOTEZ": // alias fall through 
                             case "BOTEZ_GAMBIT":
                                 if (botezGambit(board, history)) {
                                     Console.WriteLine("Botez gambit found!");
-                                    Console.WriteLine(Chess.AsciiBoard(board));
+                                    Console.WriteLine(ChessOutput.AsciiBoard(board));
                                     goto switchSides;
                                 } else {
                                     Console.WriteLine("Botez gambit unavailable");
@@ -131,9 +131,9 @@ namespace FightEval {
                                 var fenList = readLineOriginal.Split(" ").ToList();
                                 fenList.RemoveAt(0);
                                 var fen = String.Join(" ", fenList);
-                                board = Chess.LoadBoardFromFen(fen);
+                                board = Board.LoadBoardFromFen(fen);
                                 Console.WriteLine($"Loaded board {fen}");
-                                Console.WriteLine(Chess.AsciiBoard(board));
+                                Console.WriteLine(ChessOutput.AsciiBoard(board));
                                 continue;
                             case "DEBUG":
                                 debug = true;
@@ -166,7 +166,7 @@ namespace FightEval {
                                     board.UndoMove(history.Pop());
                                 }
                                 Console.WriteLine("Undo done (cheater :p)");
-                                Console.WriteLine(Chess.AsciiBoard(board));
+                                Console.WriteLine(ChessOutput.AsciiBoard(board));
                                 continue;
                             case "CHEAT":
                                 Console.WriteLine("NOTE everything after the best move is probably not accurate");
@@ -219,7 +219,7 @@ namespace FightEval {
                         var fromPosition = Board.ArrayPosition(readLine[0]);
                         if (readLine.Count() == 1) {
                             var positionMoves = board.GetMovesForPosition(fromPosition);
-                            Console.WriteLine(Chess.AsciiBoard(board, positionMoves));
+                            Console.WriteLine(ChessOutput.AsciiBoard(board, positionMoves));
                             Console.WriteLine("Legal moves:");
                             foreach (var move in positionMoves) {
                                 if (board.IsLegalMove(move)) {
@@ -249,7 +249,7 @@ namespace FightEval {
                                     continue;
                             }
                         }
-                        var moveMade = Chess.MakeMove(board, fromPosition, toPosition, promotion);
+                        var moveMade = board.MakeMove(fromPosition, toPosition, promotion);
                         if (MoveHelper.isValidMove(moveMade)) {
                             history.Push(moveMade);
                             break;
@@ -263,7 +263,7 @@ namespace FightEval {
                 } while(true);
                 
                 Console.WriteLine("Moved to");
-                Console.WriteLine(Chess.AsciiBoard(board));
+                Console.WriteLine(ChessOutput.AsciiBoard(board));
                 switchSides:  moves = board.GetMoves();
                 winner = board.detectWinner(moves);
                 if (winner == Winner.WINNER_WHITE) {
@@ -305,7 +305,7 @@ namespace FightEval {
 
                 Console.WriteLine($"AI found move with score {bestMove.score}");
                 Console.WriteLine($"AI will play {MoveHelper.ReadableMove(bestMove.move)}");
-                Console.WriteLine($"FEN: {Chess.BoardToFen(board)}");
+                Console.WriteLine($"FEN: {board.FEN}");
             } while (true);
 
 

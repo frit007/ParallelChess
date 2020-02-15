@@ -43,10 +43,10 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            var board = Chess.LoadBoardFromFen("rkr5/ppp2ppp/8/4N3/8/8/8/2K5 w - - 0 1");
+            var board = Board.LoadBoardFromFen("rkr5/ppp2ppp/8/4N3/8/8/8/2K5 w - - 0 1");
 
             var moves = board.GetMoves();
-            Chess.MakeMove(board, BoardStateOffset.C1, BoardStateOffset.C2, Piece.EMPTY);
+            board.MakeMove(BoardStateOffset.C1, BoardStateOffset.C2, Piece.EMPTY);
 
             var winner = board.detectWinner(moves);
 
@@ -69,12 +69,12 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            var board = Chess.LoadBoardFromFen("6k1/8/8/8/8/5nBN/3B1PPP/5RKR w - - 0 1");
+            var board = Board.LoadBoardFromFen("6k1/8/8/8/8/5nBN/3B1PPP/5RKR w - - 0 1");
             var original = board.CreateCopyBoard();
 
             var moves = board.GetMoves();
 
-            var move = Chess.MakeMove(board, BoardStateOffset.G2, BoardStateOffset.F3);
+            var move = board.MakeMove(BoardStateOffset.G2, BoardStateOffset.F3);
 
             board.UndoMove(move);
 
@@ -96,7 +96,7 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            var board = Chess.LoadBoardFromFen("6k1/8/8/8/8/5nBN/3B1PPP/5RKR w - - 0 1");
+            var board = Board.LoadBoardFromFen("6k1/8/8/8/8/5nBN/3B1PPP/5RKR w - - 0 1");
             var original = board.CreateCopyBoard();
 
             var moves = board.GetMoves();

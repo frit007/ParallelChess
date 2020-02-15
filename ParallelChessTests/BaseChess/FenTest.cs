@@ -8,7 +8,7 @@ namespace ParallelChessTests.BaseChess {
     class FenTest {
         [Test]
         public void SimpleFenTest() {
-            Board board = Chess.LoadBoardFromFen();
+            Board board = Board.LoadBoardFromFen();
 
             //Piece piece = Board.GetPiece(board, BoardOffset.A1);
             //Piece piece = board.A1;
@@ -20,7 +20,7 @@ namespace ParallelChessTests.BaseChess {
 
         [Test]
         public void loadEnpassantSquare() {
-            Board board = Chess.LoadBoardFromFen("4k3/8/8/PpP5/8/8/8/4K3 b - b6 0 1");
+            Board board = Board.LoadBoardFromFen("4k3/8/8/PpP5/8/8/8/4K3 b - b6 0 1");
 
             Assert.AreEqual(BoardStateOffset.B6, board.EnPassantTarget);
         }
@@ -29,18 +29,18 @@ namespace ParallelChessTests.BaseChess {
         public void toFenEnpassant() {
             var originalFEN = "4k3/8/8/PpP5/8/8/8/4K3 b - b6 0 1";
             
-            var board = Chess.LoadBoardFromFen(originalFEN);
+            var board = Board.LoadBoardFromFen(originalFEN);
 
-            Assert.AreEqual(originalFEN, Chess.BoardToFen(board));
+            Assert.AreEqual(originalFEN, board.FEN);
         }
 
         [Test]
         public void toFenWithCastling() {
             var originalFEN = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1";
 
-            var board = Chess.LoadBoardFromFen(originalFEN);
+            var board = Board.LoadBoardFromFen(originalFEN);
 
-            Assert.AreEqual(originalFEN, Chess.BoardToFen(board));
+            Assert.AreEqual(originalFEN, board.FEN);
         }
     }
 }

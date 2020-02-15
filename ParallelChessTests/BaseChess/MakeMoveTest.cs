@@ -8,7 +8,7 @@ namespace ParallelChessTests.BaseChess {
     class MakeMoveTest {
         [Test]
         public void MovePawn() {
-            Board board = Chess.LoadBoardFromFen();
+            Board board = Board.LoadBoardFromFen();
 
             List<Move> list = board.GetMovesForPosition(BoardStateOffset.E2);
             
@@ -38,7 +38,7 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            var board = Chess.LoadBoardFromFen("6k1/8/8/3r4/8/4p1p1/4P1P1/2N3K1 w - - 0 1");
+            var board = Board.LoadBoardFromFen("6k1/8/8/3r4/8/4p1p1/4P1P1/2N3K1 w - - 0 1");
 
             var moves = board.GetMoves();
 
@@ -62,8 +62,8 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
             */
-            var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/6p1/6PP/3K4 w - - 0 1");
-            Chess.MakeMove(board, BoardStateOffset.H2, BoardStateOffset.G3);
+            var board = Board.LoadBoardFromFen("3k4/8/8/8/8/6p1/6PP/3K4 w - - 0 1");
+            board.MakeMove(BoardStateOffset.H2, BoardStateOffset.G3);
             Assert.AreEqual(Piece.EMPTY, board.H2);
 
             Assert.AreEqual(Piece.PAWN | Piece.IS_WHITE, board.G3);
@@ -98,9 +98,9 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              */
 
-            var board = Chess.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
+            var board = Board.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
 
-            Chess.MakeMove(board, BoardStateOffset.D7, BoardStateOffset.D8, Piece.KNIGHT);
+            board.MakeMove(BoardStateOffset.D7, BoardStateOffset.D8, Piece.KNIGHT);
 
             Assert.AreEqual(Piece.KNIGHT | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.D8));
             Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.D7));
@@ -135,9 +135,9 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              */
 
-            var board = Chess.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
+            var board = Board.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
 
-            Chess.MakeMove(board, BoardStateOffset.D7, BoardStateOffset.C8, Piece.QUEEN);
+            board.MakeMove(BoardStateOffset.D7, BoardStateOffset.C8, Piece.QUEEN);
 
             Assert.AreEqual(Piece.QUEEN | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.C8));
             Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.D7));
@@ -172,9 +172,9 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              */
 
-            var board = Chess.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
+            var board = Board.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
 
-            Chess.MakeMove(board, BoardStateOffset.D7, BoardStateOffset.C8, Piece.ROOK);
+            board.MakeMove(BoardStateOffset.D7, BoardStateOffset.C8, Piece.ROOK);
 
             Assert.AreEqual(Piece.ROOK | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.C8));
             Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.D7));
@@ -209,9 +209,9 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              */
 
-            var board = Chess.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
+            var board = Board.LoadBoardFromFen("r1b5/pkpP4/Npr5/8/8/8/8/R2K4 w - - 0 1");
 
-            Chess.MakeMove(board, BoardStateOffset.D7, BoardStateOffset.C8, Piece.BISHOP);
+            board.MakeMove(BoardStateOffset.D7, BoardStateOffset.C8, Piece.BISHOP);
 
             Assert.AreEqual(Piece.BISHOP | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.C8));
             Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.D7));
@@ -246,9 +246,9 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              */
 
-            var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/8/6p1/3K4 b - - 0 1");
+            var board = Board.LoadBoardFromFen("3k4/8/8/8/8/8/6p1/3K4 b - - 0 1");
 
-            Chess.MakeMove(board, BoardStateOffset.G2, BoardStateOffset.G1, Piece.BISHOP);
+            board.MakeMove(BoardStateOffset.G2, BoardStateOffset.G1, Piece.BISHOP);
 
             Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.G1));
             Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.G2));
@@ -283,9 +283,9 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              */
 
-            var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/8/6p1/3K4 b - - 0 1");
+            var board = Board.LoadBoardFromFen("3k4/8/8/8/8/8/6p1/3K4 b - - 0 1");
 
-            Chess.MakeMove(board, BoardStateOffset.G2, BoardStateOffset.G1, Piece.QUEEN);
+            board.MakeMove(BoardStateOffset.G2, BoardStateOffset.G1, Piece.QUEEN);
 
             Assert.AreEqual(Piece.QUEEN, board.GetPiece(BoardStateOffset.G1));
             Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.G2));
@@ -320,9 +320,9 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              */
 
-            var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/8/6p1/3K4 b - - 0 1");
+            var board = Board.LoadBoardFromFen("3k4/8/8/8/8/8/6p1/3K4 b - - 0 1");
 
-            Chess.MakeMove(board, BoardStateOffset.G2, BoardStateOffset.G1, Piece.ROOK);
+            board.MakeMove(BoardStateOffset.G2, BoardStateOffset.G1, Piece.ROOK);
 
             Assert.AreEqual(Piece.ROOK, board.GetPiece(BoardStateOffset.G1));
             Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.G2));
@@ -357,9 +357,9 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
              */
 
-            var board = Chess.LoadBoardFromFen("3k4/8/8/8/8/8/6p1/3K4 b - - 0 1");
+            var board = Board.LoadBoardFromFen("3k4/8/8/8/8/8/6p1/3K4 b - - 0 1");
 
-            Chess.MakeMove(board, BoardStateOffset.G2, BoardStateOffset.G1, Piece.KNIGHT);
+            board.MakeMove(BoardStateOffset.G2, BoardStateOffset.G1, Piece.KNIGHT);
 
             Assert.AreEqual(Piece.KNIGHT, board.GetPiece(BoardStateOffset.G1));
             Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.G2));
@@ -405,7 +405,7 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
             */
-            Board board = Chess.LoadBoardFromFen("rnbqkbnr/pp1ppppp/8/8/3p4/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            Board board = Board.LoadBoardFromFen("rnbqkbnr/pp1ppppp/8/8/3p4/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
             
             List<Move> list = board.GetMovesForPosition(BoardStateOffset.E2);
 
@@ -486,9 +486,9 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            Board board = Chess.LoadBoardFromFen("8/3qk3/8/8/8/8/3P4/4K3 w - - 0 1");
-            Chess.MakeMove(board, BoardStateOffset.D2, BoardStateOffset.D4);
-            Chess.MakeMove(board, BoardStateOffset.D7, BoardStateOffset.D4);
+            Board board = Board.LoadBoardFromFen("8/3qk3/8/8/8/8/3P4/4K3 w - - 0 1");
+            board.MakeMove(BoardStateOffset.D2, BoardStateOffset.D4);
+            board.MakeMove(BoardStateOffset.D7, BoardStateOffset.D4);
             Assert.AreEqual(EnPassant.NO_ENPASSANT, board.EnPassantTarget);
         }
         #endregion
@@ -511,14 +511,14 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            var board = Chess.LoadBoardFromFen("rnbqkbnr/1ppppppp/8/p7/P7/2P5/pP1PPPPP/1NBQKBNR b Kkq - 0 4");
+            var board = Board.LoadBoardFromFen("rnbqkbnr/1ppppppp/8/p7/P7/2P5/pP1PPPPP/1NBQKBNR b Kkq - 0 4");
 
             board.GetMovesForPosition(BoardStateOffset.A2);
         }
 
         [Test]
         public void BlackPromotionStressUndoTest() {
-            var board = Chess.LoadBoardFromFen("1nbqkbnr/rppppppp/p7/8/1P6/P1P5/1p1PPPPP/R1BQKBNR b KQk - 0 3");
+            var board = Board.LoadBoardFromFen("1nbqkbnr/rppppppp/p7/8/1P6/P1P5/1p1PPPPP/R1BQKBNR b KQk - 0 3");
             var original = board.CreateCopyBoard();
             var moves = board.GetMoves();
             foreach (var move in moves) {
@@ -557,7 +557,7 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            var board = Chess.LoadBoardFromFen("6k1/pp6/4Knp1/6pp/1P6/4r3/6PP/R7 w - - 2 43");
+            var board = Board.LoadBoardFromFen("6k1/pp6/4Knp1/6pp/1P6/4r3/6PP/R7 w - - 2 43");
 
             var moves = board.GetMoves();
 

@@ -38,8 +38,8 @@ namespace ParallelChessTests.BaseChess.Castling {
              +---------------+
               A B C D E F G H
              */
-            Board board = Chess.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
-            Chess.MakeMove(board, BoardStateOffset.E1, BoardStateOffset.C1);
+            Board board = Board.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
+            board.MakeMove(BoardStateOffset.E1, BoardStateOffset.C1);
 
             Assert.AreEqual(Piece.KING | Piece.IS_WHITE, board.C1);
             Assert.AreEqual(Piece.ROOK | Piece.IS_WHITE, board.D1);
@@ -78,8 +78,8 @@ namespace ParallelChessTests.BaseChess.Castling {
              +---------------+
               A B C D E F G H
              */
-            Board board = Chess.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
-            Chess.MakeMove(board, BoardStateOffset.E1, BoardStateOffset.G1);
+            Board board = Board.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
+            board.MakeMove(BoardStateOffset.E1, BoardStateOffset.G1);
 
             Assert.AreEqual(Piece.KING | Piece.IS_WHITE, board.G1);
             Assert.AreEqual(Piece.ROOK | Piece.IS_WHITE, board.F1);
@@ -118,8 +118,8 @@ namespace ParallelChessTests.BaseChess.Castling {
              +---------------+
               A B C D E F G H
              */
-            Board board = Chess.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
-            Chess.MakeMove(board, BoardStateOffset.E8, BoardStateOffset.G8);
+            Board board = Board.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
+            board.MakeMove(BoardStateOffset.E8, BoardStateOffset.G8);
 
             Assert.AreEqual(Piece.KING, board.G8);
             Assert.AreEqual(Piece.ROOK, board.F8);
@@ -158,8 +158,8 @@ namespace ParallelChessTests.BaseChess.Castling {
              +---------------+
               A B C D E F G H
              */
-            Board board = Chess.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
-            Chess.MakeMove(board, BoardStateOffset.E8, BoardStateOffset.C8);
+            Board board = Board.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
+            board.MakeMove(BoardStateOffset.E8, BoardStateOffset.C8);
 
             Assert.AreEqual(Piece.KING, board.C8);
             Assert.AreEqual(Piece.ROOK, board.D8);
@@ -185,7 +185,7 @@ namespace ParallelChessTests.BaseChess.Castling {
              +---------------+
               A B C D E F G H
              */
-            Board board = Chess.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b - - 0 1");
+            Board board = Board.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b - - 0 1");
             var moves = board.GetMovesForPosition(BoardStateOffset.E8);
 
             Assert.IsFalse(MoveHelper.isValidMove(moves.FindTargetPosition(BoardStateOffset.C8)));

@@ -8,11 +8,11 @@ namespace AsciiCommentGenerator {
             Console.WriteLine("Please enter a FEN");
 
             var fen = Console.ReadLine();
-            Board board = Chess.LoadBoardFromFen(fen);
+            Board board = Board.LoadBoardFromFen(fen);
 
             var color = board.IsWhiteTurnBool ? "White" : "Black";
             
-            Console.WriteLine(Chess.AsciiBoard(board));
+            Console.WriteLine(ChessOutput.AsciiBoard(board));
 
             var moves = new List<string>();
 
@@ -30,7 +30,7 @@ namespace AsciiCommentGenerator {
                 "/*\n" +
                 $" * Starting position ({color} to play)");
 
-            Console.WriteLine($"{Chess.AsciiBoard(board)}");
+            Console.WriteLine($"{ChessOutput.AsciiBoard(board)}");
             foreach (var move in moves) {
                 var split = move.Split(" ");
                 var promotion = "";
@@ -57,12 +57,12 @@ namespace AsciiCommentGenerator {
                     };
                 }
 
-                Chess.MakeMove(board, Board.ArrayPosition(split[0]), Board.ArrayPosition(split[1]), promotionPiece);
+                board.MakeMove(Board.ArrayPosition(split[0]), Board.ArrayPosition(split[1]), promotionPiece);
                 Console.WriteLine($"{split[0]} -> {split[1]} {promotion}");
-                Console.WriteLine($"{Chess.AsciiBoard(board)}");
+                Console.WriteLine($"{ChessOutput.AsciiBoard(board)}");
             }
             Console.WriteLine(" */\n" +
-                $"var board = Chess.LoadBoardFromFen(\"{fen}\");\n\n"+
+                $"var board = Board.LoadBoardFromFen(\"{fen}\");\n\n"+
                 $"var moves = BoardHelper.GetMoves(board);");
 
             foreach (var move in moves) {

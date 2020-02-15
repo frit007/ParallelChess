@@ -35,7 +35,7 @@ namespace ChessApi.Controllers
             });
             context.SaveChanges();
 
-            var board = Chess.LoadBoardFromFen();
+            var board = Board.LoadBoardFromFen();
 
             var progress = new GameProgress() {
                 GameId = game.Entity.Id,
@@ -69,7 +69,7 @@ namespace ChessApi.Controllers
 
             var boardState = chessService.BoardToState(board);
             
-            var move = Chess.MakeMove(board, play.SAN);
+            var move = board.MakeMove(play.SAN);
 
             if (boardState.whiteWins || boardState.isDraw || boardState.blackWins) {
                 var moveRow = new Models.Move() {
