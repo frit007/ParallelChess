@@ -25,7 +25,7 @@ namespace ChessApi.Services {
                     if(piece != Piece.EMPTY) {
                         (int fromRow, int fromColumn) = convertx88ToArrayPosition(position);
                         var chessPiece = new ChessPiece() {
-                            piece = PieceParse.ToChar(piece).ToString(),
+                            piece = PieceParser.ToChar(piece).ToString(),
                             row = fromRow,
                             column = fromColumn,
                             isWhite = (piece & Piece.IS_WHITE) == Piece.IS_WHITE

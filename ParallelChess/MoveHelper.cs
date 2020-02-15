@@ -50,7 +50,7 @@ namespace ParallelChess {
         public static string ReadableMove(Move move) {
             var fromPosition = move.fromPosition;
             var toPosition = move.targetPosition;
-            return $"from: {BoardPositionHelpers.ReadablePosition(fromPosition)} to: {BoardPositionHelpers.ReadablePosition(toPosition)}";
+            return $"from: {BoardPosition.ReadablePosition(fromPosition)} to: {BoardPosition.ReadablePosition(toPosition)}";
         }
 
 

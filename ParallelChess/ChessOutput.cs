@@ -27,7 +27,7 @@ namespace ParallelChess {
                             ascii.Append("x");
                         }
                     } else {
-                        ascii.Append(PieceParse.ToChar(piece));
+                        ascii.Append(PieceParser.ToChar(piece));
                     }
                     if (column != 7) {
                         ascii.Append(" ");
@@ -52,7 +52,7 @@ namespace ParallelChess {
                     var position = row * BoardStateOffset.ROW_OFFSET + column;
                     var piece = board.GetPiece(position);
                     //var piece = Board.GetPiece(board, position);
-                    char c = PieceParse.ToChar(piece);
+                    char c = PieceParser.ToChar(piece);
                     if (c == '_') {
                         count++;
                     } else {
@@ -92,7 +92,7 @@ namespace ParallelChess {
                 }
             }
             fen.Append(" ");
-            fen.Append(board.EnPassantTarget != EnPassant.NO_ENPASSANT ? BoardPositionHelpers.ReadablePosition(board.EnPassantTarget) : "-");
+            fen.Append(board.EnPassantTarget != EnPassant.NO_ENPASSANT ? BoardPosition.ReadablePosition(board.EnPassantTarget) : "-");
             fen.Append(" ");
             fen.Append(board.HalfTurnCounter);
             fen.Append(" ");

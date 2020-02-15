@@ -61,7 +61,7 @@ namespace ParallelChess {
                 } else if (Char.IsDigit(piece)) {
                     square += int.Parse(piece.ToString());
                 } else {
-                    Piece parsedPiece = PieceParse.FromChar(piece);
+                    Piece parsedPiece = PieceParser.FromChar(piece);
                     //Board.PutPiece(board, square, parsedPiece);
                     board.SetPiece(square, parsedPiece);
                     if ((parsedPiece & Piece.PIECE_MASK) == Piece.KING) {
@@ -97,7 +97,7 @@ namespace ParallelChess {
                 board.EnPassantTarget = EnPassant.NO_ENPASSANT;
             } else {
                 //Board.SetEnPassantAttackedSquare(board, Board.AlgebraicPosition(enPassantAttackedSquare));
-                board.EnPassantTarget = (byte)BoardPositionHelpers.ArrayPosition(enPassantAttackedSquare);
+                board.EnPassantTarget = (byte)BoardPosition.ArrayPosition(enPassantAttackedSquare);
             }
 
             //Board.SetHalfTurnCounter(board, int.Parse(halfMoveClock));
