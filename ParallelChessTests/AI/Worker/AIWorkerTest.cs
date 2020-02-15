@@ -13,7 +13,7 @@ namespace ParallelChessTests.AI.Worker {
 
             var ai = new AIWorkerManager();
 
-            BoardHelper.initThreadStaticVariables();
+            Board.initThreadStaticVariables();
             ai.spawnWorkers(1);
             ai.analyzeBoard(board, 2).GetAwaiter().GetResult();
             Assert.IsTrue(MoveHelper.isValidMove(ai.GetBestMove().move));
@@ -39,7 +39,7 @@ namespace ParallelChessTests.AI.Worker {
              */
             var board = Chess.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
 
             var ai = new AIWorkerManager();
 
@@ -74,7 +74,7 @@ namespace ParallelChessTests.AI.Worker {
              */
             var board = Chess.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
 
             var ai = new AIWorkerManager();
 

@@ -10,11 +10,11 @@ namespace ParallelChessTests.BaseChess {
         public void MovePawn() {
             Board board = Chess.LoadBoardFromFen();
 
-            List<Move> list = BoardHelper.GetMovesForPosition(board, BoardStateOffset.E2);
+            List<Move> list = board.GetMovesForPosition(BoardStateOffset.E2);
             
             Move move = list.FindTargetPosition(BoardStateOffset.E4);
 
-            BoardHelper.MakeMove(board, move);
+            board.MakeMove(move);
 
             Piece piece = board.E4;
 
@@ -40,7 +40,7 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("6k1/8/8/3r4/8/4p1p1/4P1P1/2N3K1 w - - 0 1");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
 
             var move = moves.FindTargetPosition(BoardStateOffset.E4);
             Assert.IsFalse(MoveHelper.isValidMove(move));
@@ -407,17 +407,17 @@ namespace ParallelChessTests.BaseChess {
             */
             Board board = Chess.LoadBoardFromFen("rnbqkbnr/pp1ppppp/8/8/3p4/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
             
-            List<Move> list = BoardHelper.GetMovesForPosition(board, BoardStateOffset.E2);
+            List<Move> list = board.GetMovesForPosition(BoardStateOffset.E2);
 
             Move move = list.FindTargetPosition(BoardStateOffset.E4);
 
-            BoardHelper.MakeMove(board, move);
+            board.MakeMove(move);
 
-            list = BoardHelper.GetMovesForPosition(board, BoardStateOffset.D4);
+            list = board.GetMovesForPosition(BoardStateOffset.D4);
 
             move = list.FindTargetPosition(BoardStateOffset.E3);
 
-            BoardHelper.MakeMove(board, move);
+            board.MakeMove(move);
 
             return board;
         }
@@ -513,17 +513,17 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("rnbqkbnr/1ppppppp/8/p7/P7/2P5/pP1PPPPP/1NBQKBNR b Kkq - 0 4");
 
-            BoardHelper.GetMovesForPosition(board, BoardStateOffset.A2);
+            board.GetMovesForPosition(BoardStateOffset.A2);
         }
 
         [Test]
         public void BlackPromotionStressUndoTest() {
             var board = Chess.LoadBoardFromFen("1nbqkbnr/rppppppp/p7/8/1P6/P1P5/1p1PPPPP/R1BQKBNR b KQk - 0 3");
-            var original = BoardHelper.CreateCopyBoard(board);
-            var moves = BoardHelper.GetMoves(board);
+            var original = board.CreateCopyBoard();
+            var moves = board.GetMoves();
             foreach (var move in moves) {
-                BoardHelper.MakeMove(board, move);
-                BoardHelper.UndoMove(board, move);
+                board.MakeMove(move);
+                board.UndoMove(move);
             }
         }
 
@@ -559,13 +559,13 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = Chess.LoadBoardFromFen("6k1/pp6/4Knp1/6pp/1P6/4r3/6PP/R7 w - - 2 43");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
 
             var move = moves.FindTargetPosition(BoardStateOffset.F6);
 
             Assert.True(MoveHelper.isValidMove(move));
 
-            Assert.IsTrue(BoardHelper.IsLegalMove(board, move));
+            Assert.IsTrue(board.IsLegalMove(move));
         }
     }
 }

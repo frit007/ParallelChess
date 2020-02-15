@@ -26,7 +26,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("1k6/pppp1ppp/8/4Q3/8/8/8/2K5 w - - 0 1");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
             var bestMove = moves.FindTargetPosition(BoardStateOffset.E8);
             var minmax = new MinMaxAI();
             EvaluatedMove foundMove = minmax.MinMaxList(board, 1)[0];
@@ -52,7 +52,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("rkr5/ppp2ppp/8/4N3/8/8/8/2K5 w - - 0 1");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
             var minmax = new MinMaxAI();
             EvaluatedMove foundMove = minmax.MinMaxList(board, 1)[0];
 
@@ -101,7 +101,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("6k1/8/8/3r4/8/4p1p1/4P1P1/2N3K1 w - - 0 1");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
             var minmax = new MinMaxAI();
             EvaluatedMove foundMove = minmax.MinMaxList(board, 3)[0];
             // the rook has to move to e3 to defend against mate(d4->e2)
@@ -127,7 +127,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("rnbk2r1/pppp1pBp/3q4/8/2B3Q1/8/P5PP/R3R1K1 w - - 0 1");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
 
             var minmax = new MinMaxAI();
             EvaluatedMove foundMove = minmax.MinMaxList(board, 3)[0];
@@ -238,7 +238,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("B7/5PRp/4N2k/3p2p1/8/4P1P1/P5K1/8 b - - 0 2");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
             var minmax = new MinMaxAI();
             EvaluatedMove foundMove = minmax.MinMaxList(board, 5)[0];
 
@@ -263,7 +263,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("7k/pRp3p1/PpP3P1/1P4p1/8/8/8/8 b - - 0 1");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
 
             var minmax = new MinMaxAI();
             EvaluatedMove foundMove = minmax.MinMaxList(board, 2)[0];
@@ -289,7 +289,7 @@ namespace ParallelChessTests.AI.Easy {
              */
             var board = Chess.LoadBoardFromFen("4k3/8/8/8/8/8/8/4K3 w - - 0 1");
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
             Assert.Less(EvalBoard.evalBoard(board, moves), 0.000001f);
         }
         public void everyThingIsEqual(Board original, Board copy) {
@@ -316,8 +316,8 @@ namespace ParallelChessTests.AI.Easy {
              A B C D E F G H
             */
             var board = Chess.LoadBoardFromFen("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2");
-            var original = BoardHelper.CreateCopyBoard(board);
-            var moves = BoardHelper.GetMoves(board);
+            var original = board.CreateCopyBoard();
+            var moves = board.GetMoves();
             var minmax = new MinMaxAI();
             EvaluatedMove foundMove = minmax.MinMaxList(board, 5)[0];
 

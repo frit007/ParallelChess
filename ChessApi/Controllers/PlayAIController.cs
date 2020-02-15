@@ -90,7 +90,7 @@ namespace ChessApi.Controllers
 
             var aiMoveSan = board.StandardAlgebraicNotation(aiMove);
 
-            BoardHelper.MakeMove(board, aiMove);
+            board.MakeMove(aiMove);
 
             if(MoveHelper.isValidMove(move)) {
                 var moveRow = new Models.Move() {

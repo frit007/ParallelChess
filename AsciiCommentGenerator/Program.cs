@@ -57,7 +57,7 @@ namespace AsciiCommentGenerator {
                     };
                 }
 
-                Chess.MakeMove(board, BoardHelper.ArrayPosition(split[0]), BoardHelper.ArrayPosition(split[1]), promotionPiece);
+                Chess.MakeMove(board, Board.ArrayPosition(split[0]), Board.ArrayPosition(split[1]), promotionPiece);
                 Console.WriteLine($"{split[0]} -> {split[1]} {promotion}");
                 Console.WriteLine($"{Chess.AsciiBoard(board)}");
             }

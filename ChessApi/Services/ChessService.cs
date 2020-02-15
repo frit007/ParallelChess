@@ -16,7 +16,7 @@ namespace ChessApi.Services {
 
         public ChessState BoardToState(Board board) {
             var chessState = new ChessState();
-            var moves = BoardHelper.GetMoves(board).Where(move => BoardHelper.IsLegalMove(board, move));
+            var moves = board.GetMoves().Where(move => board.IsLegalMove(move));
 
             for (int column = 0; column < 8; column++) {
                 for (int row = 0; row < 8 * BoardStateOffset.ROW_OFFSET; row += BoardStateOffset.ROW_OFFSET) {
@@ -48,7 +48,7 @@ namespace ChessApi.Services {
                     }
                 }
             }
-            var winner = BoardHelper.detectWinner(board, moves);
+            var winner = board.detectWinner(moves);
             if(winner == Winner.DRAW) {
                 chessState.isDraw = true;
             } else if(winner == Winner.WINNER_BLACK) {

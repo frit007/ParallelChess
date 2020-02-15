@@ -21,7 +21,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = Chess.LoadBoardFromFen("r3k2r/8/8/2R5/8/8/8/R3K2R b KQkq - 0 1");
-            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.E8);
+            var moves = board.GetMovesForPosition(BoardStateOffset.E8);
 
             Assert.IsFalse(MoveHelper.isValidMove(moves.FindTargetPosition(BoardStateOffset.C8)));
         }
@@ -43,7 +43,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = Chess.LoadBoardFromFen("r3k2r/8/8/3R4/8/8/8/R3K2R b KQkq - 0 1");
-            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.E8);
+            var moves = board.GetMovesForPosition(BoardStateOffset.E8);
 
             Assert.IsFalse(MoveHelper.isValidMove(moves.FindTargetPosition(BoardStateOffset.C8)));
         }
@@ -65,7 +65,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = Chess.LoadBoardFromFen("r3k2r/8/8/4R3/8/8/8/R3K2R b KQkq - 0 1");
-            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.E8);
+            var moves = board.GetMovesForPosition(BoardStateOffset.E8);
 
             Assert.IsFalse(MoveHelper.isValidMove(moves.FindTargetPosition(BoardStateOffset.C8)));
         }
@@ -87,7 +87,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = Chess.LoadBoardFromFen("r3k2r/8/8/4R3/8/8/8/R3K2R b KQkq - 0 1");
-            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.E8);
+            var moves = board.GetMovesForPosition(BoardStateOffset.E8);
 
             Assert.IsFalse(MoveHelper.isValidMove(moves.FindTargetPosition(BoardStateOffset.G8)));
         }
@@ -109,7 +109,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = Chess.LoadBoardFromFen("r3k2r/8/8/5R2/8/8/8/R3K2R b KQkq - 0 1");
-            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.E8);
+            var moves = board.GetMovesForPosition(BoardStateOffset.E8);
 
             Assert.IsFalse(MoveHelper.isValidMove(moves.FindTargetPosition(BoardStateOffset.G8)));
         }
@@ -131,7 +131,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = Chess.LoadBoardFromFen("r3k2r/8/8/6R1/8/8/8/R3K2R b KQkq - 0 1");
-            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.E8);
+            var moves = board.GetMovesForPosition(BoardStateOffset.E8);
 
             Assert.IsFalse(MoveHelper.isValidMove(moves.FindTargetPosition(BoardStateOffset.G8)));
         }

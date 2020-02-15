@@ -23,7 +23,7 @@ namespace ParallelChess.AI.worker {
                 var worker = new AIWorker();
 
                 Thread thread = new Thread(() => {
-                    BoardHelper.initThreadStaticVariables();
+                    Board.initThreadStaticVariables();
                     worker.WaitForTask();
                 });
                 thread.Start();
@@ -54,7 +54,7 @@ namespace ParallelChess.AI.worker {
             HashSet<ulong> tiedPositions = new HashSet<ulong>();
 
             // take copies so we do not modify the original collection
-            var boardCopy = BoardHelper.CreateCopyBoard(board);
+            var boardCopy = board.CreateCopyBoard();
             Stack<Move> historyCopy = new Stack<Move>(history);
             var hash = HashBoard.hash(board);
             while (historyCopy.Count != 0) {
@@ -64,7 +64,7 @@ namespace ParallelChess.AI.worker {
                 // count how many times the position has occured
                 occurredPositions[hash]++;
                 var move = historyCopy.Pop();
-                BoardHelper.UndoMove(boardCopy, move);
+                boardCopy.UndoMove(move);
                 hash = HashBoard.ApplyMove(board, move, hash);
             }
 
@@ -79,7 +79,7 @@ namespace ParallelChess.AI.worker {
         }
 
         public async Task<List<EvaluatedMove>> analyzeBoard(Board board, int depth, Stack<Move> history = null, Action<AIProgress> onProgress = null) {
-            BoardHelper.initThreadStaticVariables();
+            Board.initThreadStaticVariables();
 
             HashSet<ulong> tiedBoards;
             if (history != null) {
@@ -131,7 +131,7 @@ namespace ParallelChess.AI.worker {
         }
 
         private async Task<List<EvaluatedMove>> delegateToWorkers(Board board, List<EvaluatedMove> moves, int depth, HashSet<ulong> tiedBoards, Action<AIProgress> onProgress = null) {
-            BoardHelper.initThreadStaticVariables();
+            Board.initThreadStaticVariables();
             int workerWorkId = random.Next();
             lock (stateLock) {
                 workId = workerWorkId;
@@ -171,7 +171,7 @@ namespace ParallelChess.AI.worker {
                         var worker = workers[i];
                         var aiTask = new AITask() {
                             taskId = i,
-                            board = BoardHelper.CreateCopyBoard(board),
+                            board = board.CreateCopyBoard(),
                             moves = workerMoves,
                             depth = depth,
                             tiedPositions = tiedBoards,

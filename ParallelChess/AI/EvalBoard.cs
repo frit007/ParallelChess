@@ -203,7 +203,7 @@ namespace ParallelChess.AI {
                     }
                     break;
                 case Piece.KNIGHT:
-                    foreach (var relativePosition in BoardHelper.knightMoves) {
+                    foreach (var relativePosition in Board.knightMoves) {
                         if (((position + relativePosition) & 0x88) == 0) {
                             score += attackSquare(board, piece, position + relativePosition);
                         }
@@ -211,25 +211,25 @@ namespace ParallelChess.AI {
                     break;
                 case Piece.KING:
                     // at the moment we do not account for castling options
-                    foreach (var relativePosition in BoardHelper.kingMoves) {
+                    foreach (var relativePosition in Board.kingMoves) {
                         score += attackSquare(board, piece, position + relativePosition);
                     }
                     break;
                 case Piece.ROOK:
-                    foreach (var relativePosition in BoardHelper.straightMoves) {
+                    foreach (var relativePosition in Board.straightMoves) {
                         score += walkAttackSquare(board, piece, position, relativePosition);
                     }
                     break;
                 case Piece.BISHOP:
-                    foreach (var relativePosition in BoardHelper.slantedMoves) {
+                    foreach (var relativePosition in Board.slantedMoves) {
                         score += walkAttackSquare(board, piece, position, relativePosition);
                     }
                     break;
                 case Piece.QUEEN:
-                    foreach (var relativePosition in BoardHelper.straightMoves) {
+                    foreach (var relativePosition in Board.straightMoves) {
                         score += walkAttackSquare(board, piece, position, relativePosition);
                     }
-                    foreach (var relativePosition in BoardHelper.straightMoves) {
+                    foreach (var relativePosition in Board.straightMoves) {
                         score += walkAttackSquare(board, piece, position, relativePosition);
                     }
                     break;

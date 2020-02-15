@@ -16,12 +16,12 @@ namespace FightEval {
 
         public static bool botezGambit(Board board, Stack<Move> movesMade) {
 
-            var moves = BoardHelper.GetMoves(board);
+            var moves = board.GetMoves();
 
             foreach (var move in moves) {
                 if((board.GetPiece(move.fromPosition) & Piece.PIECE_MASK) == Piece.QUEEN) {
-                    if(BoardHelper.Attacked(board, move.targetPosition, board.IsWhiteTurn)) {
-                        BoardHelper.MakeMove(board, move);
+                    if(board.Attacked(move.targetPosition, board.IsWhiteTurn)) {
+                        board.MakeMove(move);
                         movesMade.Push(move);
                         return true;
                     }
@@ -32,7 +32,7 @@ namespace FightEval {
         }
 
         public static async Task MainAsync(string[] args) {
-            BoardHelper.initThreadStaticVariables();
+            Board.initThreadStaticVariables();
             var ai = new AIWorkerManager();
             var history = new Stack<Move>();
 
@@ -46,8 +46,8 @@ namespace FightEval {
             bool debug = false;
             do {
                 Console.WriteLine(Chess.AsciiBoard(board));
-                var moves = BoardHelper.GetMoves(board);
-                var winner = BoardHelper.detectWinner(board, moves);
+                var moves = board.GetMoves();
+                var winner = board.detectWinner(moves);
                 if(winner == Winner.WINNER_WHITE) {
                     Console.WriteLine("you lost even though you cheated? :D");
                     Console.WriteLine("White wins");
@@ -89,7 +89,7 @@ namespace FightEval {
                                 continue;
                             case "MOVES":
                                 Console.WriteLine("All available moves");
-                                var allMoves = BoardHelper.GetMoves(board).Where(move => BoardHelper.IsLegalMove(board,move)).ToList();
+                                var allMoves = board.GetMoves().Where(move => board.IsLegalMove(move)).ToList();
                                 foreach (var move in allMoves) {
                                     Console.WriteLine($" - {MoveHelper.ReadableMove(move)}");
                                 }
@@ -123,7 +123,7 @@ namespace FightEval {
                             case "SWITCH":
                                 goto switchSides; // the almighty goto to skip current move and the the ai make the next move, which also switches sides as a side effect
                             case "EVAL":
-                                var evalMoves = BoardHelper.GetMoves(board).Where(move => BoardHelper.IsLegalMove(board, move)).ToList();
+                                var evalMoves = board.GetMoves().Where(move => board.IsLegalMove(move)).ToList();
                                 var score = EvalBoard.evalBoard(board, evalMoves);
                                 Console.WriteLine($"current score is: {score}");
                                 continue;
@@ -156,14 +156,14 @@ namespace FightEval {
                             case "UNDO":
                                 hasCheated = true;
                                 if(history.Count != 0) {
-                                    BoardHelper.UndoMove(board,history.Pop());
+                                    board.UndoMove(history.Pop());
                                 } else {
                                     Console.WriteLine("There is not history to undo, sorry");
                                     continue;
                                 }
 
                                 if (history.Count != 0) {
-                                    BoardHelper.UndoMove(board, history.Pop());
+                                    board.UndoMove(history.Pop());
                                 }
                                 Console.WriteLine("Undo done (cheater :p)");
                                 Console.WriteLine(Chess.AsciiBoard(board));
@@ -216,19 +216,19 @@ namespace FightEval {
                                 break;
                         }
 
-                        var fromPosition = BoardHelper.ArrayPosition(readLine[0]);
+                        var fromPosition = Board.ArrayPosition(readLine[0]);
                         if (readLine.Count() == 1) {
-                            var positionMoves = BoardHelper.GetMovesForPosition(board, fromPosition);
+                            var positionMoves = board.GetMovesForPosition(fromPosition);
                             Console.WriteLine(Chess.AsciiBoard(board, positionMoves));
                             Console.WriteLine("Legal moves:");
                             foreach (var move in positionMoves) {
-                                if (BoardHelper.IsLegalMove(board, move)) {
+                                if (board.IsLegalMove(move)) {
                                     Console.WriteLine($" - {MoveHelper.ReadableMove(move)}");
                                 }
                             }
                             continue;
                         }
-                        var toPosition = BoardHelper.ArrayPosition(readLine[1]);
+                        var toPosition = Board.ArrayPosition(readLine[1]);
                         var promotion = Piece.EMPTY;
                         if (readLine.Count() > 2) {
                             switch (readLine[2]) {
@@ -264,8 +264,8 @@ namespace FightEval {
                 
                 Console.WriteLine("Moved to");
                 Console.WriteLine(Chess.AsciiBoard(board));
-                switchSides:  moves = BoardHelper.GetMoves(board);
-                winner = BoardHelper.detectWinner(board, moves);
+                switchSides:  moves = board.GetMoves();
+                winner = board.detectWinner(moves);
                 if (winner == Winner.WINNER_WHITE) {
                     if (hasCheated) {
                         Console.WriteLine("Cheater :D");
@@ -301,7 +301,7 @@ namespace FightEval {
 
                 var bestMove = ai.GetBestMove();
                 history.Push(bestMove.move);
-                BoardHelper.MakeMove(board, bestMove.move);
+                board.MakeMove(bestMove.move);
 
                 Console.WriteLine($"AI found move with score {bestMove.score}");
                 Console.WriteLine($"AI will play {MoveHelper.ReadableMove(bestMove.move)}");

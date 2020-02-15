@@ -109,7 +109,7 @@ namespace ParallelChess {
                 board.EnPassantTarget = EnPassant.NO_ENPASSANT;
             } else {
                 //Board.SetEnPassantAttackedSquare(board, Board.AlgebraicPosition(enPassantAttackedSquare));
-                board.EnPassantTarget = (byte) BoardHelper.ArrayPosition(enPassantAttackedSquare);
+                board.EnPassantTarget = (byte) Board.ArrayPosition(enPassantAttackedSquare);
             }
 
             //Board.SetHalfTurnCounter(board, int.Parse(halfMoveClock));
@@ -170,7 +170,7 @@ namespace ParallelChess {
                 }
             }
             fen.Append(" ");
-            fen.Append(board.EnPassantTarget != EnPassant.NO_ENPASSANT ? BoardHelper.ReadablePosition(board.EnPassantTarget) : "-");
+            fen.Append(board.EnPassantTarget != EnPassant.NO_ENPASSANT ? Board.ReadablePosition(board.EnPassantTarget) : "-");
             fen.Append(" ");
             fen.Append(board.HalfTurnCounter);
             fen.Append(" ");
@@ -183,7 +183,7 @@ namespace ParallelChess {
             if(moves == null) {
                 moves = new List<Move>();
             }
-            moves = moves.Where(move => BoardHelper.IsLegalMove(board, move)).ToList();
+            moves = moves.Where(move => board.IsLegalMove(move)).ToList();
 
             StringBuilder ascii = new StringBuilder();
 
@@ -217,13 +217,13 @@ namespace ParallelChess {
         }
 
         public static Move FindMove(Board board, int from , int to) {
-            List<Move> moves = BoardHelper.GetMovesForPosition(board, from);
+            List<Move> moves = board.GetMovesForPosition(from);
 
             Move targetPosition = moves.FindTargetPosition(to);
             if (!MoveHelper.isValidMove(targetPosition)) {
                 throw new Exception("Move not found");
             }
-            if(!BoardHelper.IsLegalMove(board, targetPosition)) {
+            if(!board.IsLegalMove(targetPosition)) {
                 throw new Exception("Illegal move");
             }
 
@@ -231,14 +231,14 @@ namespace ParallelChess {
         }
 
         public static Move FindMove(Board board, int from, int to, Piece promotion) {
-            List<Move> moves = BoardHelper.GetMovesForPosition(board, from);
+            List<Move> moves = board.GetMovesForPosition(from);
 
             Move targetPosition = moves.FindTargetPosition(to, promotion);
             if (!MoveHelper.isValidMove(targetPosition)) {
                 throw new Exception("Move not found");
             }
 
-            if (!BoardHelper.IsLegalMove(board, targetPosition)) {
+            if (!board.IsLegalMove(targetPosition)) {
                 throw new Exception("Illegal move");
             }
 
@@ -248,19 +248,19 @@ namespace ParallelChess {
         public static Move MakeMove(Board board, int from, int to) {
             Move targetPosition = FindMove(board, from, to);
 
-            BoardHelper.MakeMove(board, targetPosition);
+            board.MakeMove(targetPosition);
 
             return targetPosition;
         }
 
         public static Move MakeMove(Board board, string san) {
-            List<Move> moves = BoardHelper.GetMoves(board)
-                .Where(move => BoardHelper.IsLegalMove(board, move))
+            List<Move> moves = board.GetMoves()
+                .Where(move => board.IsLegalMove(move))
                 .ToList();
 
             foreach (var move in moves) {
                 if(board.StandardAlgebraicNotation(move) == san.Trim()) {
-                    BoardHelper.MakeMove(board, move);
+                    board.MakeMove(move);
                     return move;
                 }
             }
@@ -271,7 +271,7 @@ namespace ParallelChess {
         public static Move MakeMove(Board board, int from, int to, Piece promotion) {
             Move targetPosition = FindMove(board, from, to, promotion);
 
-            BoardHelper.MakeMove(board, targetPosition);
+            board.MakeMove(targetPosition);
 
             return targetPosition;
         }

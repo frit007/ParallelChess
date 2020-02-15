@@ -186,7 +186,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = Chess.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b - - 0 1");
-            var moves = BoardHelper.GetMovesForPosition(board, BoardStateOffset.E8);
+            var moves = board.GetMovesForPosition(BoardStateOffset.E8);
 
             Assert.IsFalse(MoveHelper.isValidMove(moves.FindTargetPosition(BoardStateOffset.C8)));
         }

@@ -135,11 +135,11 @@ namespace ParallelChess.AI {
                     bestScore = min;
                 }
             }
-            BoardHelper.MakeMove(aiTask.board, move);
+            aiTask.board.MakeMove(move);
             var startedFromMin = min;
-            var detectWinnerMoves = BoardHelper.GetMoves(aiTask.board);
+            var detectWinnerMoves = aiTask.board.GetMoves();
             // check for winner
-            var winner = BoardHelper.detectWinner(aiTask.board, detectWinnerMoves);
+            var winner = aiTask.board.detectWinner(detectWinnerMoves);
             if (winner != Winner.NONE) {
                 float score = 0;
                 if ((winner == Winner.WINNER_WHITE || winner == Winner.WINNER_BLACK)) {
@@ -193,7 +193,7 @@ namespace ParallelChess.AI {
             var minmax = new MinMaxAI();
             var moveScore = minmax.MinMax(aiTask.board, aiTask.depth, aiTask.tiedPositions, false, min, max);
             aiTask.board.VirtualLevel--;
-            BoardHelper.UndoMove(aiTask.board, move);
+            aiTask.board.UndoMove(move);
             boardHash = HashBoard.ApplyMove(aiTask.board, move, boardHash);
             lock (stateLock) {
                 if (alreadySolved.Contains(move)) {
