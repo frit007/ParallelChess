@@ -216,7 +216,7 @@ namespace FightEval {
                                 break;
                         }
 
-                        var fromPosition = Board.ArrayPosition(readLine[0]);
+                        var fromPosition = BoardPositionHelpers.ArrayPosition(readLine[0]);
                         if (readLine.Count() == 1) {
                             var positionMoves = board.GetMovesForPosition(fromPosition);
                             Console.WriteLine(ChessOutput.AsciiBoard(board, positionMoves));
@@ -228,7 +228,7 @@ namespace FightEval {
                             }
                             continue;
                         }
-                        var toPosition = Board.ArrayPosition(readLine[1]);
+                        var toPosition = BoardPositionHelpers.ArrayPosition(readLine[1]);
                         var promotion = Piece.EMPTY;
                         if (readLine.Count() > 2) {
                             switch (readLine[2]) {

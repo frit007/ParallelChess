@@ -97,7 +97,7 @@ namespace ParallelChess {
                 board.EnPassantTarget = EnPassant.NO_ENPASSANT;
             } else {
                 //Board.SetEnPassantAttackedSquare(board, Board.AlgebraicPosition(enPassantAttackedSquare));
-                board.EnPassantTarget = (byte)Board.ArrayPosition(enPassantAttackedSquare);
+                board.EnPassantTarget = (byte)BoardPositionHelpers.ArrayPosition(enPassantAttackedSquare);
             }
 
             //Board.SetHalfTurnCounter(board, int.Parse(halfMoveClock));

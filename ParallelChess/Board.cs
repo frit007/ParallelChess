@@ -16,16 +16,6 @@ namespace ParallelChess {
 
 
 
-        public const int A_COLUMN = 0;
-        public const int B_COLUMN = 1;
-        public const int C_COLUMN = 2;
-        public const int D_COLUMN = 3;
-        public const int E_COLUMN = 4;
-        public const int F_COLUMN = 5;
-        public const int G_COLUMN = 6;
-        public const int H_COLUMN = 7;
-
-
 
         [FieldOffset(0)]
         public byte[] bytes;
@@ -761,63 +751,6 @@ namespace ParallelChess {
         }
         #endregion
 
-        #region PositionHelpers
-        // position is expected be in the format "a1" or "b5"
-        // converts it to a number from 0 to 119, which is the number system used internally
-        // examples
-        // a1 -> 0
-        // a3 -> 2
-        // h8 -> 119
-        public static int ArrayPosition(string readablePosition) {
-            readablePosition = readablePosition.ToLower();
-
-            // abuse the ascii system by converting the row to a number from 0 to 7
-            // subtract 'a' because then the number will start from 0
-            int algebraicPosition = (readablePosition[0] - 'a');
-
-            // add the column to the positon, subtract one because
-            // multiply by the rowoffset to get the correct row.
-            algebraicPosition += (int.Parse(readablePosition.Substring(1, 1)) - 1) * BoardStateOffset.ROW_OFFSET;
-
-            return algebraicPosition;
-        }
-
-        // convert from internal number format to a readble form
-        // examples
-        // 0 -> a1
-        // 2 -> a3
-        // 119 -> h8
-        public static string ReadablePosition(int arrayPosition) {
-            int row = arrayPosition / BoardStateOffset.ROW_OFFSET;
-            int column = arrayPosition - (row * BoardStateOffset.ROW_OFFSET);
-            string move = Convert.ToChar('a' + (column)) + (row + 1).ToString();
-            return move;
-        }
-
-        public static bool IsValidPosition(int position) {
-            // ------------0x88-------------
-            // 0x88 is method used checking if location is out of bound very fast
-            // it is done by creating an array and leaving every second row blank.
-            // We can then check if a position is in a invalid row by anding a position with 0x88
-            // for example if you tried to move one right from H3(39) + 1 = 40. 40 is a invalid position 
-            // which can be caught by checking 0x88 & 40 = 8. Any invalid position will result in a non zero value
-            // the potential disadvantage to this approach is that the boardState is larger, which will take longer to copy and 
-            // might mean that the array is no longer cached in CPU cache.
-            return (0x88 & position) == 0;
-        }
-
-        public static int RelativePosition(int position, int relativeColumn, int relativeRow) {
-            return position + relativeRow * BoardStateOffset.ROW_OFFSET + relativeColumn;
-        }
-
-        public static int PositionRow(int position) {
-            return position / BoardStateOffset.ROW_OFFSET;
-        }
-
-        public static int PositionColumn(int position) {
-            return position - (PositionRow(position) * BoardStateOffset.ROW_OFFSET);
-        }
-        #endregion
 
         // me refers to the current player
         public bool PieceBelongsToMe(Piece piece) {
@@ -827,7 +760,6 @@ namespace ParallelChess {
             // IsWhite is either 0x01 (true) or 0x00 (false)
             return IsWhiteTurn == (byte)(piece & Piece.IS_WHITE);
         }
-
 
         public bool IsPositionEmpty(int position) {
             return GetPiece(position) == Piece.EMPTY;
@@ -904,7 +836,7 @@ namespace ParallelChess {
 
         private void AddPawnMove(int fromPosition, int targetPosition, MoveFlags move, List<Move> moves) {
             Piece takenPiece;
-            int row = PositionRow(targetPosition);
+            int row = BoardPositionHelpers.PositionRow(targetPosition);
             if ((move & MoveFlags.ENPASSANT) == MoveFlags.ENPASSANT) {
                 takenPiece = Piece.PAWN;
             } else {
@@ -933,7 +865,7 @@ namespace ParallelChess {
                 int move = fromPosition;
                 do {
                     move += relativePosition;
-                    if (IsValidPosition(move)) {
+                    if (BoardPositionHelpers.IsValidPosition(move)) {
                         var moveOption = CanITakeSquare(move);
                         if (moveOption == MoveOption.NO_FIGHT) {
                             AddMove(fromPosition, move, MoveFlags.EMPTY, moves);
@@ -986,26 +918,26 @@ namespace ParallelChess {
 
                     // We don't need to check if there is a next row is outside the board.
                     // because the pawn is never able to stand on the last because of promotion
-                    int moveOne = RelativePosition(fromPosition, 0, direction);
+                    int moveOne = BoardPositionHelpers.RelativePosition(fromPosition, 0, direction);
                     if (IsPositionEmpty(moveOne)) {
                         AddPawnMove(fromPosition, moveOne, MoveFlags.PAWN_MOVE, moves);
                     }
 
                     // check if the pawn is on the starting position. If it is then assume that it is possible to move forward
-                    if (isWhitesTurn ? PositionRow(fromPosition) == 1 : PositionRow(fromPosition) == 6) {
-                        int hasToBeEmptyPosition = RelativePosition(fromPosition, 0, direction);
-                        int move = RelativePosition(fromPosition, 0, 2 * direction);
+                    if (isWhitesTurn ? BoardPositionHelpers.PositionRow(fromPosition) == 1 : BoardPositionHelpers.PositionRow(fromPosition) == 6) {
+                        int hasToBeEmptyPosition = BoardPositionHelpers.RelativePosition(fromPosition, 0, direction);
+                        int move = BoardPositionHelpers.RelativePosition(fromPosition, 0, 2 * direction);
                         if (IsPositionEmpty(move) && IsPositionEmpty(hasToBeEmptyPosition)) {
                             AddPawnMove(fromPosition, move, MoveFlags.BIG_PAWN_MOVE | MoveFlags.PAWN_MOVE, moves);
                         }
                     }
 
-                    int column = PositionColumn(fromPosition);
+                    int column = BoardPositionHelpers.PositionColumn(fromPosition);
                     // check if the pawn is on the right column. 
                     // We don't need to check if there is a next row is outside the board.
                     // because the pawn is never able to stand on the last because of promotion
-                    if (column != H_COLUMN) {
-                        int move = RelativePosition(fromPosition, 1, direction);
+                    if (column != BoardPositionHelpers.H_COLUMN) {
+                        int move = BoardPositionHelpers.RelativePosition(fromPosition, 1, direction);
                         bool isEnpassant = EnPassantTarget == move;
                         if (
                             // targetposition has to either be the enpassant square.
@@ -1017,8 +949,8 @@ namespace ParallelChess {
                     // check if the pawn is on the left column. 
                     // We don't need to check if there is a next row is outside the board.
                     // because the pawn is never able to stand on the last because of promotion
-                    if (column != A_COLUMN) {
-                        int move = RelativePosition(fromPosition, -1, direction);
+                    if (column != BoardPositionHelpers.A_COLUMN) {
+                        int move = BoardPositionHelpers.RelativePosition(fromPosition, -1, direction);
                         bool isEnpassant = EnPassantTarget == move;
                         if (
                             // targetposition has to either be the enpassant square.
@@ -1032,7 +964,7 @@ namespace ParallelChess {
                 case Piece.KING:
                     foreach (var relativeMove in kingMoves) {
                         int move = relativeMove + fromPosition;
-                        if (IsValidPosition(move)) {
+                        if (BoardPositionHelpers.IsValidPosition(move)) {
                             var moveOption = CanITakeSquare(move);
                             if (moveOption != MoveOption.INVALID) {
                                 AddMove(fromPosition, move, MoveFlags.EMPTY, moves);
@@ -1070,7 +1002,7 @@ namespace ParallelChess {
                 case Piece.KNIGHT:
                     foreach (var relativeMove in knightMoves) {
                         int move = fromPosition + relativeMove;
-                        if (IsValidPosition(move)) {
+                        if (BoardPositionHelpers.IsValidPosition(move)) {
                             var moveOption = CanITakeSquare(move);
                             if (moveOption != MoveOption.INVALID) {
                                 AddMove(fromPosition, move, MoveFlags.EMPTY, moves);
@@ -1108,7 +1040,7 @@ namespace ParallelChess {
                 bool isFirstPosition = true;
                 do {
                     relativePosition += move;
-                    if (IsValidPosition(relativePosition)) {
+                    if (BoardPositionHelpers.IsValidPosition(relativePosition)) {
                         var piece = GetPiece(relativePosition);
                         if (piece != Piece.EMPTY) {
                             Piece enemySlantedAttacked = (theirColorPiece | Piece.ATTACKS_SLANTED);
@@ -1137,7 +1069,7 @@ namespace ParallelChess {
                 bool isFirstPosition = true;
                 do {
                     relativePosition += move;
-                    if (IsValidPosition(relativePosition)) {
+                    if (BoardPositionHelpers.IsValidPosition(relativePosition)) {
                         var piece = GetPiece(relativePosition);
                         if (piece != Piece.EMPTY) {
                             Piece enemySlantedAttacked = (theirColorPiece | Piece.ATTACKS_STRAIGHT);
@@ -1162,7 +1094,7 @@ namespace ParallelChess {
             foreach (var move in knightMoves) {
                 int relativePosition = position + move;
 
-                if (IsValidPosition(relativePosition)) {
+                if (BoardPositionHelpers.IsValidPosition(relativePosition)) {
                     var piece = GetPiece(relativePosition);
                     Piece enemySlantedAttacked = (theirColorPiece | Piece.KNIGHT);
                     if ((piece & (Piece.PIECE_MASK | Piece.IS_WHITE)) == enemySlantedAttacked) {
@@ -1173,14 +1105,14 @@ namespace ParallelChess {
 
             int leftPawnPosition = position - BoardStateOffset.ROW_OFFSET - 1 + BoardStateOffset.ROW_OFFSET * pretendToBeWhite * 2;
             int rightPawnPosition = position - BoardStateOffset.ROW_OFFSET + 1 + BoardStateOffset.ROW_OFFSET * pretendToBeWhite * 2;
-            if (IsValidPosition(leftPawnPosition)) {
+            if (BoardPositionHelpers.IsValidPosition(leftPawnPosition)) {
                 Piece leftPawn = GetPiece(leftPawnPosition);
                 if (leftPawn == (theirColorPiece | Piece.PAWN)) {
                     return true;
                 }
             }
 
-            if (IsValidPosition(rightPawnPosition)) {
+            if (BoardPositionHelpers.IsValidPosition(rightPawnPosition)) {
                 Piece rightPawn = GetPiece(rightPawnPosition);
                 if (rightPawn == (theirColorPiece | Piece.PAWN)) {
                     return true;

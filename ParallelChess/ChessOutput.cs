@@ -92,7 +92,7 @@ namespace ParallelChess {
                 }
             }
             fen.Append(" ");
-            fen.Append(board.EnPassantTarget != EnPassant.NO_ENPASSANT ? Board.ReadablePosition(board.EnPassantTarget) : "-");
+            fen.Append(board.EnPassantTarget != EnPassant.NO_ENPASSANT ? BoardPositionHelpers.ReadablePosition(board.EnPassantTarget) : "-");
             fen.Append(" ");
             fen.Append(board.HalfTurnCounter);
             fen.Append(" ");
