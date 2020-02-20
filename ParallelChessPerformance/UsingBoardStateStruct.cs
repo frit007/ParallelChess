@@ -26,7 +26,7 @@ namespace ParallelChessPerformance {
 
 
                 //Console.WriteLine(boardState.A1);
-                Piece piece = (Piece)boardState.A1;
+                Piece piece = board.GetPiece(BoardStateOffset.A1);
 
                 Console.WriteLine(piece);
             }

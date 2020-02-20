@@ -20,6 +20,9 @@ namespace ParallelChessPerformance {
             //    Console.WriteLine($"still working: {i}");
             //}
 
+
+            //var games = PGNParser.ParseFile("C:/Users/Frithjof/Source/Repos/ParallelChess/ParallelChessTests/Resources/tactics.pgn");
+
             //var board = BoardFactory.LoadBoardFromFen("r1b1n2r/1q1nNpbk/1p1p2p1/p2NpPPp/2P1P2P/3BB3/PP6/R2QK2R w - - 0 1");
 
             //var moves = Board.GetMoves(board);
@@ -28,8 +31,9 @@ namespace ParallelChessPerformance {
 
             //Console.WriteLine("hi");
             //Console.WriteLine("Hello World!");
-            var summary = BenchmarkRunner.Run<ModelCallOverhead>();
+            //var summary = BenchmarkRunner.Run<GetMovePerformance>();
 
+            var summary = BenchmarkRunner.Run<StructMethodsVsStaticReferenceFunction>();
             //UsingBoardStateStruct usingBoardStateStruct = new UsingBoardStateStruct();
             //usingBoardStateStruct.makeAMove();
         }

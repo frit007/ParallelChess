@@ -35,11 +35,11 @@ namespace ChessApi.Controllers
             });
             context.SaveChanges();
 
-            var board = BoardFactory.LoadBoardFromFen();
+            var chess = chessService.ReplayMoves(new List<Models.Move>());
 
             var progress = new GameProgress() {
                 GameId = game.Entity.Id,
-                State = chessService.BoardToState(board),
+                State = chessService.ChessToState(chess),
             };
 
             return progress;
@@ -49,11 +49,11 @@ namespace ChessApi.Controllers
         public GameProgress View(int id) {
             var game = context.Game.Include(game => game.Moves).Where(game => game.Id == id).First();
             
-            var board = chessService.ReplayMoves(game.Moves.ToList());
+            var chess = chessService.ReplayMoves(game.Moves.ToList());
 
             return new GameProgress() {
                 GameId = game.Id,
-                State = chessService.BoardToState(board),
+                State = chessService.ChessToState(chess),
             };
         }
 
@@ -65,11 +65,11 @@ namespace ChessApi.Controllers
         public async Task<GameProgress> PlayMove(PlayDTO play, int id) {
             var game = context.Game.Include(game => game.Moves).Where(game => game.Id == id).First();
 
-            var board = chessService.ReplayMoves(game.Moves.ToList());
+            var chess = chessService.ReplayMoves(game.Moves.ToList());
 
-            var boardState = chessService.BoardToState(board);
-            
-            var move = board.MakeMove(play.SAN);
+            var move = chess.Move(play.SAN);
+
+            var boardState = chessService.ChessToState(chess);
 
             if (boardState.whiteWins || boardState.isDraw || boardState.blackWins) {
                 var moveRow = new Models.Move() {
@@ -86,13 +86,13 @@ namespace ChessApi.Controllers
                 };
             }
 
-            var aiMove = await chessService.GetAiMove(board);
+            var aiMove = await chessService.GetAiMove(chess.board);
 
-            var aiMoveSan = board.StandardAlgebraicNotation(aiMove);
+            var aiMoveSan = chess.board.StandardAlgebraicNotation(aiMove);
 
-            board.MakeMove(aiMove);
+            chess.Move(aiMove);
 
-            if(MoveHelper.isValidMove(move)) {
+            if(MoveHelper.isValidMove(move.move)) {
                 var moveRow = new Models.Move() {
                     SAN = play.SAN,
                     Game = game,
@@ -114,7 +114,7 @@ namespace ChessApi.Controllers
             
             return new GameProgress() {
                 GameId = id,
-                State = chessService.BoardToState(board)
+                State = chessService.ChessToState(chess)
             };
         }
 

@@ -5,86 +5,161 @@ using System.Collections.Generic;
 namespace AsciiCommentGenerator {
     class Program {
         static void Main(string[] args) {
-            Console.WriteLine("Please enter a FEN");
+            while (true) {
+                Console.WriteLine("press \"1\" for PGN \"2\" for FEN builder ");
+                var key = Console.ReadKey();
+                switch (key.KeyChar) {
+                    case '1':
+                        GameToChessComment(CreateGameFromPGN());
+                        return ;
+                    case'2':
+                        GameToChessComment(CreateGameLinePerLine());
+                        return ;
+                    default:
+                        break;
+                }
+            }
+        }
 
-            var fen = Console.ReadLine();
-            Board board = BoardFactory.LoadBoardFromFen(fen);
+        static Chess CreateGameFromPGN() {
+            Console.WriteLine("please paste pgn (2 empty lines marks the end of the pgn)");
 
-            var color = board.IsWhiteTurnBool ? "White" : "Black";
-            
-            Console.WriteLine(ChessOutput.AsciiBoard(board));
+            string pgn = "";
+            bool lastLineWasEmpty = false;
+            while(true) {
+                string line = Console.ReadLine();
+                if (lastLineWasEmpty) {
+                    if(line.Trim() == "") {
+                        break;
+                    } else {
+                        lastLineWasEmpty = false;
+                    }
+                } else {
+                    if(line.Trim() == "") {
+                        lastLineWasEmpty = true;
+                    }
+                }
+                pgn += line + "\n";
+            }
 
-            var moves = new List<string>();
+            return PGNParser.parse(pgn);
+        }
+        static Chess CreateGameLinePerLine() {
+
+            Chess game = null;
+            while (game == null) {
+                try {
+                    Console.WriteLine("Please enter a FEN");
+
+                    var fen = Console.ReadLine();
+
+                    game = Chess.ContinueFromFEN(fen);
+                } catch (Exception e) {
+                    Console.WriteLine(e.Message);
+                }
+            }
 
             do {
-                Console.WriteLine("Do you want to add moves? for each move add in the format \"A2 A4\" if you want no more moves press space, you can specify promotion with by adding R,N,B,Q like \"A7 A8 Q\"");
-                var read = Console.ReadLine().ToUpper();
-                if(read == "") {
+                Console.WriteLine(ChessOutput.AsciiBoard(game.board));
+                Console.WriteLine("Do you want to add moves? for each move add in the format \"A2 A4\" if you want no more moves press space, you can specify promotion with by adding R,N,B,Q like \"A7 A8 Q\" or san");
+                var read = Console.ReadLine();
+                if (read == "") {
                     break;
                 } else {
-                    moves.Add(read);
+                    try {
+                        var split = read.Split(" ");
+                        Move boardMove;
+                        Piece promotionPiece = Piece.EMPTY;
+                        if (split.Length == 1) {
+                            var chessMove = game.FindMoveFromSan(split[0]);
+                            boardMove = chessMove.move;
+                        } else {
+                            if (split.Length == 3) {
+                                switch (split[2].ToUpper()) {
+                                    case "Q":
+                                        promotionPiece = Piece.QUEEN;
+                                        break;
+                                    case "R":
+                                        promotionPiece = Piece.ROOK;
+                                        break;
+                                    case "B":
+                                        promotionPiece = Piece.BISHOP;
+                                        break;
+                                    case "N":
+                                        promotionPiece = Piece.KNIGHT;
+                                        break;
+                                };
+                            }
+                            boardMove = game.board.FindMove(BoardPosition.ArrayPosition(split[0]), BoardPosition.ArrayPosition(split[1]), promotionPiece);
+                        }
+                        if (!MoveHelper.isValidMove(boardMove)) {
+                            continue;
+                        }
+
+                        game.Move(boardMove);
+                    } catch (Exception e) {
+
+                        Console.WriteLine("move could not be found");
+                    }
+
                 }
             } while (true);
+
+            return game;
+        }
+
+        static void GameToChessComment(Chess game) {
+
+            Chess copy = game.Copy();
+            copy.UndoAll();
+
+            var color = copy.board.IsWhiteTurnBool ? "White" : "Black";
             
+            var fen = copy.FEN;
+
             Console.WriteLine(
                 "/*\n" +
                 $" * Starting position ({color} to play)");
 
-            Console.WriteLine($"{ChessOutput.AsciiBoard(board)}");
-            foreach (var move in moves) {
-                var split = move.Split(" ");
+            Console.WriteLine($"{ChessOutput.AsciiBoard(game)}");
+            
+            while(copy.CanRedo()) {
+                var chessMove = copy.Redo();
+                var move = chessMove.move;
                 var promotion = "";
-                Piece promotionPiece = Piece.EMPTY;
                 
-                if(split.Length == 3) {
-                    switch (split[2]) {
-                        case "Q":
-                            promotionPiece = Piece.QUEEN;
-                            promotion = "(Promote to Queen)";
-                            break;
-                        case "R":
-                            promotionPiece = Piece.ROOK;
-                            promotion = "(Promote to Rook)";
-                            break;
-                        case "B":
-                            promotionPiece = Piece.BISHOP;
-                            promotion = "(Promote to Bishop)";
-                            break;
-                        case "N":
-                            promotionPiece = Piece.KNIGHT;
-                            promotion = "(Promote to Knight)";
-                            break;
-                    };
+                if ((Piece)move.promotion != Piece.EMPTY) {
+                    promotion = $"(Promote to {PieceParser.ToReadable((Piece)move.promotion)})";
                 }
 
-                board.MakeMove(BoardPosition.ArrayPosition(split[0]), BoardPosition.ArrayPosition(split[1]), promotionPiece);
-                Console.WriteLine($"{split[0]} -> {split[1]} {promotion}");
-                Console.WriteLine($"{ChessOutput.AsciiBoard(board)}");
+                Console.WriteLine($"{BoardPosition.ReadablePosition(move.fromPosition)} -> {BoardPosition.ReadablePosition(move.targetPosition)} {promotion}");
+                Console.WriteLine($"{ChessOutput.AsciiBoard(copy)}");
             }
             Console.WriteLine(" */\n" +
-                $"var board = BoardFactory.LoadBoardFromFen(\"{fen}\");\n\n"+
-                $"var moves = BoardHelper.GetMoves(board);");
+                $"var board = BoardFactory.LoadBoardFromFen(\"{fen}\");\n\n" +
+                $"var moves = board.GetMoves();");
 
-            foreach (var move in moves) {
-                var split = move.Split(" ");
+            copy.UndoAll();
+            while(copy.CanRedo()) {
+                var move = copy.Redo().move;
+
                 var promotion = "EMPTY";
-                if (split.Length == 3) {
-                    switch (split[2]) {
-                        case "Q":
-                            promotion = "QUEEN";
-                            break;
-                        case "R":
-                            promotion = "ROOK";
-                            break;
-                        case "B":
-                            promotion = "BISHOP";
-                            break;
-                        case "N":
-                            promotion = "Knight";
-                            break;
-                    };
-                }
-                Console.WriteLine($"Chess.MakeMove(board, BoardStateOffset.{split[0]},BoardStateOffset.{split[1]}, Piece.{promotion});");
+                switch ((Piece)move.promotion) {
+                    case Piece.QUEEN:
+                        promotion = "QUEEN";
+                        break;
+                    case Piece.ROOK:
+                        promotion = "ROOK";
+                        break;
+                    case Piece.BISHOP:
+                        promotion = "BISHOP";
+                        break;
+                    case Piece.KNIGHT:
+                        promotion = "Knight";
+                        break;
+                };
+
+                Console.WriteLine($"board.MakeMove(BoardStateOffset.{BoardPosition.ReadablePosition(move.fromPosition).ToUpper()},BoardStateOffset.{BoardPosition.ReadablePosition(move.targetPosition).ToUpper()}, Piece.{promotion});");
             }
         }
     }

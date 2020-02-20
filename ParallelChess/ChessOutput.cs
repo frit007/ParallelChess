@@ -5,6 +5,11 @@ using System.Text;
 
 namespace ParallelChess {
     public static class ChessOutput {
+
+        public static String AsciiBoard(Chess game, List<Move> moves = null, bool displayCount = false) {
+
+            return AsciiBoard(game.board, moves, displayCount);
+        }
         public static String AsciiBoard(Board board, List<Move> moves = null, bool displayCount = false) {
             if (moves == null) {
                 moves = new List<Move>();

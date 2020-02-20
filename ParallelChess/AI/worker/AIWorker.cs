@@ -135,7 +135,7 @@ namespace ParallelChess.AI {
                     bestScore = min;
                 }
             }
-            aiTask.board.MakeMove(move);
+            aiTask.board.Move(move);
             var startedFromMin = min;
             var detectWinnerMoves = aiTask.board.GetMoves();
             // check for winner

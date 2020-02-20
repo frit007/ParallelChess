@@ -44,5 +44,33 @@ namespace ParallelChess {
 
             return c;
         }
+
+        public static string ToReadable(Piece piece, bool includeColor = false) {
+            if(Piece.EMPTY == piece) {
+                return "_blank_";
+            }
+
+            String name = (piece & Piece.PIECE_MASK) switch
+            {
+                Piece.PAWN => "Pawn",
+                Piece.ROOK => "Rook",
+                Piece.KNIGHT => "Knight",
+                Piece.BISHOP => "Bishop",
+                Piece.QUEEN => "Queen",
+                Piece.KING => "King",
+                Piece.EMPTY => "",
+                _ => throw new ArgumentException($"Invalid piece {piece}")
+            };
+
+            if(includeColor) {
+                if ((piece & Piece.IS_WHITE) == Piece.IS_WHITE) {
+                    name = "White " + name;
+                } else {
+                    name = "Black " + name;
+                }
+            }
+
+            return name;
+        }
     }
 }

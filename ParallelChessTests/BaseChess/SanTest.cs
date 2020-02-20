@@ -444,7 +444,7 @@ namespace ParallelChessTests.BaseChess {
 
             board.MakeMove("e4");
 
-            Assert.AreEqual(Piece.PAWN|Piece.IS_WHITE,board.E4);
+            Assert.AreEqual(Piece.PAWN|Piece.IS_WHITE, board.GetPiece(BoardStateOffset.E4));
         }
 
         [Test]

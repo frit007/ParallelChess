@@ -14,14 +14,15 @@ namespace ChessApi.Services {
             return (row, column);
         }
 
-        public ChessState BoardToState(Board board) {
+        public ChessState ChessToState(Chess game) {
             var chessState = new ChessState();
-            var moves = board.GetMoves().Where(move => board.IsLegalMove(move));
+            //var moves = board.GetMoves().Where(move => board.IsLegalMove(move));
+            var moves = game.getMoves();
 
             for (int column = 0; column < 8; column++) {
                 for (int row = 0; row < 8 * BoardStateOffset.ROW_OFFSET; row += BoardStateOffset.ROW_OFFSET) {
                     var position = row + column;
-                    Piece piece = board.GetPiece(position);
+                    Piece piece = game.board.GetPiece(position);
                     if(piece != Piece.EMPTY) {
                         (int fromRow, int fromColumn) = convertx88ToArrayPosition(position);
                         var chessPiece = new ChessPiece() {
@@ -34,21 +35,21 @@ namespace ChessApi.Services {
                         chessState.pieces.Add(chessPiece);
 
                         foreach (var move in moves) {
-                            if(move.fromPosition == position) {
-                                (int toRow, int toColumn) = convertx88ToArrayPosition(move.targetPosition);
+                            if(move.move.fromPosition == position) {
+                                (int toRow, int toColumn) = convertx88ToArrayPosition(move.move.targetPosition);
                                 chessPiece.options.Add(new PieceOption() {
                                     row = toRow,
                                     column = toColumn,
-                                    isCastle = ((MoveFlags)move.moveFlags & MoveFlags.CASTLING) == MoveFlags.CASTLING,
-                                    isEnpassant =(((MoveFlags)move.moveFlags & MoveFlags.ENPASSANT) == MoveFlags.ENPASSANT),
-                                    san = board.StandardAlgebraicNotation(move)
+                                    isCastle = ((MoveFlags)move.move.moveFlags & MoveFlags.CASTLING) == MoveFlags.CASTLING,
+                                    isEnpassant =(((MoveFlags)move.move.moveFlags & MoveFlags.ENPASSANT) == MoveFlags.ENPASSANT),
+                                    san = move.san
                                 });
                             }
                         }
                     }
                 }
             }
-            var winner = board.detectWinner(moves);
+            var winner = game.Winner();
             if(winner == Winner.DRAW) {
                 chessState.isDraw = true;
             } else if(winner == Winner.WINNER_BLACK) {
@@ -57,23 +58,23 @@ namespace ChessApi.Services {
                 chessState.whiteWins = true;
             }
 
-            chessState.fen = board.FEN;
+            chessState.fen = game.FEN;
 
             return chessState;
         }
 
-        public Board ReplayMoves(List<ChessApi.Models.Move> moves) {
+        public Chess ReplayMoves(List<ChessApi.Models.Move> moves) {
             return ReplayMoves(moves.Select(move => move.SAN).ToList());
         }
 
-        public Board ReplayMoves(List<string> san) {
-            Board board = BoardFactory.LoadBoardFromFen();
+        public Chess ReplayMoves(List<string> san) {
+            Chess game = Chess.StartGame();
 
             foreach (var move in san) {
-                board.MakeMove(move);
+               game.Move(move);
             }
 
-            return board;
+            return game;
         }
 
         public async Task<Move> GetAiMove(Board board) {

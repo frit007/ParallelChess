@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace ParallelChess {
@@ -22,6 +23,7 @@ namespace ParallelChess {
         // a1 -> 0
         // a3 -> 2
         // h8 -> 119
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int ArrayPosition(string readablePosition) {
             readablePosition = readablePosition.ToLower();
 
@@ -41,6 +43,7 @@ namespace ParallelChess {
         // 0 -> a1
         // 2 -> a3
         // 119 -> h8
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ReadablePosition(int arrayPosition) {
             int row = arrayPosition / BoardStateOffset.ROW_OFFSET;
             int column = arrayPosition - (row * BoardStateOffset.ROW_OFFSET);
@@ -48,6 +51,7 @@ namespace ParallelChess {
             return move;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsValidPosition(int position) {
             // ------------0x88-------------
             // 0x88 is method used checking if location is out of bound very fast
@@ -60,14 +64,17 @@ namespace ParallelChess {
             return (0x88 & position) == 0;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int RelativePosition(int position, int relativeColumn, int relativeRow) {
             return position + relativeRow * BoardStateOffset.ROW_OFFSET + relativeColumn;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int PositionRow(int position) {
             return position / BoardStateOffset.ROW_OFFSET;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int PositionColumn(int position) {
             return position - (PositionRow(position) * BoardStateOffset.ROW_OFFSET);
         }

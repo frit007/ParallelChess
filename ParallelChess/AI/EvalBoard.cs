@@ -28,7 +28,7 @@ namespace ParallelChess.AI {
         private static float MOVE_BONUS = 0.1f;
         // count moves that are not valid meaning they are likely to be valid in the future
         // this means a well positionend queen is usefull even though it is pinned right now. Or atleast that is the intention.
-        private static float PSEUDO_VALID_MOVE_PENALTY = 0.1f;
+        //private static float PSEUDO_VALID_MOVE_PENALTY = 0.1f;
 
         static EvalBoard() {
             for (int i = 0; i <= (int)Piece.PIECE_MASK; i++) {

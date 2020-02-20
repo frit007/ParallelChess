@@ -424,10 +424,141 @@ namespace ParallelChessTests.BaseChess {
 
         [Test]
         public void ThreefoldRepetition() {
-            // remember
-            // the state has to be the exact same which means it has to be same players turn, same pieces in the same position, same enpassant options and same castling options.
-            // currently not implemented because you need to keep track of every move ever made, which is unfortunate.
-            Assert.Fail();
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |r _ _ _ _ _ _ k| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ Q _ p| 5
+            |_ _ _ _ _ _ _ _| 4
+            |r _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ _ _ _ _ K| 1
+            +---------------+
+             A B C D E F G H
+            f6 -> f5
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |r _ _ _ _ _ _ k| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ Q _ p| 5
+            |_ _ _ _ _ _ _ _| 4
+            |r _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ _ _ _ _ K| 1
+            +---------------+
+             A B C D E F G H
+            h7 -> h6
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |r _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ k| 6
+            |_ _ _ _ _ Q _ p| 5
+            |_ _ _ _ _ _ _ _| 4
+            |r _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ _ _ _ _ K| 1
+            +---------------+
+             A B C D E F G H
+            f5 -> f6
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |r _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ Q _ k| 6
+            |_ _ _ _ _ _ _ p| 5
+            |_ _ _ _ _ _ _ _| 4
+            |r _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ _ _ _ _ K| 1
+            +---------------+
+             A B C D E F G H
+            h6 -> h7
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |r _ _ _ _ _ _ k| 7
+            |_ _ _ _ _ Q _ _| 6
+            |_ _ _ _ _ _ _ p| 5
+            |_ _ _ _ _ _ _ _| 4
+            |r _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ _ _ _ _ K| 1
+            +---------------+
+             A B C D E F G H
+            f6 -> f5
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |r _ _ _ _ _ _ k| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ Q _ p| 5
+            |_ _ _ _ _ _ _ _| 4
+            |r _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ _ _ _ _ K| 1
+            +---------------+
+             A B C D E F G H
+            h7 -> h6
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |r _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ k| 6
+            |_ _ _ _ _ Q _ p| 5
+            |_ _ _ _ _ _ _ _| 4
+            |r _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ _ _ _ _ K| 1
+            +---------------+
+             A B C D E F G H
+            f5 -> f6
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |r _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ Q _ k| 6
+            |_ _ _ _ _ _ _ p| 5
+            |_ _ _ _ _ _ _ _| 4
+            |r _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ _ _ _ _ K| 1
+            +---------------+
+             A B C D E F G H
+            h6 -> h7
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |r _ _ _ _ _ _ k| 7
+            |_ _ _ _ _ Q _ _| 6
+            |_ _ _ _ _ _ _ p| 5
+            |_ _ _ _ _ _ _ _| 4
+            |r _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ _ _ _ _ K| 1
+            +---------------+
+             A B C D E F G H
+            f6 -> f5
+            +---------------+
+            |_ _ _ _ _ _ _ _| 8
+            |r _ _ _ _ _ _ k| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ Q _ p| 5
+            |_ _ _ _ _ _ _ _| 4
+            |r _ _ _ _ _ p _| 3
+            |_ _ _ _ _ _ P _| 2
+            |_ _ _ _ _ _ _ K| 1
+            +---------------+
+             A B C D E F G H
+             */
+            var board = Chess.ContinueFromFEN("8/r6k/5Q2/7p/8/r5p1/6P1/7K w - - 0 1");
+
+            board.Move(BoardStateOffset.F6, BoardStateOffset.F5, Piece.EMPTY);
+            board.Move(BoardStateOffset.H7, BoardStateOffset.H6, Piece.EMPTY);
+            board.Move(BoardStateOffset.F5, BoardStateOffset.F6, Piece.EMPTY);
+            board.Move(BoardStateOffset.H6, BoardStateOffset.H7, Piece.EMPTY);
+            board.Move(BoardStateOffset.F6, BoardStateOffset.F5, Piece.EMPTY);
+            board.Move(BoardStateOffset.H7, BoardStateOffset.H6, Piece.EMPTY);
+            board.Move(BoardStateOffset.F5, BoardStateOffset.F6, Piece.EMPTY);
+            board.Move(BoardStateOffset.H6, BoardStateOffset.H7, Piece.EMPTY);
+            board.Move(BoardStateOffset.F6, BoardStateOffset.F5, Piece.EMPTY);
+
+            Assert.AreEqual(Winner.DRAW, board.Winner());
         }
     }
 }

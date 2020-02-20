@@ -35,9 +35,7 @@ namespace ParallelChess {
         // 6. Fullmove number
         //  - Counts how many full moves have been made
         public static Board LoadBoardFromFen(String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-            Board board = new Board() {
-                bytes = new byte[BoardStateOffset.BOARD_STATE_SIZE]
-            };
+            Board board = new Board(new byte[BoardStateOffset.BOARD_STATE_SIZE]);
 
             var sections = fen.Split(" ");
 
@@ -75,19 +73,19 @@ namespace ParallelChess {
             //Board.SetIsWhitesTurn(board, activeColor == "w");
             board.IsWhiteTurnBool = activeColor == "w";
 
-            if (castlingOptions.Contains("K")) {
+            if (castlingOptions.Contains("K") && board.WhiteKingPosition == BoardStateOffset.E1 && board.GetPiece(BoardStateOffset.H1) == (Piece.ROOK | Piece.IS_WHITE)) {
                 //Board.SetCastleBit(board, CastlingBits.WHITE_KING_SIDE_CASTLE, true);
                 board.CastlingBits |= CastlingBits.WHITE_KING_SIDE_CASTLE;
             }
-            if (castlingOptions.Contains("Q")) {
+            if (castlingOptions.Contains("Q") && board.WhiteKingPosition == BoardStateOffset.E1 && board.GetPiece(BoardStateOffset.A1) == (Piece.ROOK | Piece.IS_WHITE)) {
                 //Board.SetCastleBit(board, CastlingBits.WHITE_QUEEN_SIDE_CASTLE, true);
                 board.CastlingBits |= CastlingBits.WHITE_QUEEN_SIDE_CASTLE;
             }
-            if (castlingOptions.Contains("k")) {
+            if (castlingOptions.Contains("k") && board.BlackKingPosition == BoardStateOffset.E8 && board.GetPiece(BoardStateOffset.H8) == Piece.ROOK) {
                 //Board.SetCastleBit(board, CastlingBits.BLACK_KING_SIDE_CASTLE, true);
                 board.CastlingBits |= CastlingBits.BLACK_KING_SIDE_CASTLE;
             }
-            if (castlingOptions.Contains("q")) {
+            if (castlingOptions.Contains("q") && board.BlackKingPosition == BoardStateOffset.E8 && board.GetPiece(BoardStateOffset.A8) == Piece.ROOK) {
                 //Board.SetCastleBit(board, CastlingBits.BLACK_QUEEN_SIDE_CASTLE, true);
                 board.CastlingBits |= CastlingBits.BLACK_QUEEN_SIDE_CASTLE;
             }

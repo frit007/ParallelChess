@@ -12,11 +12,15 @@ namespace ParallelChessPerformance {
     public class SharedPerformance {
 
         //String fen = "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 4 3";
-        [Params("r1b2rk1/ppq1bppp/2nppn2/8/2B1PP2/1NN1B3/PPP3PP/R2Q1RK1 w - - 0 1", "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 4 3")]
+        // "r1b2rk1/ppq1bppp/2nppn2/8/2B1PP2/1NN1B3/PPP3PP/R2Q1RK1 w - - 0 1"
+        [Params("r1b2rk1/ppq1bppp/2nppn2/8/2B1PP2/1NN1B3/PPP3PP/R2Q1RK1 w - - 0 1")]
         public String fen = "rnbqkb1r/ppp1pppp/5n2/3p4/3P1B2/5N2/PPP1PPPP/RN1QKB1R b KQkq - 4 3";
 
         [Params(5)]
         public int depth { get; set; }
+
+        [Params(1, 4, 7, 8)]
+        public int workers { get; set; }
 
         Board board;
 
@@ -50,16 +54,44 @@ namespace ParallelChessPerformance {
         //    }).GetAwaiter().GetResult();
         //    ai.killWorkers();
         //}
-
         [Benchmark]
-        public void solvePosition3Worker() {
+        public void solvePositionWorker() {
             var ai = new AIWorkerManager();
-            ai.spawnWorkers(3);
+            ai.spawnWorkers(workers);
             Task.Run(async () => {
                 await ai.analyzeBoard(board, depth);
             }).GetAwaiter().GetResult();
             ai.killWorkers();
         }
+        //[Benchmark]
+        //public void solvePosition4Worker() {
+        //    var ai = new AIWorkerManager();
+        //    ai.spawnWorkers(4);
+        //    Task.Run(async () => {
+        //        await ai.analyzeBoard(board, depth);
+        //    }).GetAwaiter().GetResult();
+        //    ai.killWorkers();
+        //}
+
+        //[Benchmark]
+        //public void solvePosition8Worker() {
+        //    var ai = new AIWorkerManager();
+        //    ai.spawnWorkers(8);
+        //    Task.Run(async () => {
+        //        await ai.analyzeBoard(board, depth);
+        //    }).GetAwaiter().GetResult();
+        //    ai.killWorkers();
+        //}
+
+        //[Benchmark]
+        //public void solvePosition7Worker() {
+        //    var ai = new AIWorkerManager();
+        //    ai.spawnWorkers(7);
+        //    Task.Run(async () => {
+        //        await ai.analyzeBoard(board, depth);
+        //    }).GetAwaiter().GetResult();
+        //    ai.killWorkers();
+        //}
 
         //[Benchmark]
         //public void solvePosition4Worker() {

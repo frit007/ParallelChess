@@ -14,11 +14,11 @@ namespace ParallelChessTests.BaseChess {
             
             Move move = list.FindTargetPosition(BoardStateOffset.E4);
 
-            board.MakeMove(move);
+            board.Move(move);
 
-            Piece piece = board.E4;
+            Piece piece = board.GetPiece(BoardStateOffset.E4);
 
-            Assert.AreEqual(Piece.PAWN, board.E4 & Piece.PIECE_MASK);
+            Assert.AreEqual(Piece.PAWN, board.GetPiece(BoardStateOffset.E4) & Piece.PIECE_MASK);
             Assert.AreEqual(BoardStateOffset.E3, board.EnPassantTarget);
         }
 
@@ -64,9 +64,9 @@ namespace ParallelChessTests.BaseChess {
             */
             var board = BoardFactory.LoadBoardFromFen("3k4/8/8/8/8/6p1/6PP/3K4 w - - 0 1");
             board.MakeMove(BoardStateOffset.H2, BoardStateOffset.G3);
-            Assert.AreEqual(Piece.EMPTY, board.H2);
+            Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.H2));
 
-            Assert.AreEqual(Piece.PAWN | Piece.IS_WHITE, board.G3);
+            Assert.AreEqual(Piece.PAWN | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.G3));
         }
 
         [Test]
@@ -411,13 +411,13 @@ namespace ParallelChessTests.BaseChess {
 
             Move move = list.FindTargetPosition(BoardStateOffset.E4);
 
-            board.MakeMove(move);
+            board.Move(move);
 
             list = board.GetMovesForPosition(BoardStateOffset.D4);
 
             move = list.FindTargetPosition(BoardStateOffset.E3);
 
-            board.MakeMove(move);
+            board.Move(move);
 
             return board;
         }
@@ -425,7 +425,7 @@ namespace ParallelChessTests.BaseChess {
         [Test]
         public void CheckEnpassantSuccededToMove() {
             Board board = TakeEnpassant();
-            Assert.AreEqual(Piece.PAWN, board.E3 & Piece.PIECE_MASK);
+            Assert.AreEqual(Piece.PAWN, board.GetPiece(BoardStateOffset.E3) & Piece.PIECE_MASK);
         }
 
         [Test]
@@ -437,13 +437,13 @@ namespace ParallelChessTests.BaseChess {
         [Test]
         public void CheckEnpassantMovedFromPosition() {
             Board board = TakeEnpassant();
-            Assert.AreEqual(Piece.EMPTY, board.D4&Piece.PIECE_MASK);
+            Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.D4) &Piece.PIECE_MASK);
         }
 
         [Test]
         public void EnPassantKilledEnemyPawn() {
             Board board = TakeEnpassant();
-            Assert.AreEqual(Piece.EMPTY, board.E4 & Piece.PIECE_MASK);
+            Assert.AreEqual(Piece.EMPTY, board.GetPiece(BoardStateOffset.E4) & Piece.PIECE_MASK);
         }
 
         [Test]
@@ -522,7 +522,7 @@ namespace ParallelChessTests.BaseChess {
             var original = board.CreateCopy();
             var moves = board.GetMoves();
             foreach (var move in moves) {
-                board.MakeMove(move);
+                board.Move(move);
                 board.UndoMove(move);
             }
         }

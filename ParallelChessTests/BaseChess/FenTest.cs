@@ -13,9 +13,9 @@ namespace ParallelChessTests.BaseChess {
             //Piece piece = Board.GetPiece(board, BoardOffset.A1);
             //Piece piece = board.A1;
 
-            Assert.AreEqual(board.A1, Piece.IS_WHITE | Piece.ROOK);
-            Assert.AreEqual(board.E1, Piece.IS_WHITE | Piece.KING);
-            Assert.AreEqual(board.E8, Piece.KING);
+            Assert.AreEqual(board.GetPiece(BoardStateOffset.A1), Piece.IS_WHITE | Piece.ROOK);
+            Assert.AreEqual(board.GetPiece(BoardStateOffset.E1), Piece.IS_WHITE | Piece.KING);
+            Assert.AreEqual(board.GetPiece(BoardStateOffset.E8), Piece.KING);
         }
 
         [Test]
@@ -41,6 +41,17 @@ namespace ParallelChessTests.BaseChess {
             var board = BoardFactory.LoadBoardFromFen(originalFEN);
 
             Assert.AreEqual(originalFEN, board.FEN);
+        }
+
+        [Test]
+        public void SanitizeFenCastling() {
+            // this fen is technically illegal because you cannot castle while the king isn't on the correct position
+            // if it is not sanitized it will cause the program to crash
+            var poisionFEN = "3r3k/6pp/3Q4/q7/8/4P2P/6P1/5RK1 b Qq - 0 1";
+
+            var board = BoardFactory.LoadBoardFromFen(poisionFEN);
+
+            Assert.AreEqual(CastlingBits.EMPTY, board.CastlingBits);
         }
     }
 }

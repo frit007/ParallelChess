@@ -207,7 +207,7 @@ namespace ParallelChessPerformance {
                 foreach (var move in moves) {
                     
                     if (board.IsLegalMove(move)) {
-                        board.MakeMove(move);
+                        board.Move(move);
                         board.UndoMove(move);
                     }
                 }

@@ -47,8 +47,8 @@ namespace ParallelChessTests.BaseChess {
 
             copy.UndoMove(moveMade);
 
-            Assert.AreEqual(original.E2, copy.E2);
-            Assert.AreEqual(original.E4, copy.E4);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.E2), copy.GetPiece(BoardStateOffset.E2));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.E4), copy.GetPiece(BoardStateOffset.E4));
             //everyThingIsEqual(original, copy);
         }
 
@@ -89,8 +89,8 @@ namespace ParallelChessTests.BaseChess {
 
             copy.UndoMove(moveMade);
 
-            Assert.AreEqual(original.F4, copy.F4);
-            Assert.AreEqual(original.C7, copy.C7);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.F4), copy.GetPiece(BoardStateOffset.F4));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.C7), copy.GetPiece(BoardStateOffset.C7));
         }
 
         [Test]
@@ -294,12 +294,12 @@ namespace ParallelChessTests.BaseChess {
             copy.UndoMove(move);
 
             // king position checks
-            Assert.AreEqual(original.E1, copy.E1);
-            Assert.AreEqual(original.C1, copy.C1);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.E1), copy.GetPiece(BoardStateOffset.E1));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.C1), copy.GetPiece(BoardStateOffset.C1));
 
             // check rooks moved back to its starting position
-            Assert.AreEqual(original.D1, copy.D1);
-            Assert.AreEqual(original.A1, copy.A1);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.D1), copy.GetPiece(BoardStateOffset.D1));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.A1), copy.GetPiece(BoardStateOffset.A1));
             Assert.AreEqual(original.CastlingBits, copy.CastlingBits);
 
         }
@@ -342,12 +342,12 @@ namespace ParallelChessTests.BaseChess {
             copy.UndoMove(move);
 
             // king position checks
-            Assert.AreEqual(original.E1, copy.E1);
-            Assert.AreEqual(original.G1, copy.G1);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.E1), copy.GetPiece(BoardStateOffset.E1));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.G1), copy.GetPiece(BoardStateOffset.G1));
 
             // check rooks moved back to its starting position
-            Assert.AreEqual(original.F1, copy.F1);
-            Assert.AreEqual(original.H1, copy.H1);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.F1), copy.GetPiece(BoardStateOffset.F1));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.H1), copy.GetPiece(BoardStateOffset.H1));
             Assert.AreEqual(original.CastlingBits, copy.CastlingBits);
 
         }
@@ -390,12 +390,12 @@ namespace ParallelChessTests.BaseChess {
             copy.UndoMove(move);
 
             // king position checks
-            Assert.AreEqual(original.E8, copy.E8);
-            Assert.AreEqual(original.C8, copy.C8);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.E8), copy.GetPiece(BoardStateOffset.E8));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.C8), copy.GetPiece(BoardStateOffset.C8));
 
             // check rooks moved back to its starting position
-            Assert.AreEqual(original.D8, copy.D8);
-            Assert.AreEqual(original.A8, copy.A8);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.D8), copy.GetPiece(BoardStateOffset.D8));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.A8), copy.GetPiece(BoardStateOffset.A8));
             Assert.AreEqual(original.CastlingBits, copy.CastlingBits);
 
         }
@@ -438,12 +438,12 @@ namespace ParallelChessTests.BaseChess {
             copy.UndoMove(move);
 
             // king position checks
-            Assert.AreEqual(original.E8, copy.E8);
-            Assert.AreEqual(original.G8, copy.G8);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.E8), copy.GetPiece(BoardStateOffset.E8));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.G8), copy.GetPiece(BoardStateOffset.G8));
 
             // check rooks moved back to its starting position
-            Assert.AreEqual(original.F8, copy.F8);
-            Assert.AreEqual(original.H8, copy.H8);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.F8), copy.GetPiece(BoardStateOffset.F8));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.H8), copy.GetPiece(BoardStateOffset.H8));
             Assert.AreEqual(original.CastlingBits, copy.CastlingBits);
 
         }
@@ -581,9 +581,9 @@ namespace ParallelChessTests.BaseChess {
             copy.UndoMove(secondMove);
             copy.UndoMove(firstMove);
 
-            Assert.AreEqual(original.E4, copy.E4);
-            Assert.AreEqual(original.D2, copy.D2);
-            Assert.AreEqual(original.D3, copy.D3);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.E4), copy.GetPiece(BoardStateOffset.E4));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.D2), copy.GetPiece(BoardStateOffset.D2));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.D3), copy.GetPiece(BoardStateOffset.D3));
 
             everyThingIsEqual(original, copy, firstMove);
         }
@@ -638,9 +638,9 @@ namespace ParallelChessTests.BaseChess {
             copy.UndoMove(secondMove);
             copy.UndoMove(firstMove);
 
-            Assert.AreEqual(original.D7, copy.D7);
-            Assert.AreEqual(original.E5, copy.E5);
-            Assert.AreEqual(original.D6, copy.D6);
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.D7), copy.GetPiece(BoardStateOffset.D7));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.E5), copy.GetPiece(BoardStateOffset.E5));
+            Assert.AreEqual(original.GetPiece(BoardStateOffset.D6), copy.GetPiece(BoardStateOffset.D6));
 
             everyThingIsEqual(original, copy, firstMove);
         }
@@ -678,7 +678,7 @@ namespace ParallelChessTests.BaseChess {
 
             var moves = board.GetMovesForPosition(BoardStateOffset.D7);
             var move = moves.FindTargetPosition(BoardStateOffset.C8, Piece.BISHOP);
-            board.MakeMove(move);
+            board.Move(move);
             board.UndoMove(move);
 
             Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.C8));
@@ -718,7 +718,7 @@ namespace ParallelChessTests.BaseChess {
 
             var moves = board.GetMovesForPosition(BoardStateOffset.D7);
             var move = moves.FindTargetPosition(BoardStateOffset.C8, Piece.QUEEN);
-            board.MakeMove(move);
+            board.Move(move);
             board.UndoMove(move);
 
             Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.C8));
@@ -758,7 +758,7 @@ namespace ParallelChessTests.BaseChess {
             var original = board.CreateCopy();
             var moves = board.GetMovesForPosition(BoardStateOffset.D7);
             var move = moves.FindTargetPosition(BoardStateOffset.C8, Piece.ROOK);
-            board.MakeMove(move);
+            board.Move(move);
             board.UndoMove(move);
 
             Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.C8));
@@ -799,7 +799,7 @@ namespace ParallelChessTests.BaseChess {
 
             var moves = board.GetMovesForPosition(BoardStateOffset.D7);
             var move = moves.FindTargetPosition(BoardStateOffset.C8, Piece.KNIGHT);
-            board.MakeMove(move);
+            board.Move(move);
             board.UndoMove(move);
 
             Assert.AreEqual(Piece.BISHOP, board.GetPiece(BoardStateOffset.C8));
@@ -849,7 +849,7 @@ namespace ParallelChessTests.BaseChess {
             var original = board.CreateCopy();
 
             foreach (var move in board.GetMoves()) {
-                board.MakeMove(move);
+                board.Move(move);
                 board.UndoMove(move);
                 everyThingIsEqual(original, board, move);
             }
@@ -861,7 +861,7 @@ namespace ParallelChessTests.BaseChess {
             var original = board.CreateCopy();
 
             foreach (var move in board.GetMoves()) {
-                board.MakeMove(move);
+                board.Move(move);
                 board.UndoMove(move);
                 everyThingIsEqual(original, board, move);
             }
@@ -873,7 +873,7 @@ namespace ParallelChessTests.BaseChess {
             var original = board.CreateCopy();
 
             foreach (var move in board.GetMoves()) {
-                board.MakeMove(move);
+                board.Move(move);
                 board.UndoMove(move);
                 everyThingIsEqual(original, board, move);
             }
@@ -885,7 +885,7 @@ namespace ParallelChessTests.BaseChess {
             var original = board.CreateCopy();
 
             foreach (var move in board.GetMoves()) {
-                board.MakeMove(move);
+                board.Move(move);
                 board.UndoMove(move);
                 everyThingIsEqual(original, board, move);
             }
@@ -896,7 +896,7 @@ namespace ParallelChessTests.BaseChess {
             var original = board.CreateCopy();
 
             foreach (var move in board.GetMoves()) {
-                board.MakeMove(move);
+                board.Move(move);
                 board.UndoMove(move);
                 everyThingIsEqual(original, board, move);
             }
@@ -908,7 +908,7 @@ namespace ParallelChessTests.BaseChess {
             var original = board.CreateCopy();
             var moves = board.GetMovesForPosition(BoardStateOffset.B2);
             foreach (var move in moves) {
-                board.MakeMove(move);
+                board.Move(move);
                 board.UndoMove(move);
                 everyThingIsEqual(original, board, move);
             }

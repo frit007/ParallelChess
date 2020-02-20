@@ -48,7 +48,7 @@ namespace ParallelChess.AI {
             foreach (var move in moves) {
                 byte myTurn = board.IsWhiteTurn;
                 boardHash = HashBoard.ApplyMove(board, move, boardHash);
-                board.MakeMove(move);
+                board.Move(move);
 
                 board.VirtualLevel++;
 
@@ -105,7 +105,7 @@ namespace ParallelChess.AI {
 
 
             if (board.VirtualLevel >= depth) {
-                float existingScore = 0;
+                //float existingScore = 0;
                 //if (moveScores.TryGetValue(boardHash, out existingScore)) {
                 //    return existingScore;
                 //}
@@ -168,7 +168,7 @@ namespace ParallelChess.AI {
                 byte myTurn = board.IsWhiteTurn;
 
                 boardHash = HashBoard.ApplyMove(board, move, boardHash);
-                board.MakeMove(move);
+                board.Move(move);
 
                 board.VirtualLevel++;
 

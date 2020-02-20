@@ -19,7 +19,7 @@ namespace ParallelChessTests.BaseChess {
 
             var nextBoardHash = HashBoard.ApplyMove(board, move, boardHash);
 
-            board.MakeMove(move);
+            board.Move(move);
 
             var expectedHash = HashBoard.hash(board);
 
@@ -79,7 +79,7 @@ namespace ParallelChessTests.BaseChess {
 
             var nextBoardHash = HashBoard.ApplyMove(board, move, boardHash);
 
-            board.MakeMove(move);
+            board.Move(move);
 
             var expectedHash = HashBoard.hash(board);
 
@@ -124,7 +124,7 @@ namespace ParallelChessTests.BaseChess {
 
             var nextBoardHash = HashBoard.ApplyMove(board, move, boardHash);
 
-            board.MakeMove(move);
+            board.Move(move);
 
             var expectedHash = HashBoard.hash(board);
 
@@ -390,7 +390,7 @@ namespace ParallelChessTests.BaseChess {
 
             var nextBoardHash = HashBoard.ApplyMove(board, move, boardHash);
 
-            board.MakeMove(move);
+            board.Move(move);
             board.UndoMove(move);
             var previousHash = HashBoard.ApplyMove(board, move, nextBoardHash);
 

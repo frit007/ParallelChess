@@ -217,7 +217,10 @@ namespace ParallelChessTests.AI.Easy {
             var minmax = new MinMaxAI();
             EvaluatedMove foundMove = minmax.MinMaxList(board, 5)[0];
 
-            Assert.AreEqual(BoardStateOffset.H5, foundMove.move.targetPosition);
+            //Assert.AreEqual(BoardStateOffset.H5, foundMove.move.targetPosition);
+            if(!(foundMove.move.targetPosition == BoardStateOffset.H5 || foundMove.move.targetPosition == BoardStateOffset.G6)) {
+                Assert.Fail("ai has to find the move H5 or G6");
+            }
         }
 
         [Test]
