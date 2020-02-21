@@ -44,7 +44,7 @@ namespace ParallelChessTests.BaseChess {
             */
             var board = BoardFactory.LoadBoardFromFen("1k6/6pp/8/8/8/8/6PP/1K6 b - - 0 1");
 
-            board.MakeMove(BoardStateOffset.B8, BoardStateOffset.B7);
+            board.Move(BoardStateOffset.B8, BoardStateOffset.B7);
 
             Assert.AreEqual(BoardStateOffset.B7, board.BlackKingPosition);
         }
@@ -80,7 +80,7 @@ namespace ParallelChessTests.BaseChess {
 
             var board = BoardFactory.LoadBoardFromFen("1k6/6pp/8/8/8/8/6PP/1K6 w - - 0 1");
 
-            board.MakeMove(BoardStateOffset.B1, BoardStateOffset.B2);
+            board.Move(BoardStateOffset.B1, BoardStateOffset.B2);
 
             Assert.AreEqual(BoardStateOffset.B2, board.WhiteKingPosition);
         }

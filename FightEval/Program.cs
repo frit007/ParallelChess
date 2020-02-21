@@ -31,7 +31,7 @@ namespace FightEval {
         }
 
         public static async Task MainAsync(string[] args) {
-            Board.initThreadStaticVariables();
+            EvalBoard.initThreadStaticVariables();
             var ai = new AIWorkerManager();
             //var history = new Stack<Move>();
 

@@ -48,7 +48,7 @@ namespace ParallelChess {
         }
 
 
-        public static String BoardToFen(Board board) {
+        public static String BoardToFen(Board board, int move = 0) {
             StringBuilder fen = new StringBuilder();
 
             for (int row = 7; row >= 0; row--) {
@@ -101,7 +101,7 @@ namespace ParallelChess {
             fen.Append(" ");
             fen.Append(board.HalfTurnCounter);
             fen.Append(" ");
-            fen.Append(board.TurnCounter);
+            fen.Append(move);
 
             return fen.ToString();
         }

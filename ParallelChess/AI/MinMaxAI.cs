@@ -105,54 +105,39 @@ namespace ParallelChess.AI {
 
 
             if (board.VirtualLevel >= depth) {
-                //float existingScore = 0;
-                //if (moveScores.TryGetValue(boardHash, out existingScore)) {
-                //    return existingScore;
-                //}
+                float existingScore = 0;
+                if (moveScores.TryGetValue(boardHash, out existingScore)) {
+                    return existingScore;
+                }
                 float score;
                 var winner = board.detectWinner(moves);
                 if ((winner == Winner.WINNER_WHITE || winner == Winner.WINNER_BLACK)) {
                     if (maximizing) {
                         // if a checkmate is found then no deeper moves matter since we are going to play that move
                         score = float.MinValue + board.VirtualLevel;
-                        //moveScores.Add(boardHash, score);
+                        moveScores.Add(boardHash, score);
                         return score;
                     } else {
                         score = float.MaxValue - board.VirtualLevel;
-                        //moveScores.Add(boardHash, score);
+                        moveScores.Add(boardHash, score);
                         return score;
                     }
                 } else if (winner == Winner.DRAW) {
                     score = 0;
-                    //moveScores.Add(boardHash, score);
+                    moveScores.Add(boardHash, score);
                     return score;
                 }
 
                 score = EvalBoard.evalBoard(board, moves);
 
                 int isWhite = ((board.IsWhiteTurn ^ depth) & 1);
-                //Console.WriteLine($"depth {depth} a: {a}");
-                //Console.WriteLine($"score {score}");
+                
                 if (isWhite != 1) {
                     // if black started the query then optimize for black
                     score *= -1;
-                } else {
-                    //Console.WriteLine("anylysing white");
                 }
-                //if (maximizing) {
-                //    score *= 1;
-                //}
-                //if (maximizing != board.IsWhiteTurnBool) {
-                //    score *= 1;
-                //}
-                //if (!maximizing) {
-                //    // if the score is not for the optimized player flip the score.
-                //    score *= -1;
-                //}
-                //if (board.IsWhiteTurnBool) {
-                //    score *= 1;
-                //}
-                //moveScores.Add(boardHash, score);
+
+                moveScores.Add(boardHash, score);
                 return score;
             }
 

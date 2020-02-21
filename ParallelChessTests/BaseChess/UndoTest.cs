@@ -43,7 +43,7 @@ namespace ParallelChessTests.BaseChess {
             */
             var original = BoardFactory.LoadBoardFromFen();
             var copy = original.CreateCopy();
-            var moveMade = copy.MakeMove(BoardStateOffset.E2, BoardStateOffset.E4);
+            var moveMade = copy.Move(BoardStateOffset.E2, BoardStateOffset.E4);
 
             copy.UndoMove(moveMade);
 
@@ -85,7 +85,7 @@ namespace ParallelChessTests.BaseChess {
             var original = BoardFactory.LoadBoardFromFen("rnbqkb1r/ppp1pp1p/5np1/3p4/2PP1B2/2N5/PP2PPPP/R2QKBNR w KQkq - 2 4");
             var copy = original.CreateCopy();
 
-            var moveMade = copy.MakeMove(BoardStateOffset.F4, BoardStateOffset.C7);
+            var moveMade = copy.Move(BoardStateOffset.F4, BoardStateOffset.C7);
 
             copy.UndoMove(moveMade);
 
@@ -126,7 +126,7 @@ namespace ParallelChessTests.BaseChess {
             var original = BoardFactory.LoadBoardFromFen("rnbqkb1r/ppp1pp1p/5np1/3p4/2PP1B2/2N5/PP2PPPP/R2QKBNR w KQkq - 2 4");
             var copy = original.CreateCopy();
 
-            var moveMade = copy.MakeMove(BoardStateOffset.F4, BoardStateOffset.C7);
+            var moveMade = copy.Move(BoardStateOffset.F4, BoardStateOffset.C7);
 
             copy.UndoMove(moveMade);
 
@@ -164,13 +164,13 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
               Undo
             */
-            var original = BoardFactory.LoadBoardFromFen("1q2k3/8/8/8/8/8/3PPP2/4K3 b - - 0 1");
+            var original = Chess.ContinueFromFEN("1q2k3/8/8/8/8/8/3PPP2/4K3 b - - 0 1");
 
-            var copy = original.CreateCopy();
+            var copy = original.Copy();
 
-            var moveMade = copy.MakeMove(BoardStateOffset.B8, BoardStateOffset.B1);
+            copy.Move(BoardStateOffset.B8, BoardStateOffset.B1);
 
-            copy.UndoMove(moveMade);
+            copy.Undo();
 
             Assert.AreEqual(original.TurnCounter, copy.TurnCounter);
         }
@@ -204,13 +204,13 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
               Undo
             */
-            var original = BoardFactory.LoadBoardFromFen("1q2k3/8/8/8/8/8/3PPP2/4K3 w - - 0 1");
+            var original = Chess.ContinueFromFEN("1q2k3/8/8/8/8/8/3PPP2/4K3 w - - 0 1");
 
-            var copy = original.CreateCopy();
+            var copy = original.Copy();
 
-            var moveMade = copy.MakeMove(BoardStateOffset.D2, BoardStateOffset.D3);
+            var moveMade = copy.Move(BoardStateOffset.D2, BoardStateOffset.D3);
 
-            copy.UndoMove(moveMade);
+            copy.Undo();
 
             Assert.AreEqual(original.TurnCounter, copy.TurnCounter);
         }
@@ -249,7 +249,7 @@ namespace ParallelChessTests.BaseChess {
 
             var copy = original.CreateCopy();
 
-            var moveMade = copy.MakeMove(BoardStateOffset.B8, BoardStateOffset.B1);
+            var moveMade = copy.Move(BoardStateOffset.B8, BoardStateOffset.B1);
 
             copy.UndoMove(moveMade);
 
@@ -289,7 +289,7 @@ namespace ParallelChessTests.BaseChess {
             var original = BoardFactory.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
             var copy = original.CreateCopy();
 
-            var move = copy.MakeMove(BoardStateOffset.E1, BoardStateOffset.C1);
+            var move = copy.Move(BoardStateOffset.E1, BoardStateOffset.C1);
 
             copy.UndoMove(move);
 
@@ -337,7 +337,7 @@ namespace ParallelChessTests.BaseChess {
             var original = BoardFactory.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
             var copy = original.CreateCopy();
 
-            var move = copy.MakeMove(BoardStateOffset.E1, BoardStateOffset.G1);
+            var move = copy.Move(BoardStateOffset.E1, BoardStateOffset.G1);
 
             copy.UndoMove(move);
 
@@ -385,7 +385,7 @@ namespace ParallelChessTests.BaseChess {
             var original = BoardFactory.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
             var copy = original.CreateCopy();
 
-            var move = copy.MakeMove(BoardStateOffset.E8, BoardStateOffset.C8);
+            var move = copy.Move(BoardStateOffset.E8, BoardStateOffset.C8);
 
             copy.UndoMove(move);
 
@@ -433,7 +433,7 @@ namespace ParallelChessTests.BaseChess {
             var original = BoardFactory.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
             var copy = original.CreateCopy();
 
-            var move = copy.MakeMove(BoardStateOffset.E8, BoardStateOffset.G8);
+            var move = copy.Move(BoardStateOffset.E8, BoardStateOffset.G8);
 
             copy.UndoMove(move);
 
@@ -481,7 +481,7 @@ namespace ParallelChessTests.BaseChess {
             var original = BoardFactory.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
             var copy = original.CreateCopy();
 
-            var move = copy.MakeMove(BoardStateOffset.E1, BoardStateOffset.C1);
+            var move = copy.Move(BoardStateOffset.E1, BoardStateOffset.C1);
 
             copy.UndoMove(move);
 
@@ -522,7 +522,7 @@ namespace ParallelChessTests.BaseChess {
             var original = BoardFactory.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
             var copy = original.CreateCopy();
 
-            var move = copy.MakeMove(BoardStateOffset.E8, BoardStateOffset.C8);
+            var move = copy.Move(BoardStateOffset.E8, BoardStateOffset.C8);
 
             copy.UndoMove(move);
 
@@ -575,8 +575,8 @@ namespace ParallelChessTests.BaseChess {
             var original = BoardFactory.LoadBoardFromFen("3k4/8/8/8/4p3/8/3P4/3K4 w - - 0 1");
             var copy = original.CreateCopy();
 
-            var firstMove = copy.MakeMove(BoardStateOffset.D2, BoardStateOffset.D4);
-            var secondMove = copy.MakeMove(BoardStateOffset.E4, BoardStateOffset.D3);
+            var firstMove = copy.Move(BoardStateOffset.D2, BoardStateOffset.D4);
+            var secondMove = copy.Move(BoardStateOffset.E4, BoardStateOffset.D3);
 
             copy.UndoMove(secondMove);
             copy.UndoMove(firstMove);
@@ -632,8 +632,8 @@ namespace ParallelChessTests.BaseChess {
             var original = BoardFactory.LoadBoardFromFen("3k4/3p4/8/4P3/8/8/8/3K4 b - - 0 1");
             var copy = original.CreateCopy();
 
-            var firstMove = copy.MakeMove(BoardStateOffset.D7, BoardStateOffset.D5);
-            var secondMove = copy.MakeMove(BoardStateOffset.E5, BoardStateOffset.D6);
+            var firstMove = copy.Move(BoardStateOffset.D7, BoardStateOffset.D5);
+            var secondMove = copy.Move(BoardStateOffset.E5, BoardStateOffset.D6);
 
             copy.UndoMove(secondMove);
             copy.UndoMove(firstMove);
@@ -838,7 +838,7 @@ namespace ParallelChessTests.BaseChess {
             var board = BoardFactory.LoadBoardFromFen("3k4/8/8/8/8/6p1/6PP/3K4 w - - 0 1");
             var original = board.CreateCopy();
 
-            var move = board.MakeMove(BoardStateOffset.H2, BoardStateOffset.H4);
+            var move = board.Move(BoardStateOffset.H2, BoardStateOffset.H4);
             board.UndoMove(move);
             Assert.AreEqual(original.EnPassantTarget, board.EnPassantTarget);
         }
@@ -946,7 +946,7 @@ namespace ParallelChessTests.BaseChess {
             var original = board.CreateCopy();
             var moves = board.GetMoves();
 
-            var move = board.MakeMove(BoardStateOffset.C1, BoardStateOffset.C2, Piece.EMPTY);
+            var move = board.Move(BoardStateOffset.C1, BoardStateOffset.C2, Piece.EMPTY);
             board.UndoMove(move);
 
             Assert.AreEqual(original.BlackKingPosition, board.BlackKingPosition);

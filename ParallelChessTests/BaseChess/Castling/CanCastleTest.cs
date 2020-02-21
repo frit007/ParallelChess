@@ -39,7 +39,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = BoardFactory.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
-            board.MakeMove(BoardStateOffset.E1, BoardStateOffset.C1);
+            board.Move(BoardStateOffset.E1, BoardStateOffset.C1);
 
             Assert.AreEqual(Piece.KING | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.C1));
             Assert.AreEqual(Piece.ROOK | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.D1));
@@ -79,7 +79,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = BoardFactory.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
-            board.MakeMove(BoardStateOffset.E1, BoardStateOffset.G1);
+            board.Move(BoardStateOffset.E1, BoardStateOffset.G1);
 
             Assert.AreEqual(Piece.KING | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.G1));
             Assert.AreEqual(Piece.ROOK | Piece.IS_WHITE, board.GetPiece(BoardStateOffset.F1));
@@ -119,7 +119,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = BoardFactory.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
-            board.MakeMove(BoardStateOffset.E8, BoardStateOffset.G8);
+            board.Move(BoardStateOffset.E8, BoardStateOffset.G8);
 
             Assert.AreEqual(Piece.KING, board.GetPiece(BoardStateOffset.G8));
             Assert.AreEqual(Piece.ROOK, board.GetPiece(BoardStateOffset.F8));
@@ -159,7 +159,7 @@ namespace ParallelChessTests.BaseChess.Castling {
               A B C D E F G H
              */
             Board board = BoardFactory.LoadBoardFromFen("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1");
-            board.MakeMove(BoardStateOffset.E8, BoardStateOffset.C8);
+            board.Move(BoardStateOffset.E8, BoardStateOffset.C8);
 
             Assert.AreEqual(Piece.KING, board.GetPiece(BoardStateOffset.C8));
             Assert.AreEqual(Piece.ROOK, board.GetPiece(BoardStateOffset.D8));

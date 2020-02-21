@@ -13,6 +13,12 @@ namespace ParallelChess.AI {
 
     // we mark the functions as unsafe because I want to stackAlloc a array since we only need it for the function duration
     public unsafe static class EvalBoard {
+
+        public static void initThreadStaticVariables() {
+            moves = new List<Move>();
+            attackedFields = new AttackedField[BoardStateOffset.BOARD_STATE_SIZE];
+        }
+
         [ThreadStatic]
         private static List<Move> moves = new List<Move>();
 
@@ -57,11 +63,6 @@ namespace ParallelChess.AI {
                         break;
                 }
             }
-        }
-
-        public static void initThreadStaticVariables() {
-            moves = new List<Move>();
-            attackedFields = new AttackedField[BoardStateOffset.BOARD_STATE_SIZE];
         }
 
         public static float evalBoard(Board board, List<Move> myMoves) {

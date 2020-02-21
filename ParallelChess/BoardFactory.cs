@@ -4,6 +4,10 @@ using System.Text;
 
 namespace ParallelChess {
     public static class BoardFactory {
+        public static Board LoadBoardFromFen(String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+            return LoadBoardFromFen(out int _, fen);
+        }
+
         // Loads a board from the FEN notation(Forsyth–Edwards Notation)
         // Useful for getting to certain chess positions quickly. 
         // Use the website below to generate positions
@@ -34,7 +38,7 @@ namespace ParallelChess {
         //  - This is used for declaring stalemate
         // 6. Fullmove number
         //  - Counts how many full moves have been made
-        public static Board LoadBoardFromFen(String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+        public static Board LoadBoardFromFen(out int move, String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
             Board board = new Board(new byte[BoardStateOffset.BOARD_STATE_SIZE]);
 
             var sections = fen.Split(" ");
@@ -101,9 +105,9 @@ namespace ParallelChess {
             //Board.SetHalfTurnCounter(board, int.Parse(halfMoveClock));
             board.HalfTurnCounter = (byte)int.Parse(halfMoveClock);
 
+            
             //Board.SetFullMoveClock(board, int.Parse(fullMoveClock));
-            board.TurnCounter = (short)int.Parse(fullMoveClock);
-
+            move = (short)int.Parse(fullMoveClock);
             return board;
         }
 

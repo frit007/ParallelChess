@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using ParallelChess;
+using ParallelChess.AI;
 using ParallelChess.AI.worker;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace ParallelChessTests.AI.Worker {
 
             var ai = new AIWorkerManager();
 
-            Board.initThreadStaticVariables();
+            EvalBoard.initThreadStaticVariables();
             ai.spawnWorkers(1);
             ai.analyzeBoard(board, 2).GetAwaiter().GetResult();
             Assert.IsTrue(MoveHelper.isValidMove(ai.GetBestMove().move));

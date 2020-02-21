@@ -23,7 +23,7 @@ namespace ParallelChess.AI.worker {
                 var worker = new AIWorker();
 
                 Thread thread = new Thread(() => {
-                    Board.initThreadStaticVariables();
+                    EvalBoard.initThreadStaticVariables();
                     worker.WaitForTask();
                 });
                 thread.Start();
@@ -79,7 +79,7 @@ namespace ParallelChess.AI.worker {
         }
 
         public async Task<List<EvaluatedMove>> analyzeBoard(Board board, int depth, Stack<Move> history = null, Action<AIProgress> onProgress = null) {
-            Board.initThreadStaticVariables();
+            EvalBoard.initThreadStaticVariables();
 
             HashSet<ulong> tiedBoards;
             if (history != null) {
@@ -131,7 +131,7 @@ namespace ParallelChess.AI.worker {
         }
 
         private async Task<List<EvaluatedMove>> delegateToWorkers(Board board, List<EvaluatedMove> moves, int depth, HashSet<ulong> tiedBoards, Action<AIProgress> onProgress = null) {
-            Board.initThreadStaticVariables();
+            EvalBoard.initThreadStaticVariables();
             int workerWorkId = random.Next();
             lock (stateLock) {
                 workId = workerWorkId;

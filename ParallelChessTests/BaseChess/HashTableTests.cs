@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ParallelChess;
-using ParallelChess.AI;
 
 namespace ParallelChessTests.BaseChess {
     class HashTableTests {
@@ -395,6 +394,15 @@ namespace ParallelChessTests.BaseChess {
             var previousHash = HashBoard.ApplyMove(board, move, nextBoardHash);
 
             Assert.AreEqual(boardHash, previousHash);
+        }
+
+        [Test]
+        public void blackAndWhiteDontHashToTheSameValue() {
+            var whiteBoard = BoardFactory.LoadBoardFromFen("r3k2r/8/8/2pP4/8/8/8/R3K2R w KQkq c6 0 2");
+            var blackBoard = BoardFactory.LoadBoardFromFen("r3k2r/8/8/2pP4/8/8/8/R3K2R b KQkq c6 0 2");
+
+
+            Assert.AreNotEqual(HashBoard.hash(whiteBoard), HashBoard.hash(blackBoard));
         }
     }
 }

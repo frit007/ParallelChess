@@ -33,7 +33,7 @@ namespace ParallelChessPerformance {
             //Console.WriteLine("Hello World!");
             //var summary = BenchmarkRunner.Run<GetMovePerformance>();
 
-            var summary = BenchmarkRunner.Run<StructMethodsVsStaticReferenceFunction>();
+            var summary = BenchmarkRunner.Run<GetMovePerformance>();
             //UsingBoardStateStruct usingBoardStateStruct = new UsingBoardStateStruct();
             //usingBoardStateStruct.makeAMove();
         }

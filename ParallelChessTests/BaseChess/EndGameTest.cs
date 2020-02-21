@@ -352,12 +352,12 @@ namespace ParallelChessTests.BaseChess {
             var winner = board.detectWinner(moves);
             Assert.AreEqual(Winner.NONE, winner);
 
-            board.MakeMove(BoardStateOffset.G7, BoardStateOffset.G2, Piece.EMPTY);
+            board.Move(BoardStateOffset.G7, BoardStateOffset.G2, Piece.EMPTY);
             moves = board.GetMoves();
             winner = board.detectWinner(moves);
             Assert.AreEqual(Winner.NONE, winner);
             
-            board.MakeMove(BoardStateOffset.H2, BoardStateOffset.H7, Piece.EMPTY);
+            board.Move(BoardStateOffset.H2, BoardStateOffset.H7, Piece.EMPTY);
             moves = board.GetMoves();
             winner = board.detectWinner(moves);
 
@@ -410,12 +410,12 @@ namespace ParallelChessTests.BaseChess {
             var winner = board.detectWinner(moves);
             Assert.AreEqual(Winner.NONE, winner);
 
-            board.MakeMove(BoardStateOffset.G7, BoardStateOffset.G2, Piece.EMPTY);
+            board.Move(BoardStateOffset.G7, BoardStateOffset.G2, Piece.EMPTY);
             moves = board.GetMoves();
             winner = board.detectWinner(moves);
             Assert.AreEqual(Winner.NONE, winner);
 
-            board.MakeMove(BoardStateOffset.D7, BoardStateOffset.D6, Piece.EMPTY);
+            board.Move(BoardStateOffset.D7, BoardStateOffset.D6, Piece.EMPTY);
             moves = board.GetMoves();
             winner = board.detectWinner(moves);
 

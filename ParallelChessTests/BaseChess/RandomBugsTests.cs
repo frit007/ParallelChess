@@ -46,7 +46,7 @@ namespace ParallelChessTests.BaseChess {
             var board = BoardFactory.LoadBoardFromFen("rkr5/ppp2ppp/8/4N3/8/8/8/2K5 w - - 0 1");
 
             var moves = board.GetMoves();
-            board.MakeMove(BoardStateOffset.C1, BoardStateOffset.C2, Piece.EMPTY);
+            board.Move(BoardStateOffset.C1, BoardStateOffset.C2, Piece.EMPTY);
 
             var winner = board.detectWinner(moves);
 
@@ -74,7 +74,7 @@ namespace ParallelChessTests.BaseChess {
 
             var moves = board.GetMoves();
 
-            var move = board.MakeMove(BoardStateOffset.G2, BoardStateOffset.F3);
+            var move = board.Move(BoardStateOffset.G2, BoardStateOffset.F3);
 
             board.UndoMove(move);
 

@@ -442,7 +442,7 @@ namespace ParallelChessTests.BaseChess {
              */
             var board = BoardFactory.LoadBoardFromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 
-            board.MakeMove("e4");
+            board.Move("e4");
 
             Assert.AreEqual(Piece.PAWN|Piece.IS_WHITE, board.GetPiece(BoardStateOffset.E4));
         }

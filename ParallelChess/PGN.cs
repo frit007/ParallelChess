@@ -17,7 +17,7 @@ namespace ParallelChess {
         public string Round = "?";
         // name of white player
         public string White = "Unkown";
-        // name of black palyer
+        // name of black palyerTest
         public string Black = "Unkown";
         // possibilities 
         // - "1-0"

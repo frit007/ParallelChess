@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.CompilerServices;
 using ParallelChess;
+using System.Runtime.InteropServices;
 
 namespace ParallelChessPerformance {
 
@@ -38,6 +39,32 @@ namespace ParallelChessPerformance {
             updater(position % i.Length, result);
 
             return result;
+        }
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    public struct BoardSimpler {
+        [FieldOffset(0)]
+        public byte[] bytes;
+        [FieldOffset(0)]
+        public short[] shorts;
+        public BoardSimpler(byte[] bytes) {
+            shorts = new short[0];
+            this.bytes = bytes;
+        }
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public Piece GetPiece(int position) {
+            return (Piece)bytes[position];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public bool IsPositionEmpty(int position) {
+            return GetPiece(position) == Piece.EMPTY;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public static bool IsPositionEmpty(BoardSimpler board, int position) {
+            return board.GetPiece(position) == Piece.EMPTY;
         }
     }
 
@@ -117,14 +144,110 @@ namespace ParallelChessPerformance {
         //}
 
 
-        [Benchmark]
-        public void areGettersInlined() {
-            int total = 1;
-            var board = BoardFactory.LoadBoardFromFen();
-            for (int i = 0; i < 100000000; i++) {
-                total += (int) board.GetPiece(i % 64);
-                total += board.bytes[i % 64];
-            }
-        }
+
+
+
+        //[Benchmark]
+        //public void oustideTest() {
+        //    int total = 1;
+        //    var board = BoardFactory.LoadBoardFromFen();
+        //    for (int i = 0; i < 10000000; i++) {
+        //        int position = i % BoardStateOffset.BOARD_STATE_SIZE;
+        //        if(BoardPosition.IsValidPosition(position)) {
+        //            total += GetMovesForPosition(board, BoardStateOffset.E2).Count;
+        //        }
+        //    }
+        //}
+
+        //[Benchmark]
+        //public void methodTest() {
+        //    int total = 1;
+        //    var board = BoardFactory.LoadBoardFromFen();
+        //    for (int i = 0; i < 10000000; i++) {
+        //        int position = i % BoardStateOffset.BOARD_STATE_SIZE;
+        //        if (BoardPosition.IsValidPosition(position)) {
+        //            total += board.GetMovesForPosition(BoardStateOffset.E2).Count;
+        //        }
+        //    }
+        //}
+
+
+
+        //[Benchmark]
+        //// navnet skifter til noUnionFunction i anden test
+        //public void unionMethod() {
+        //    ulong combined = 0;
+        //    var originalBoard = Chess.StartGame().board;
+        //    var board = new BoardSimpler(originalBoard.bytes);
+        //    var moves = originalBoard.GetMoves();
+        //    for (int i = 0; i < 10000000; i++) {
+        //        foreach (var move in moves) {
+        //            if (board.IsPositionEmpty(move.targetPosition)) {
+        //                combined++;
+        //            }
+        //        }
+        //    }
+        //}
+
+        //[Benchmark]
+        //// navnet skifter til noUnionFunction i anden test
+        //public void unionFunction() { 
+        //    ulong combined = 0;
+        //    var originalBoard = Chess.StartGame().board;
+        //    var board = new BoardSimpler(originalBoard.bytes);
+        //    var moves = originalBoard.GetMoves();
+        //    for (int i = 0; i < 10000000; i++) {
+        //        foreach (var move in moves) {
+
+        //            if (BoardSimpler.IsPositionEmpty(board, move.targetPosition)) {
+        //                combined++;
+        //            }
+        //        }
+        //    }
+        //}
+
+        //[Benchmark]
+        //// navnet skifter til noUnionFunction i anden test
+        //public void hashMethod() {
+        //    ulong combined = 0;
+        //    var board = Chess.StartGame().board;
+        //    for (int i = 0; i < 1000000; i++) {
+        //        combined += board.hash();
+        //    }
+        //}
+
+        //[Benchmark]
+        //// navnet skifter til noUnionFunction i anden test
+        //public void hashFunktion() {
+        //    ulong combined = 0;
+        //    var board = Chess.StartGame().board;
+        //    for (int i = 0; i < 1000000; i++) {
+        //        combined += Board.hash(board);
+        //    }
+        //}
+
+        //[Benchmark]
+        //// navnet skifter til noUnionFunction i anden test
+        //public void HashBoardFunktion() {
+        //    ulong combined = 0;
+        //    var board = Chess.StartGame().board;
+        //    for (int i = 0; i < 1000000; i++) {
+        //        combined += HashBoard.hash(board);
+        //    }
+        //}
+
+
+        //[Benchmark]
+        //public void localMethod() {
+        //    ulong combined = 0;
+        //    var board = Chess.StartGame().board;
+        //    var moves = board.GetMoves();
+        //    for (int i = 0; i < 1000000; i++) {
+        //        foreach (var move in moves) {
+        //            Move(board, move);
+        //            board.UndoMove(move);
+        //        }
+        //    }
+        //}
     }
 }

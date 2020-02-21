@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace ParallelChess.AI {
+namespace ParallelChess {
+
+    public static class RandomVariables {
+
+    }
     // based on https://en.wikipedia.org/wiki/Zobrist_hashing
     public static class HashBoard {
 
-        private static int pieceLength = (int)(Piece.ENPASSANT_TARGET);
+        public static int pieceLength = (int)Piece.ENPASSANT_TARGET;
 
         // because the pieces do not have low numeric value from 0 to 12(instead it is something like 0-25) and the boardSize is 120 instead of 64 
         // this hash table is going to be bigger than it needs to be, which means it will fill more than it needs to,
@@ -16,8 +21,9 @@ namespace ParallelChess.AI {
         // as long as we are not working on a memory constrained system then it should be fine.
         // this could be anoying for cache misses
         public static ulong[] hashTable = new ulong[BoardStateOffset.BOARD_STATE_SIZE * pieceLength + pieceLength];
-        public static ulong[] enpassantHashTable = new ulong[(int) EnPassant.NO_ENPASSANT];
-        public static ulong[] castlingOptions = new ulong[(int) CastlingBits.CAN_ALL + 1];
+        public static ulong[] enpassantHashTable = new ulong[EnPassant.NO_ENPASSANT];
+        public static ulong[] castlingOptions = new ulong[(int)CastlingBits.CAN_ALL + 1];
+        public static ulong whiteTurn;
 
         private static Piece[] pieceVariations = {
             Piece.EMPTY,
@@ -62,10 +68,12 @@ namespace ParallelChess.AI {
             for (int i = 0; i < castlingOptions.Length; i++) {
                 castlingOptions[i] = LongRandom(random);
             }
+
+            whiteTurn = LongRandom(random);
         }
 
         public static ulong pieceHash(int position, Piece piece) {
-            return hashTable[position * pieceLength + (byte) piece];
+            return hashTable[position * pieceLength + (byte)piece];
         }
         public static ulong enpassantHash(int position) {
             return enpassantHashTable[position];
@@ -86,6 +94,8 @@ namespace ParallelChess.AI {
             boardHash ^= pieceHash(toPosition, toPiece);
             // add the moved piece to the target position
             boardHash ^= pieceHash(toPosition, fromPiece);
+            // switch turn
+            boardHash ^= whiteTurn;
 
             MoveFlags moveFlags = (MoveFlags)move.moveFlags;
 
@@ -115,11 +125,11 @@ namespace ParallelChess.AI {
                 & CastlingHelper.castleLookup[toPosition]
                 & CastlingHelper.castleLookup[fromPosition];
 
-            if(nextCastlingBits != board.CastlingBits) {
+            if (nextCastlingBits != board.CastlingBits) {
                 // remove the previous castlingOptions;
-                boardHash ^= castlingOptions[(int) board.CastlingBits];
+                boardHash ^= castlingOptions[(int)board.CastlingBits];
                 // apply the new castlingOptions
-                boardHash ^= castlingOptions[(int) nextCastlingBits];
+                boardHash ^= castlingOptions[(int)nextCastlingBits];
             }
 
             if ((moveFlags & MoveFlags.CASTLING) == MoveFlags.CASTLING) {
@@ -191,6 +201,7 @@ namespace ParallelChess.AI {
         //    return boardHash;
         //}
 
+
         public static ulong hash(Board board) {
             ulong hash = 0;
             for (int column = 0; column < 8; column++) {
@@ -201,10 +212,12 @@ namespace ParallelChess.AI {
                     hash ^= bitString;
                 }
             }
-            
+
+            hash ^= board.IsWhiteTurn * whiteTurn;
+
             hash ^= castlingOptions[(int)board.CastlingBits];
 
-            if(board.EnPassantTarget != EnPassant.NO_ENPASSANT) {
+            if (board.EnPassantTarget != EnPassant.NO_ENPASSANT) {
                 hash ^= enpassantHash(board.EnPassantTarget);
             }
 
@@ -212,10 +225,10 @@ namespace ParallelChess.AI {
         }
 
         public static ulong LongRandom(Random rand) {
-            ulong result = (ulong) rand.Next(int.MinValue, int.MaxValue);
-            result = (result << 32);
-            result = result | (ulong) rand.Next(int.MinValue, int.MaxValue);
-            
+            ulong result = (ulong)rand.Next(int.MinValue, int.MaxValue);
+            result = result << 32;
+            result = result | (ulong)rand.Next(int.MinValue, int.MaxValue);
+
             return result;
         }
     }

@@ -28,19 +28,19 @@ namespace ParallelChessTests.BaseChess {
         [Test]
         public void toFenEnpassant() {
             var originalFEN = "4k3/8/8/PpP5/8/8/8/4K3 b - b6 0 1";
-            
-            var board = BoardFactory.LoadBoardFromFen(originalFEN);
 
-            Assert.AreEqual(originalFEN, board.FEN);
+            var game = Chess.ContinueFromFEN(originalFEN);
+
+            Assert.AreEqual(originalFEN, game.FEN);
         }
 
         [Test]
         public void toFenWithCastling() {
             var originalFEN = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1";
 
-            var board = BoardFactory.LoadBoardFromFen(originalFEN);
+            var game = Chess.ContinueFromFEN(originalFEN);
 
-            Assert.AreEqual(originalFEN, board.FEN);
+            Assert.AreEqual(originalFEN, game.FEN);
         }
 
         [Test]
@@ -52,6 +52,15 @@ namespace ParallelChessTests.BaseChess {
             var board = BoardFactory.LoadBoardFromFen(poisionFEN);
 
             Assert.AreEqual(CastlingBits.EMPTY, board.CastlingBits);
+        }
+
+        [Test]
+        public void preserveTurnCounter() {
+            var originalFen = "rnbqkb1r/ppp2ppp/4pn2/3p4/3PP3/2N5/PPP2PPP/R1BQKBNR w KQkq - 3 4";
+
+            var game = Chess.ContinueFromFEN(originalFen);
+
+            Assert.AreEqual(originalFen, game.FEN);
         }
     }
 }

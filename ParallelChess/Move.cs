@@ -46,7 +46,7 @@ namespace ParallelChess {
 
     //}
 
-    public struct Move {
+    public readonly struct Move {
         public readonly byte targetPosition;
         public readonly byte fromPosition;
         // use bytes instead of the actual datatype since they are smaller

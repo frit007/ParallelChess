@@ -94,8 +94,8 @@ namespace ParallelChess {
         // -------------- FULL Turn Counter --------------
         // counter is increased after BLACKs turn 
         // since we likely need more than a byte to store the game length we dedicate 2 bytes to this.
-        public const int TURN_COUNTER_1_FROM_RIGHT = 8;
-        public const int TURN_COUNTER_2_FROM_RIGHT = 9;
+        public const int TURN_COUNTER_1_FROM_RIGHT = 9;
+        public const int TURN_COUNTER_2_FROM_RIGHT = 8;
 
         public const int TURN_COUNTER_FROM_SHORT = TURN_COUNTER_1_FROM_RIGHT / 2;
 

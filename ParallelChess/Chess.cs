@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ParallelChess.AI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,16 @@ namespace ParallelChess {
 
     // chess is supposed to be an easy to use interface which is less performant than the core game, but handles the chess history necessary for 3 fold repetition
     public class Chess {
+        
 
         public Stack<ChessMove> previousMoves { get; private set; } = new Stack<ChessMove>();
         public Stack<ChessMove> nextMoves { get; private set; } = new Stack<ChessMove>();
         public Board board { get; private set; } = BoardFactory.LoadBoardFromFen();
-        public string FEN { get { return board.FEN; } }
+        public string FEN { get { return ChessOutput.BoardToFen(board, TurnCounter); } }
+
+        // store the turnCounter in Chess since it doesn't affect any chess rules and is only used by humans
+        // which means it is wasteful during simulation
+        public int TurnCounter = 1;
 
         // portable game notation
         public PGN pgn = new PGN();
@@ -35,9 +41,17 @@ namespace ParallelChess {
 
         // continue from FEN(Forsyth–Edwards Notation) position
         public static Chess ContinueFromFEN(string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-            return new Chess() {
-                board = BoardFactory.LoadBoardFromFen(fen)
+            var parts = fen.Split();
+
+            var board = BoardFactory.LoadBoardFromFen(out int turnCounter, fen);
+            
+            var game = new Chess() {
+                board = board
             };
+
+            game.TurnCounter = turnCounter;
+
+            return game;
         }
 
         public static Chess LoadGame(IEnumerable<String> SANlist, string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
@@ -104,14 +118,23 @@ namespace ParallelChess {
                 san = san,
                 move = move
             };
-            previousMoves.Push(chessMove);
             
-            if(clearNextMoves) {
+
+
+
+
+            board.Move(move);
+
+            if (board.IsWhiteTurnBool) {
+                // increment fullMoveClock after blacks turn
+                TurnCounter++;
+            }
+
+            previousMoves.Push(chessMove);
+            if (clearNextMoves) {
                 // unless explictly specified clear the next moves so nobody accidentally tries redo a move that doesn't make sense any more.
                 nextMoves.Clear();
             }
-
-            board.Move(move);
 
             return chessMove;
         }
@@ -141,6 +164,12 @@ namespace ParallelChess {
                 var move = previousMoves.Pop();
                 board.UndoMove(move.move);
                 nextMoves.Push(move);
+
+                // decrement the turn counter if it is blacks turn now(the turn counter is incremented after whites turn)
+                if(!board.IsWhiteTurnBool) {
+                    TurnCounter--;
+                }
+
                 return true;
             }
             return false;
