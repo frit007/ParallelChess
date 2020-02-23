@@ -11,7 +11,7 @@ namespace ParallelChess {
     // based on https://en.wikipedia.org/wiki/Zobrist_hashing
     public static class HashBoard {
 
-        public static int pieceLength = (int)Piece.ENPASSANT_TARGET;
+        private static int pieceLength = (int)Piece.ENPASSANT_TARGET;
 
         // because the pieces do not have low numeric value from 0 to 12(instead it is something like 0-25) and the boardSize is 120 instead of 64 
         // this hash table is going to be bigger than it needs to be, which means it will fill more than it needs to,
@@ -20,10 +20,10 @@ namespace ParallelChess {
         // instead we create a lookup table for their natual format, which should give us a performance boost
         // as long as we are not working on a memory constrained system then it should be fine.
         // this could be anoying for cache misses
-        public static ulong[] hashTable = new ulong[BoardStateOffset.BOARD_STATE_SIZE * pieceLength + pieceLength];
-        public static ulong[] enpassantHashTable = new ulong[EnPassant.NO_ENPASSANT];
-        public static ulong[] castlingOptions = new ulong[(int)CastlingBits.CAN_ALL + 1];
-        public static ulong whiteTurn;
+        private static ulong[] hashTable = new ulong[BoardStateOffset.BOARD_STATE_SIZE * pieceLength + pieceLength];
+        private static ulong[] enpassantHashTable = new ulong[EnPassant.NO_ENPASSANT];
+        private static ulong[] castlingOptions = new ulong[(int)CastlingBits.CAN_ALL + 1];
+        private static ulong whiteTurn;
 
         private static Piece[] pieceVariations = {
             Piece.EMPTY,
@@ -154,52 +154,6 @@ namespace ParallelChess {
 
             return boardHash;
         }
-        //public static ulong UndoMove(BoardState board, Move move, ulong boardHash) {
-        //    var fromPiece = board.GetPiece(move.fromPosition);
-        //    var toPiece = board.GetPiece(move.targetPosition);
-        //    var toPosition = move.targetPosition;
-        //    var fromPosition = move.fromPosition;
-
-        //    // remove the from piece
-        //    boardHash ^= pieceHash(fromPosition, fromPiece);
-        //    // add nothing to fromPosition
-        //    boardHash ^= pieceHash(fromPosition, Piece.EMPTY);
-        //    // remove the previous piece at the target location
-        //    boardHash ^= pieceHash(toPosition, toPiece);
-        //    // add the moved piece to the target position
-        //    boardHash ^= pieceHash(toPosition, fromPiece);
-
-        //    MoveFlags moveFlags = (MoveFlags)move.moveFlags;
-
-
-        //    if ((moveFlags & MoveFlags.BIG_PAWN_MOVE) == MoveFlags.BIG_PAWN_MOVE) {
-        //        // toPosition -16 if white and + 16 when black. (expressed with a )
-        //        boardHash ^= enpassantHash(toPosition + BoardStateOffset.ROW_OFFSET - BoardStateOffset.ROW_OFFSET * 2 * board.IsWhiteTurn);
-        //    }
-
-        //    if (board.EnPassantTarget != EnPassant.NO_ENPASSANT) {
-        //        boardHash ^= enpassantHash(board.EnPassantTarget);
-        //    }
-
-        //    if (((MoveFlags)move.moveFlags & MoveFlags.ENPASSANT) == MoveFlags.ENPASSANT) {
-        //        int enpassantSpawnPosition = move.targetPosition - BoardStateOffset.ROW_OFFSET + 2 * BoardStateOffset.ROW_OFFSET * board.IsWhiteTurn;
-        //        // if the move has a enpassant target then add it
-        //        boardHash ^= enpassantHash(enpassantSpawnPosition);
-        //    }
-
-        //    var nextCastlingBits = board.CastlingBits
-        //        & CastlingHelper.castleLookup[toPosition]
-        //        & CastlingHelper.castleLookup[fromPosition];
-
-        //    if (nextCastlingBits != board.CastlingBits) {
-        //        // remove the previous castlingOptions;
-        //        boardHash ^= castlingOptions[(int)board.CastlingBits];
-        //        // apply the new castlingOptions
-        //        boardHash ^= castlingOptions[(int)nextCastlingBits];
-        //    }
-
-        //    return boardHash;
-        //}
 
 
         public static ulong hash(Board board) {

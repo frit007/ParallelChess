@@ -206,25 +206,16 @@ namespace ParallelChessPerformance {
         //    }
         //}
 
-        //[Benchmark]
-        //// navnet skifter til noUnionFunction i anden test
-        //public void hashMethod() {
-        //    ulong combined = 0;
-        //    var board = Chess.StartGame().board;
-        //    for (int i = 0; i < 1000000; i++) {
-        //        combined += board.hash();
-        //    }
-        //}
 
-        //[Benchmark]
-        //// navnet skifter til noUnionFunction i anden test
-        //public void hashFunktion() {
-        //    ulong combined = 0;
-        //    var board = Chess.StartGame().board;
-        //    for (int i = 0; i < 1000000; i++) {
-        //        combined += Board.hash(board);
-        //    }
-        //}
+        [Benchmark]
+        // navnet skifter til noUnionFunction i anden test
+        public void hashFunktion() {
+            ulong combined = 0;
+            var board = Chess.StartGame().board;
+            for (int i = 0; i < 1000000; i++) {
+                combined += HashBoard.hash(board);
+            }
+        }
 
         //[Benchmark]
         //// navnet skifter til noUnionFunction i anden test

@@ -45,6 +45,7 @@ namespace ParallelChess.AI {
 
             var winner = board.detectWinner(moves);
 
+
             foreach (var move in moves) {
                 byte myTurn = board.IsWhiteTurn;
                 boardHash = HashBoard.ApplyMove(board, move, boardHash);
@@ -149,7 +150,8 @@ namespace ParallelChess.AI {
             // hasValidMove is used to track if the player has a valid move they can play, 
             // if not this is used to declare a winner
             bool foundValidMove = false;
-            foreach (var move in moves) {
+            for (int i = 0; i < moves.Count; i++) {
+                var move = moves[i];
                 byte myTurn = board.IsWhiteTurn;
 
                 boardHash = HashBoard.ApplyMove(board, move, boardHash);
@@ -158,7 +160,7 @@ namespace ParallelChess.AI {
                 board.VirtualLevel++;
 
                 var attacked = board.Attacked(board.GetKingPosition(myTurn), myTurn);
-                if(attacked) {
+                if (attacked) {
                     // if the king is under attack after making the move then it is not a valid move, in which case ignore the move
                     board.VirtualLevel--;
                     board.UndoMove(move);
@@ -173,7 +175,7 @@ namespace ParallelChess.AI {
 
                 if (maximizing) {
                     // optimize for player
-                    if(moveScore > bestMove) {
+                    if (moveScore > bestMove) {
                         bestMove = moveScore;
                     }
                     min = Math.Max(moveScore, min);
@@ -190,6 +192,47 @@ namespace ParallelChess.AI {
                     }
                 }
             }
+            //foreach (var move in moves) {
+            //    byte myTurn = board.IsWhiteTurn;
+
+            //    boardHash = HashBoard.ApplyMove(board, move, boardHash);
+            //    board.Move(move);
+
+            //    board.VirtualLevel++;
+
+            //    var attacked = board.Attacked(board.GetKingPosition(myTurn), myTurn);
+            //    if (attacked) {
+            //        // if the king is under attack after making the move then it is not a valid move, in which case ignore the move
+            //        board.VirtualLevel--;
+            //        board.UndoMove(move);
+            //        boardHash = HashBoard.ApplyMove(board, move, boardHash);
+            //        continue;
+            //    }
+            //    foundValidMove = true;
+            //    var moveScore = MinMax(board, depth, tiedPositions, !maximizing, min, max);
+            //    board.VirtualLevel--;
+            //    board.UndoMove(move);
+            //    boardHash = HashBoard.ApplyMove(board, move, boardHash);
+
+            //    if (maximizing) {
+            //        // optimize for player
+            //        if (moveScore > bestMove) {
+            //            bestMove = moveScore;
+            //        }
+            //        min = Math.Max(moveScore, min);
+            //        if (min > max) {
+            //            return bestMove;
+            //        }
+            //    } else {
+            //        if (moveScore < bestMove) {
+            //            bestMove = moveScore;
+            //        }
+            //        max = Math.Min(moveScore, max);
+            //        if (min > max) {
+            //            return bestMove;
+            //        }
+            //    }
+            //}
 
             if (!foundValidMove) {
                 if (maximizing) {

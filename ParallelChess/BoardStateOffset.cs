@@ -91,13 +91,14 @@ namespace ParallelChess {
         // every second row on the board is wasted since they are invalid positions.
         // We can use this space by placing all the extra data we need in those empty spaces
 
-        // -------------- FULL Turn Counter --------------
+        // -------------- FULL Turn Counter -------------- 
+        // (DEPRECATED) Turn counter moved to Chess
         // counter is increased after BLACKs turn 
         // since we likely need more than a byte to store the game length we dedicate 2 bytes to this.
-        public const int TURN_COUNTER_1_FROM_RIGHT = 9;
-        public const int TURN_COUNTER_2_FROM_RIGHT = 8;
+        //public const int TURN_COUNTER_1_FROM_RIGHT = 9;
+        //public const int TURN_COUNTER_2_FROM_RIGHT = 8;
 
-        public const int TURN_COUNTER_FROM_SHORT = TURN_COUNTER_1_FROM_RIGHT / 2;
+        //public const int TURN_COUNTER_FROM_SHORT = TURN_COUNTER_1_FROM_RIGHT / 2;
 
         public const int CASTLING = 10;
 

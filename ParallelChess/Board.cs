@@ -11,18 +11,11 @@ namespace ParallelChess {
 
     // Board is essentially a wrapper around a array, making is easier to perform actions on the array(and enabling typechecking)
     // Ideally the Board shuold not include any other variables outside the array since the board is a struct, 
-    // which will be copied by value every time it is used in an argument 
-    //[StructLayout(LayoutKind.Explicit)]
+    // which will be copied by value every time it is used in an argument. 
+    // This also means that it technically shuold be as efficient as using a byte[] directly, 
+    // since all it is doing is passing the pointer to the array.
     public struct Board {
-        // store a single array at the field offset 0 of the struct
-        // FieldOffset(0) allows reading the same array with different types
-        // Where bytes is used for reading the individual pieces and shorts and ints can be used to read longer numbers
-        // BoardStateOffset details what is available at which location
-        //[FieldOffset(0)]
         public byte[] bytes;
-        //[FieldOffset(0)]
-        //public short[] shorts;
-        
         public Board(byte[] bytes) {
             // temporaily assign ints and shorts to make the compiler happy
             //shorts = new short[0];
@@ -239,6 +232,7 @@ namespace ParallelChess {
 
         
         public void WalkRelativePaths(int fromPosition, int[] movePositions, List<Move> moves) {
+
             foreach (var relativePosition in movePositions) {
                 int move = fromPosition;
                 do {
@@ -257,6 +251,19 @@ namespace ParallelChess {
                         break;
                     }
                 } while (true);
+            }
+        }
+        private void RelativePath(int fromPosition, int[] relativePaths, List<Move> moves) {
+
+
+            foreach (var relativePath in relativePaths) {
+                int move = relativePath + fromPosition;
+                if (BoardPosition.IsValidPosition(move)) {
+                    var moveOption = CanITakeSquare(move);
+                    if (moveOption != MoveOption.INVALID) {
+                        AddMove(fromPosition, move, MoveFlags.EMPTY, moves);
+                    }
+                }
             }
         }
 
@@ -342,15 +349,8 @@ namespace ParallelChess {
 
                     break;
                 case Piece.KING:
-                    foreach (var relativeMove in kingMoves) {
-                        int move = relativeMove + fromPosition;
-                        if (BoardPosition.IsValidPosition(move)) {
-                            var moveOption = CanITakeSquare(move);
-                            if (moveOption != MoveOption.INVALID) {
-                                AddMove(fromPosition, move, MoveFlags.EMPTY, moves);
-                            }
-                        }
-                    }
+                    RelativePath(fromPosition, kingMoves, moves);
+
                     byte isWhite = IsWhiteTurn;
                     // check if they are allowed to castle
                     // 1. Check history if rook or king has moved. This information is stored in the castlingBit
@@ -380,15 +380,8 @@ namespace ParallelChess {
 
                     break;
                 case Piece.KNIGHT:
-                    foreach (var relativeMove in knightMoves) {
-                        int move = fromPosition + relativeMove;
-                        if (BoardPosition.IsValidPosition(move)) {
-                            var moveOption = CanITakeSquare(move);
-                            if (moveOption != MoveOption.INVALID) {
-                                AddMove(fromPosition, move, MoveFlags.EMPTY, moves);
-                            }
-                        }
-                    }
+                    RelativePath(fromPosition, knightMoves, moves);
+
                     break;
                 case Piece.QUEEN:
                     WalkRelativePaths(fromPosition, slantedMoves, moves);
@@ -415,6 +408,7 @@ namespace ParallelChess {
         public bool Attacked(int position, byte pretendToBeWhite) {
             int theirColor = pretendToBeWhite ^ 1;
             Piece theirColorPiece = (Piece)theirColor;
+            
             foreach (var move in slantedMoves) {
                 int relativePosition = position;
                 // king filter is used to allow kings to attack one square
@@ -787,6 +781,7 @@ namespace ParallelChess {
             }
 
             var repeatedPositions = this.RepeatedPositions(history);
+
             foreach (var position in repeatedPositions) {
                 if (position.Value >= 3) {
                     // if any position has occured more than 3 times then it a draw according to 3 fold repetition

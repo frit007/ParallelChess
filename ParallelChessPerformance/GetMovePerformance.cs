@@ -167,6 +167,7 @@ namespace ParallelChessPerformance {
         //public void QueenPerformanceTest() {
         //    Board board = BoardFactory.LoadBoardFromFen();
 
+
         //    for (int i = 0; i < 1000000; i++) {
         //        BoardHelper.GetMovesForPosition(board, BoardStateOffset.D1);
         //    }
@@ -182,34 +183,37 @@ namespace ParallelChessPerformance {
         //    }
         //}
 
+
+        /*
+        * Board was chosen because it looks like a realistic midgame
+        * Starting position (White to play)
+        +---------------+
+        |r n b q k b _ r| 8
+        |_ p _ _ _ p p p| 7
+        |p _ _ p _ n _ _| 6
+        |_ _ _ _ p _ _ _| 5
+        |_ _ _ N P _ _ _| 4
+        |_ _ N _ _ _ _ _| 3
+        |P P P _ _ P P P| 2
+        |R _ B Q K B _ R| 1
+        +---------------+
+         A B C D E F G H
+        */
+        Board board = BoardFactory.LoadBoardFromFen("rnbqkb1r/1p3ppp/p2p1n2/4p3/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 1 6");
+        List<Move> moves = new List<Move>();
+        //[GlobalSetup]
+        //public void setup() {
+
+        //}
+
         [Benchmark]
         public void realisticTest() {
-            /*
-             * Board was chosen because it looks like a realistic midgame
-             * Starting position (White to play)
-            +---------------+
-            |r n b q k b _ r| 8
-            |_ p _ _ _ p p p| 7
-            |p _ _ p _ n _ _| 6
-            |_ _ _ _ p _ _ _| 5
-            |_ _ _ N P _ _ _| 4
-            |_ _ N _ _ _ _ _| 3
-            |P P P _ _ P P P| 2
-            |R _ B Q K B _ R| 1
-            +---------------+
-             A B C D E F G H
-             */
-            Board board = BoardFactory.LoadBoardFromFen("rnbqkb1r/1p3ppp/p2p1n2/4p3/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 1 6");
-            List<Move> moves = new List<Move>();
-            for (int i = 0; i < 1000000; i++) {
-                moves.Clear();
-                moves = board.GetMoves(moves);
-                foreach (var move in moves) {
-                    
-                    if (board.IsLegalMove(move)) {
-                        board.Move(move);
-                        board.UndoMove(move);
-                    }
+            moves.Clear();
+            foreach (var move in board.GetMoves(moves)) {
+
+                if (board.IsLegalMove(move)) {
+                    board.Move(move);
+                    board.UndoMove(move);
                 }
             }
         }
