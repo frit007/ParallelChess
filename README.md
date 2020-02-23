@@ -2,7 +2,7 @@
 The project was developped in visual studio 2019 using dotnet core 3.1
 
 # Structure
-The project is split into multiple parts 
+The project is split into multiple solution each trying to solve a small problem. 
 
 ## ParallelChess
 ParallelChess is the core chess program which tries to be as fast c# allows.
@@ -21,6 +21,9 @@ Used for testing the AI using a command line interface
 
 ## ChessApi
 A ASP.NET Core server allowing people to challenge the AI via a rest api
+
+## ChessDisplay
+A angular application using the ChessApi to play against the AI. it is planned that this could also play against a web assembly version, for offline play.
 
 ## ParrallelChessPerformance
 A messy library containing performance tests
