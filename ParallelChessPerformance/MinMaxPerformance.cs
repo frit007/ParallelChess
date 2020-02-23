@@ -3,7 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ParallelChess;
-using ParallelChess.AI;
+using ParallelChess.MinMax;
+
 namespace ParallelChessPerformance {
     [SimpleJob]
     public class MinMaxPerformance {

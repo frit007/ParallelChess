@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ParallelChess.AI.worker {
+namespace ParallelChess.MinMax {
     public class AIProgress {
         public int total;
         public int progress;

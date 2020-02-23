@@ -1,11 +1,9 @@
 ﻿using ParallelChess;
-using ParallelChess.AI;
-using ParallelChess.AI.worker;
+using ParallelChess.MinMax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static ParallelChess.AI.MinMaxAI;
 
 namespace FightEval {
     class Program {

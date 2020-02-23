@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 using ParallelChess;
-using ParallelChess.AI;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ParallelChess.MinMax;
 
 namespace ParallelChessTests.AI.Easy {
     class EvalBoardTest {

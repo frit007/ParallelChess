@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FightEval", "FightEval\Figh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChessApi", "ChessApi\ChessApi.csproj", "{5B8D125F-65C7-49BA-97AB-26F1ADA3FFA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI", "AI\AI.csproj", "{859C2480-0C6B-44A4-8312-A89DC425AC5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinMaxAI", "MinMaxAI\MinMaxAI.csproj", "{157FFF85-34E9-4969-94A5-09024B052848}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{5B8D125F-65C7-49BA-97AB-26F1ADA3FFA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B8D125F-65C7-49BA-97AB-26F1ADA3FFA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B8D125F-65C7-49BA-97AB-26F1ADA3FFA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{859C2480-0C6B-44A4-8312-A89DC425AC5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{859C2480-0C6B-44A4-8312-A89DC425AC5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{859C2480-0C6B-44A4-8312-A89DC425AC5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{859C2480-0C6B-44A4-8312-A89DC425AC5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{157FFF85-34E9-4969-94A5-09024B052848}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{157FFF85-34E9-4969-94A5-09024B052848}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{157FFF85-34E9-4969-94A5-09024B052848}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{157FFF85-34E9-4969-94A5-09024B052848}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ParallelChess.AI.worker {
+namespace ParallelChess.MinMax {
     public class SolvedMove {
         public EvaluatedMove move;
         public Move startSolvingMove;

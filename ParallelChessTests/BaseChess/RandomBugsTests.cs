@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using ParallelChess;
-using ParallelChess.AI;
+using ParallelChess.MinMax;
 using System;
 using System.Collections.Generic;
 using System.Linq;

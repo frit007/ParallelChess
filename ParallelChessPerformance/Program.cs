@@ -1,9 +1,7 @@
 ﻿using BenchmarkDotNet.Running;
 using ParallelChess;
 using ParallelChess.AI;
-using ParallelChess.AI.worker;
 using System;
-using static ParallelChess.AI.MinMaxAI;
 
 namespace ParallelChessPerformance {
     class Program {

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ParallelChess;
 
-namespace ParallelChess.AI {
+namespace ParallelChess.MinMax {
 
     public struct AttackedField {
         public byte whiteOptions;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ParallelChess.AI {
+namespace ParallelChess.MinMax {
     // based on https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
     // use alpha beta prunning to reduce the amount of notes searched, in best case scenario this can remove over half of the searched nodes
     public class MinMaxAI {

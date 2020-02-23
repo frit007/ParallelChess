@@ -1,13 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AI\AI.csproj" />
-    <ProjectReference Include="..\MinMaxAI\MinMaxAI.csproj" />
     <ProjectReference Include="..\ParallelChess\ParallelChess.csproj" />
   </ItemGroup>
 

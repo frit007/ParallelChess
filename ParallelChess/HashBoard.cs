@@ -11,7 +11,7 @@ namespace ParallelChess {
     // based on https://en.wikipedia.org/wiki/Zobrist_hashing
     public static class HashBoard {
 
-        private static int pieceLength = (int)Piece.ENPASSANT_TARGET;
+        public static int pieceLength = (int)Piece.ENPASSANT_TARGET;
 
         // because the pieces do not have low numeric value from 0 to 12(instead it is something like 0-25) and the boardSize is 120 instead of 64 
         // this hash table is going to be bigger than it needs to be, which means it will fill more than it needs to,
@@ -20,10 +20,10 @@ namespace ParallelChess {
         // instead we create a lookup table for their natual format, which should give us a performance boost
         // as long as we are not working on a memory constrained system then it should be fine.
         // this could be anoying for cache misses
-        private static ulong[] hashTable = new ulong[BoardStateOffset.BOARD_STATE_SIZE * pieceLength + pieceLength];
-        private static ulong[] enpassantHashTable = new ulong[EnPassant.NO_ENPASSANT];
-        private static ulong[] castlingOptions = new ulong[(int)CastlingBits.CAN_ALL + 1];
-        private static ulong whiteTurn;
+        public static ulong[] hashTable = new ulong[BoardStateOffset.BOARD_STATE_SIZE * pieceLength + pieceLength];
+        public static ulong[] enpassantHashTable = new ulong[EnPassant.NO_ENPASSANT];
+        public static ulong[] castlingOptions = new ulong[(int)CastlingBits.CAN_ALL + 1];
+        public static ulong whiteTurn;
 
         private static Piece[] pieceVariations = {
             Piece.EMPTY,

@@ -1,5 +1,5 @@
 ﻿using ParallelChess;
-using ParallelChess.AI.worker;
+using ParallelChess.MinMax;
 using System;
 using System.Collections.Generic;
 using System.Linq;

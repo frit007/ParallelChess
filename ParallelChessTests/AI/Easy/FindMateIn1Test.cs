@@ -1,10 +1,7 @@
 ﻿using NUnit.Framework;
 using ParallelChess;
 using ParallelChess.AI;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static ParallelChess.AI.MinMaxAI;
+using ParallelChess.MinMax;
 
 namespace ParallelChessTests.AI.Easy {
     class FindMateIn1Test {

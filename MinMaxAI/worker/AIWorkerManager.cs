@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static ParallelChess.AI.AIWorker;
-using static ParallelChess.AI.MinMaxAI;
 
-namespace ParallelChess.AI.worker {
+namespace ParallelChess.MinMax {
     public class AIWorkerManager {
         List<AIWorker> workers = new List<AIWorker>();
         private object stateLock = new object();
