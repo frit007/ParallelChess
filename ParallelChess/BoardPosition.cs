@@ -78,5 +78,20 @@ namespace ParallelChess {
         public static int PositionColumn(int position) {
             return position - (PositionRow(position) * BoardStateOffset.ROW_OFFSET);
         }
+
+        public struct Coordinate {
+            public int row;
+            public int column;
+        }
+
+        public static Coordinate x88PositionToCoordinate(int x88Position) {
+            int row = x88Position / BoardStateOffset.ROW_OFFSET;
+            int column = x88Position - (row * BoardStateOffset.ROW_OFFSET);
+
+            return new Coordinate() {
+                row = row,
+                column = column
+            };
+        }
     }
 }

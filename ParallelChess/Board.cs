@@ -622,7 +622,6 @@ namespace ParallelChess {
             }
 
 
-            var castleBit = CastlingBits;
             // remove opportunity to castle based on the position on the board
             CastlingBits = CastlingBits
                 & CastlingHelper.castleLookup[toPosition]
@@ -694,7 +693,7 @@ namespace ParallelChess {
             // we abuse that isWhite is a integer which is 1 on whites turn and 0 and blacks turn
             //TurnCounter -= IsWhiteTurn;
 
-            if ((movedPiece & Piece.KING) == Piece.KING) {
+            if ((movedPiece & Piece.PIECE_MASK) == Piece.KING) {
                 if ((moveFlags & MoveFlags.CASTLING) == MoveFlags.CASTLING) {
                     // if the target move is less than the kingsposition it is queenside castling, 
                     // otherwise it is kingside castle 

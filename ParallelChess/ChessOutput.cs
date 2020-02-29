@@ -6,7 +6,7 @@ using System.Text;
 namespace ParallelChess {
     public static class ChessOutput {
 
-        public static String AsciiBoard(Chess game, List<Move> moves = null, bool displayCount = false) {
+        public static String AsciiBoard(ChessGame game, List<Move> moves = null, bool displayCount = false) {
 
             return AsciiBoard(game.board, moves, displayCount);
         }

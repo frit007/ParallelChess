@@ -39,7 +39,7 @@ namespace ChessApi.Controllers
 
             var progress = new GameProgress() {
                 GameId = game.Entity.Id,
-                State = chessService.ChessToState(chess),
+                State = CoordinateOutput.GameToState(chess),
             };
 
             return progress;
@@ -53,7 +53,7 @@ namespace ChessApi.Controllers
 
             return new GameProgress() {
                 GameId = game.Id,
-                State = chessService.ChessToState(chess),
+                State = CoordinateOutput.GameToState(chess),
             };
         }
 
@@ -69,7 +69,7 @@ namespace ChessApi.Controllers
 
             var move = chess.Move(play.SAN);
 
-            var boardState = chessService.ChessToState(chess);
+            var boardState = CoordinateOutput.GameToState(chess);
 
             if (boardState.whiteWins || boardState.isDraw || boardState.blackWins) {
                 var moveRow = new Models.Move() {
@@ -86,7 +86,7 @@ namespace ChessApi.Controllers
                 };
             }
 
-            var aiMove = await chessService.GetAiMove(chess.board);
+            var aiMove = await chessService.GetAiMove(chess);
 
             var aiMoveSan = chess.board.StandardAlgebraicNotation(aiMove);
 
@@ -114,7 +114,7 @@ namespace ChessApi.Controllers
             
             return new GameProgress() {
                 GameId = id,
-                State = chessService.ChessToState(chess)
+                State = CoordinateOutput.GameToState(chess)
             };
         }
 

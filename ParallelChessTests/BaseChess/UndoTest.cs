@@ -164,7 +164,7 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
               Undo
             */
-            var original = Chess.ContinueFromFEN("1q2k3/8/8/8/8/8/3PPP2/4K3 b - - 0 1");
+            var original = ChessGame.ContinueFromFEN("1q2k3/8/8/8/8/8/3PPP2/4K3 b - - 0 1");
 
             var copy = original.Copy();
 
@@ -204,7 +204,7 @@ namespace ParallelChessTests.BaseChess {
              A B C D E F G H
               Undo
             */
-            var original = Chess.ContinueFromFEN("1q2k3/8/8/8/8/8/3PPP2/4K3 w - - 0 1");
+            var original = ChessGame.ContinueFromFEN("1q2k3/8/8/8/8/8/3PPP2/4K3 w - - 0 1");
 
             var copy = original.Copy();
 

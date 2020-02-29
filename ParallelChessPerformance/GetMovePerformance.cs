@@ -208,14 +208,18 @@ namespace ParallelChessPerformance {
 
         [Benchmark]
         public void realisticTest() {
-            moves.Clear();
-            foreach (var move in board.GetMoves(moves)) {
+            
+            for (int i = 0; i < 1000000; i++) {
+                moves.Clear();
+                foreach (var move in board.GetMoves(moves)) {
 
-                if (board.IsLegalMove(move)) {
-                    board.Move(move);
-                    board.UndoMove(move);
+                    if (board.IsLegalMove(move)) {
+                        board.Move(move);
+                        board.UndoMove(move);
+                    }
                 }
             }
+
         }
     }
 }

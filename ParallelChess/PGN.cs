@@ -5,6 +5,7 @@ using System.Text;
 
 namespace ParallelChess {
     // based on http://en.chessbase.com/support-kb/content/details/1157/Tips_on_the_PGN_format
+    // minimum implementation
     public class PGN {
         // name of the tournament, or other possible event
         public string Event = "none";

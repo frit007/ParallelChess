@@ -211,7 +211,7 @@ namespace ParallelChessPerformance {
         // navnet skifter til noUnionFunction i anden test
         public void hashFunktion() {
             ulong combined = 0;
-            var board = Chess.StartGame().board;
+            var board = ChessGame.StartGame().board;
             for (int i = 0; i < 1000000; i++) {
                 combined += HashBoard.hash(board);
             }

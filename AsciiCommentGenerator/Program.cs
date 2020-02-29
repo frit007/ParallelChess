@@ -21,7 +21,7 @@ namespace AsciiCommentGenerator {
             }
         }
 
-        static Chess CreateGameFromPGN() {
+        static ChessGame CreateGameFromPGN() {
             Console.WriteLine("please paste pgn (2 empty lines marks the end of the pgn)");
 
             string pgn = "";
@@ -44,16 +44,16 @@ namespace AsciiCommentGenerator {
 
             return PGNParser.parse(pgn);
         }
-        static Chess CreateGameLinePerLine() {
+        static ChessGame CreateGameLinePerLine() {
 
-            Chess game = null;
+            ChessGame game = null;
             while (game == null) {
                 try {
                     Console.WriteLine("Please enter a FEN");
 
                     var fen = Console.ReadLine();
 
-                    game = Chess.ContinueFromFEN(fen);
+                    game = ChessGame.ContinueFromFEN(fen);
                 } catch (Exception e) {
                     Console.WriteLine(e.Message);
                 }
@@ -108,9 +108,9 @@ namespace AsciiCommentGenerator {
             return game;
         }
 
-        static void GameToChessComment(Chess game) {
+        static void GameToChessComment(ChessGame game) {
 
-            Chess copy = game.Copy();
+            ChessGame copy = game.Copy();
             copy.UndoAll();
 
             var color = copy.board.IsWhiteTurnBool ? "White" : "Black";

@@ -33,6 +33,12 @@ namespace ParallelChess.MinMax {
         int totalFound = 0;
         int totalMoves = 0;
 
+        public int CountWorkers() {
+            lock (stateLock) {
+                return workers.Count;
+            }
+        }
+
 
         public void killWorkers() {
             foreach (var worker in workers) {
@@ -72,7 +78,7 @@ namespace ParallelChess.MinMax {
                     tiedPositions.Add(position.Key);
                 }
             }
-
+            
             return tiedPositions;
         }
 
@@ -234,5 +240,7 @@ namespace ParallelChess.MinMax {
 
             return solvedMoves.Select(move => move.move).OrderBy(move => move.score).Reverse().ToList();
         }
+
+
     }
 }

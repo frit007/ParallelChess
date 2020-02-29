@@ -8,10 +8,10 @@ namespace ParallelChess {
     // it does not handle comments or variations of the game.
     public class PGNParser {
 
-        public static Chess parse(string pgnString) {
+        public static ChessGame parse(string pgnString) {
             var pgn = new PGN();
             var lines = pgnString.Split("\n");
-            Chess game = null;
+            ChessGame game = null;
 
             bool headerSection = true;
             var body = "";
@@ -21,7 +21,7 @@ namespace ParallelChess {
                         return game;
                     }
                     headerSection = false;
-                    game = Chess.ContinueFromFEN(pgn.FEN);
+                    game = ChessGame.ContinueFromFEN(pgn.FEN);
                     game.pgn = pgn;
                     continue;
                 }
@@ -49,12 +49,12 @@ namespace ParallelChess {
 
         // this parsing is too simplistic to catch all the nuances of proper PGN, but it works for simple examples, 
         // and it might even get complex examples correct(but it shouldn't relied upon)
-        public static void parseBody(string body, Chess game) {
+        public static void parseBody(string body, ChessGame game) {
             body = removeComments(body);
             body = body.Replace("\n", " ");
             body = body.Replace("\r", " ");
             var parts = body.Split(" ");
-            var moves = game.getMoves();
+            var moves = game.Moves();
             foreach (var part in parts) {
                 if (part.Contains(".")) {
                     continue;
@@ -62,7 +62,7 @@ namespace ParallelChess {
                 var move = moves.Find(move => move.san == part.Trim());
                 if(move != null) {
                     game.Move(move.move);
-                    moves = game.getMoves();
+                    moves = game.Moves();
                 }
             }
         }
@@ -126,8 +126,8 @@ namespace ParallelChess {
             return (key, value);
         }
 
-        public static List<Chess> ParseFile(string path) {
-            List<Chess> games = new List<Chess>();
+        public static List<ChessGame> ParseFile(string path) {
+            List<ChessGame> games = new List<ChessGame>();
 
             System.IO.StreamReader file = new System.IO.StreamReader(path);
 

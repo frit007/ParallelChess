@@ -6,7 +6,7 @@ using System.Text;
 namespace ParallelChess.AI {
     interface AI {
 
-        Move GetMove(Chess game);
+        Move GetMove(ChessGame game);
 
     }
 }

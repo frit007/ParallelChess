@@ -38,6 +38,7 @@ namespace ParallelChess {
         //  - This is used for declaring stalemate
         // 6. Fullmove number
         //  - Counts how many full moves have been made
+        //  - full moves are not a part of Board since it is not required to play legal chess, it will be handled by the Chess class
         public static Board LoadBoardFromFen(out int move, String fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
             Board board = new Board(new byte[BoardStateOffset.BOARD_STATE_SIZE]);
 

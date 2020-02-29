@@ -6,13 +6,14 @@ using System.Text;
 
 namespace ParallelChess {
 
+    // wrapper around move to include san
     public class ChessMove {
         public string san { get; set; }
         public Move move { get; set; }
     }
 
     // chess is supposed to be an easy to use interface which is less performant than the core game, but handles the chess history necessary for 3 fold repetition
-    public class Chess {
+    public class ChessGame {
         
 
         public Stack<ChessMove> previousMoves { get; private set; } = new Stack<ChessMove>();
@@ -27,24 +28,24 @@ namespace ParallelChess {
         // portable game notation
         public PGN pgn = new PGN();
 
-        private Chess() {
+        private ChessGame() {
             // hide the default chess constructor, you have to use a factory method
             // - LoadGame 
             // - StartGame
             // - ContinueFromFen
         }
 
-        public static Chess StartGame() {
-            return new Chess();
+        public static ChessGame StartGame() {
+            return new ChessGame();
         }
 
         // continue from FEN(Forsyth–Edwards Notation) position
-        public static Chess ContinueFromFEN(string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+        public static ChessGame ContinueFromFEN(string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
             var parts = fen.Split();
 
             var board = BoardFactory.LoadBoardFromFen(out int turnCounter, fen);
             
-            var game = new Chess() {
+            var game = new ChessGame() {
                 board = board
             };
 
@@ -53,7 +54,7 @@ namespace ParallelChess {
             return game;
         }
 
-        public static Chess LoadGame(IEnumerable<String> SANlist, string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
+        public static ChessGame LoadGame(IEnumerable<String> SANlist, string fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
             var game = ContinueFromFEN(fen);
 
             foreach (var san in SANlist) {
@@ -64,12 +65,12 @@ namespace ParallelChess {
         }
 
         // loads PGN(Portable Game Notation)
-        public static Chess LoadPGN(string pgn) {
+        public static ChessGame LoadPGN(string pgn) {
             return PGNParser.parse(pgn);
         }
 
         public ChessMove FindMoveFromSan(string SAN) {
-            var moves = getMoves();
+            var moves = Moves();
             foreach (var move in moves) {
                 if(move.san == SAN) {
                     return move;
@@ -90,7 +91,7 @@ namespace ParallelChess {
             return board;
         }
 
-        public List<ChessMove> getMoves() {
+        public List<ChessMove> Moves() {
             return board.GetMoves()
                 .Where((move) => board.IsLegalMove(move))
                 .Select((move) => new ChessMove() {
@@ -186,9 +187,9 @@ namespace ParallelChess {
         }
 
 
-        public Chess Copy() {
+        public ChessGame Copy() {
 
-            return new Chess() {
+            return new ChessGame() {
                 board = board.CreateCopy(),
                 // we have to reverse the stack, because when copying the stack this way it reverses the order.
                 previousMoves = Helper.CloneStack(previousMoves),
@@ -196,6 +197,34 @@ namespace ParallelChess {
             };
         }
 
+        public Dictionary<ulong, int> RepeatedPositions() {
+            var repeated = board.RepeatedPositions(previousMoves.Select(move => move.move));
+
+            return repeated;
+        }
+
+        public HashSet<ulong> AboutToTiePositions() {
+
+            return new HashSet<ulong>(RepeatedPositions()
+                // if a position has occurred more than twice then it is about to tie
+                // when a position occurs three times it is a time.
+                .Where(position => position.Value >= 2)
+                .Select(position => position.Key));
+
+
+        }
+
+        public HashSet<ulong> AboutToTieDirect() {
+            HashSet<ulong> aboutToTieHashes = new HashSet<ulong>();
+
+            foreach (var position in RepeatedPositions()) {
+                if (position.Value >= 2) {
+                    aboutToTieHashes.Add(position.Key);
+                }
+            }
+
+            return aboutToTieHashes;
+        }
 
 
     }

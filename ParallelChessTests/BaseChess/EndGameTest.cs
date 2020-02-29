@@ -546,7 +546,7 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            var board = Chess.ContinueFromFEN("8/r6k/5Q2/7p/8/r5p1/6P1/7K w - - 0 1");
+            var board = ChessGame.ContinueFromFEN("8/r6k/5Q2/7p/8/r5p1/6P1/7K w - - 0 1");
 
             board.Move(BoardStateOffset.F6, BoardStateOffset.F5, Piece.EMPTY);
             board.Move(BoardStateOffset.H7, BoardStateOffset.H6, Piece.EMPTY);

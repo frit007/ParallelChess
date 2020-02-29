@@ -12,7 +12,7 @@ namespace FightEval {
             MainAsync(args).GetAwaiter().GetResult();
         }
 
-        public static bool botezGambit(Chess game) {
+        public static bool botezGambit(ChessGame game) {
 
             var moves = game.board.GetMoves();
 
@@ -33,7 +33,7 @@ namespace FightEval {
             var ai = new AIWorkerManager();
             //var history = new Stack<Move>();
 
-            var game = Chess.StartGame();
+            var game = ChessGame.StartGame();
 
             ai.spawnWorkers(3);
 
@@ -43,7 +43,7 @@ namespace FightEval {
             bool debug = false;
             do {
                 Console.WriteLine(ChessOutput.AsciiBoard(game.board));
-                List<Move> moves = game.getMoves().Select(move => move.move).ToList();
+                List<Move> moves = game.Moves().Select(move => move.move).ToList();
                 Winner winner = game.Winner();
                 if(winner == Winner.WINNER_WHITE) {
                     Console.WriteLine("White wins");
@@ -77,7 +77,8 @@ namespace FightEval {
  - fen [fen]                * load Forsyth-Edwards Notation 
  - undo                     * Undo the last move
  - eval                     * get the current evaluation of the board
- - workers [workerCount=2]  * Specify how many worker threads the computer should use (should be less than the amount of processors you have)
+ - workers [workerCount]    * Specify how many worker threads the computer should use (should be less than the amount of processors you have)
+ - workers                  * Read how many workers are currently being used
  - [from=D5]                * list moves for a specific field
  - [from=E2] [to=e4]        * play a move
  - [from=E7] [to=e8] [promotion=Q/R/B/N] * play a move and choose which piece you want to promote to");
@@ -85,7 +86,7 @@ namespace FightEval {
                             case "MOVES":
                                 Console.WriteLine("All available moves");
                                 //var allMoves = game.board.GetMoves().Where(move => game.board.IsLegalMove(move)).ToList();
-                                var allMoves = game.getMoves().Select(move => move.move).ToList();
+                                var allMoves = game.Moves().Select(move => move.move).ToList();
                                 foreach (var move in allMoves) {
                                     Console.WriteLine($" - {MoveHelper.ReadableMove(move)}");
                                 }
@@ -125,7 +126,7 @@ namespace FightEval {
                                 fenList.RemoveAt(0);
                                 var fen = String.Join(" ", fenList);
                                 //board = BoardFactory.LoadBoardFromFen(fen);
-                                game = Chess.ContinueFromFEN(fen);
+                                game = ChessGame.ContinueFromFEN(fen);
                                 Console.WriteLine($"Loaded board {fen}");
                                 Console.WriteLine(ChessOutput.AsciiBoard(game.board));
                                 continue;
@@ -139,13 +140,15 @@ namespace FightEval {
                                 }
                                 continue;
                             case "WORKERS":
-                                ai.killWorkers();
-                                int workerCount = 2;
+                                int workerCount = 3;
                                 if (readLine.Count() > 1) {
                                     workerCount = int.Parse(readLine[1]);
+                                    ai.killWorkers();
+                                    ai.spawnWorkers(workerCount);
+                                } else {
+                                    workerCount = ai.CountWorkers();
                                 }
                                 Console.WriteLine($"Using {workerCount} workers");
-                                ai.spawnWorkers(workerCount);
                                 continue;
                             case "UNDO":
                                 hasCheated = true;

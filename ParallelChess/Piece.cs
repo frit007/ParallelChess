@@ -25,12 +25,12 @@ namespace ParallelChess {
         // otherwise ROOK and ATTACKS_STRAIGHT have the same color pattern and for some reason is prefers ATTACKS_STRAIGHT
         PIECE_MASK          = 0b0001_1110,
 
-        // we are using the 3rd and 4th bit to store information about if the piece attacks slanted or straight(or both in case of the queen)
+        // we are using the 4th and 5th bit to store information about if the piece attacks slanted or straight(or both in case of the queen)
         // this is done to speed up attacked checks
         ATTACKS_STRAIGHT    = 0b000_1000,
         ATTACKS_SLANTED     = 0b001_0000,
 
-        // use the furthest right as as isWhite because we can compare is directly to isWhite then
+        // use the furthest right as as isWhite because we can compare isWhite directly to other things that also follow this convention
         IS_WHITE            = 0b0000_0001,
         // IS_BLACK would be 0000_0000 but it gives anoying error messages(everything is marked as IS_BLACK because it matches every piece), therefor if something is not white it is implied to be black
         //IS_BLACK = 0b0000_0000,
