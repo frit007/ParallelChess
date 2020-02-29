@@ -17,3 +17,18 @@ jobs:
       run: dotnet build --configuration Release
     - name: run tests
       run: dotnet test --configuration Release
+    - name: Upload FightEval
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: FighEval
+        # Directory containing files to upload
+        path: FightEval/bin/Release/netcoreapp3.1
+    - name: Upload FightEval
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        # Artifact name
+        name: ChessApi
+        # Directory containing files to upload
+        path: ChessApi/bin/Release/netcoreapp3.1
+    
