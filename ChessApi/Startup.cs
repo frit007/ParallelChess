@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Pomelo.EntityFrameworkCore.MySql.Storage;
 
 namespace ChessApi {
     public class Startup {
@@ -22,7 +24,13 @@ namespace ChessApi {
             //services.Add(new ServiceDescriptor(typeof(ChessContext), new ChessContext(Configuration.GetConnectionString("DefaultConnection"))));
             //services.AddDbContext<ChessContext>(options => options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDbContext<ChessContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<ChessContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //     "DefaultConnection": "Data Source=localhost;Initial Catalog=parallel-chess;Integrated Security=True"
+
+            //services.AddDbContext<ChessContext>(options => options.My)
+
+            services.AddDbContext<ChessContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
