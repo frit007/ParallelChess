@@ -10,8 +10,33 @@ using Pomelo.EntityFrameworkCore.MySql.Storage;
 
 namespace ChessApi {
     public class Startup {
-        public Startup(IConfiguration configuration) {
-            Configuration = configuration;
+        //public Startup(IConfiguration configuration) {
+
+        //    var builder = new ConfigurationBuilder()
+        //        .SetBasePath(configuration.)
+
+        //    Configuration = configuration;
+
+        //}
+
+        public Startup(IWebHostEnvironment env) {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json",
+                             optional: false,
+                             reloadOnChange: true)
+                .AddJsonFile("env.json",
+                    optional: false,
+                    reloadOnChange: true)
+                .AddEnvironmentVariables();
+
+            
+
+            //if (env.IsDevelopment()) {
+            //    builder.AddUserSecrets<Startup>();
+            //}
+
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -35,6 +60,7 @@ namespace ChessApi {
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+            
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
