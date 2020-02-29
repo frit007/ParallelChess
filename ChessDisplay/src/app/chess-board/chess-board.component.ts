@@ -277,4 +277,9 @@ export class ChessBoardComponent implements OnInit {
     this.dragHighlightSquare.column = column;
     this.dragHighlightSquare.row = targetRow;
   }
+  
+  onPieceDragOver(piece: PieceWithId, $event) {
+    this.dragHighlightSquare.column = piece.column;
+    this.dragHighlightSquare.row = piece.row;
+  }
 }

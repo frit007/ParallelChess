@@ -13,6 +13,7 @@
         draggable="true"
         (dragstart)="onPieceDragStart(piece, $event)"
         (dragend)="onPieceDragStop(piece, $event)"
+        (dragover)="onPieceDragOver(piece, $event)"
         [ngClass]="{
           piece: true,
           selected: piece == selectedPiece,

@@ -9,9 +9,9 @@ import { PlayAIService, ChessState } from "./play-ai.service";
 export class PlayAiComponent implements OnInit {
   constructor(private playAi: PlayAIService) {}
 
-  private state: ChessState;
-  private gameId;
-  private winningMessage;
+  state: ChessState;
+  gameId;
+  winningMessage;
 
   ngOnInit() {
     this.startGame();
