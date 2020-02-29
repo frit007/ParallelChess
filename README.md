@@ -1,4 +1,4 @@
-![.NET Core](https://github.com/frit007/ParallelChess/workflows/.NET%20Core/badge.svg)
+![Unit tests](https://github.com/frit007/ParallelChess/workflows/.NET%20Core/badge.svg)
 
 # ParallelChess
 The project was developped in visual studio 2019 using dotnet core 3.1
