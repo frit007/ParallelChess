@@ -30,3 +30,6 @@ A messy library containing performance tests
 
 ## AsciiCommentGenerator
 A internal cmd line program which makes it a bit easier to generate comments for unit tests that visualize which moves where played.
+
+## ParallelChessC
+A version the core of ParallelChess written in c++. This was primarily done to see how C# vs c++ would perform. And might allow webassembly, since C# doesn't convert well to wasm.  
