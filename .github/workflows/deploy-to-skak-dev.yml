@@ -1,4 +1,4 @@
-name: .NET Core
+name: Deploy to skak.dev
 
 on:
   push:
