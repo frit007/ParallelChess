@@ -38,7 +38,7 @@ create a file at location **/etc/supervisor/conf.d/chessApi.conf**
 ```
 [program:ChessApi]
 directory=$(SolutionDir)/ChessApi/bin/Release/netcoreapp3.1/publish
-command=./ChessApi
+command=$(SolutionDir)/ChessApi/bin/Release/netcoreapp3.1/publish/ChessApi
 autostart=true
 autorestart=true
 stderr_logfile=/var/log/chessApi.err.log
