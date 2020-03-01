@@ -1,4 +1,5 @@
 using ChessApi.Models;
+using ChessApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,7 @@ namespace ChessApi {
                              optional: false,
                              reloadOnChange: true)
                 .AddJsonFile("env.json",
-                    optional: false,
+                    optional: true,
                     reloadOnChange: true)
                 .AddEnvironmentVariables();
 
@@ -55,7 +56,9 @@ namespace ChessApi {
             //services.AddDbContext<ChessContext>(options => options.My)
 
             services.AddDbContext<ChessContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
-
+            services.AddTransient<ChessService>((serviceProvider) => {
+                return new ChessService(Configuration);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -17,9 +17,9 @@ namespace ChessApi.Controllers
     {
         private readonly ChessContext context;
         private readonly ChessService chessService;
-        public PlayAIController(ChessContext context) {
+        public PlayAIController(ChessContext context, ChessService chessService) {
             this.context = context;
-            this.chessService = new ChessService();
+            this.chessService = chessService;
         }
 
         public class GameProgress {
@@ -27,12 +27,21 @@ namespace ChessApi.Controllers
             public int GameId { get; set; }
         }
 
+        public class StartGameRequest {
+            public int difficulty { get; set; } = 5;
+            public string name { get; set; } = "Anonymous";
+        }
+
         [HttpPost("StartGame")]
-        public GameProgress PostStartGame() {
+        public GameProgress PostStartGame([FromBody] StartGameRequest request) {
+            // limit difficulty between 1 and 8
+            request.difficulty = Math.Min(8, Math.Max(1, request.difficulty));
             var game = context.Game.Add(new Game() {
-                Name = "frit",
-                Opponent = "AI"
+                Name = request.name,
+                Opponent = "AI",
+                AIDifficulty = request.difficulty,
             });
+            ;
             context.SaveChanges();
 
             var chess = chessService.ReplayMoves(new List<Models.Move>());
@@ -86,7 +95,7 @@ namespace ChessApi.Controllers
                 };
             }
 
-            var aiMove = await chessService.GetAiMove(chess);
+            var aiMove = await chessService.GetAiMove(game.AIDifficulty, chess);
 
             var aiMoveSan = chess.board.StandardAlgebraicNotation(aiMove);
 
