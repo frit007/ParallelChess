@@ -25,6 +25,7 @@ jobs:
         #script: ls
         script: |
           cd /var/www/ParallelChess
+          git fetch
           git checkout release
           cd /var/www/ParallelChess/ChessDisplay
           ng run build-prod
