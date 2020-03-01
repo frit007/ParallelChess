@@ -19,7 +19,7 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release
     - name: SSH Commands
-      uses: appleboy/ssh-action@v0.0.
+      uses: appleboy/ssh-action@v0.0.2
       with:
         host: ${{secrets.DEPLOY_HOST}}
         username: ${{secrets.DEPLOY_USERNAME}}
