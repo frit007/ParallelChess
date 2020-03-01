@@ -1,10 +1,10 @@
 name: Deploy to skak.dev
 
-#on:
-#  push:
-#    branches: 
-#      - release
-on: [push]
+on:
+  push:
+    branches: 
+      - release
+#on: [push]
 
 
 jobs:
@@ -22,7 +22,6 @@ jobs:
         passphrase: ${{secrets.DEPLOY_PASSPHRASE}}
         port: "22"
         script_stop: true
-        #script: ls
         script: |
           cd /var/www/ParallelChess
           git fetch
