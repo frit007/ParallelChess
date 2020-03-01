@@ -39,7 +39,7 @@ export class PlayAIService {
   startGame(difficulty: number): Observable<GameProgress> {
     return this.http
       .post<GameProgress>("api/PlayAi/StartGame", {
-        difficulty: difficulty
+        difficulty: difficulty || 5
       })
       .pipe<GameProgress>(
         map(progress => {
