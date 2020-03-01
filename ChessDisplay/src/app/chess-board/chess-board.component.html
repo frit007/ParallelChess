@@ -14,9 +14,10 @@
         (dragstart)="onPieceDragStart(piece, $event)"
         (dragend)="onPieceDragStop(piece, $event)"
         (dragover)="onPieceDragOver(piece, $event)"
+        (mousedown)="onPieceMouseDown(piece, $event)"
         [ngClass]="{
           piece: true,
-          selected: piece == selectedPiece,
+          selected: dragging && piece == selectedPiece,
           'piece-white': piece.isWhite
         }"
         [src]="piece.image"
@@ -33,6 +34,7 @@
       <img
         *ngFor="let droptarget of selectedPiece.options"
         (drop)="onDropPiece($event, droptarget)"
+        (mousedown)="onDropPiece($event, droptarget)"
         (dragover)="allowDrop($event, droptarget)"
         class="drop-target"
         src="/assets/images/possibilityDot.svg"
@@ -48,7 +50,7 @@
     </ng-container>
 
     <!-- drag highlight -->
-    <ng-container *ngIf="selectedPiece != null">
+    <ng-container *ngIf="selectedPiece != null && dragging">
       <img
         class="tile-highlight"
         src="/assets/images/softBorder.svg"

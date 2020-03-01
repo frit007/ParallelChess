@@ -21,6 +21,17 @@ export class ChessBoardComponent implements OnInit {
   pieces: PieceWithId[] = [];
 
   @Output() moveMade = new EventEmitter();
+  
+  selectedPiece = null;
+
+  dragHighlightSquare = { column: 0, row: 0 };
+
+  dragging = false;
+  // dropTargets = [];
+
+  // used for displaying the data
+  // reordering the board is needed to display information
+  private _displayBoard = new Array(64);
 
   @Input()
   set state(newState: ChessState) {
@@ -36,6 +47,45 @@ export class ChessBoardComponent implements OnInit {
         .forEach(piece => {
           console.log(piece.id);
         });
+    }
+  }
+
+  ngOnInit() {
+    this.board = new Array(64);
+
+    let isWhite = false;
+    for (let i = 0; i < 64; i++) {
+      let showText = false;
+      if (i % 8 == 0) {
+        isWhite = !isWhite;
+        showText = true;
+      }
+
+      var row = Math.floor(i / 8);
+      var column = i - row * 8;
+
+      this.board[i] = {
+        background: isWhite ? "white-tile" : "black-tile",
+        showText: row == 0 || column == 0,
+        // showText: true,
+        location: this.readablePosition(i)
+      };
+      isWhite = !isWhite;
+    }
+
+    this._displayBoard = [...this.board];
+    this.preload(
+      "/assets/images/possibilityDot.svg"
+      )
+  }
+
+  
+  preloadedImages = new Array();
+  preload(...args: any[]):void {
+    for (var i = 0; i < args.length; i++) {
+      this.preloadedImages[i] = new Image();
+      this.preloadedImages[i].src = args[i];
+      console.log('loaded: ' + args[i]);
     }
   }
 
@@ -92,39 +142,8 @@ export class ChessBoardComponent implements OnInit {
     return obj.id;
   }
 
-  selectedPiece = null;
-  dragHighlightSquare = { column: 0, row: 0 };
-  // dropTargets = [];
 
-  // used for displaying the data
-  // reordering the board is needed to display information
-  private _displayBoard = new Array(64);
 
-  ngOnInit() {
-    this.board = new Array(64);
-
-    let isWhite = false;
-    for (let i = 0; i < 64; i++) {
-      let showText = false;
-      if (i % 8 == 0) {
-        isWhite = !isWhite;
-        showText = true;
-      }
-
-      var row = Math.floor(i / 8);
-      var column = i - row * 8;
-
-      this.board[i] = {
-        background: isWhite ? "white-tile" : "black-tile",
-        showText: row == 0 || column == 0,
-        // showText: true,
-        location: this.readablePosition(i)
-      };
-      isWhite = !isWhite;
-    }
-
-    this._displayBoard = [...this.board];
-  }
 
   removeAllOptions() {
     for (const piece of this.pieces) {
@@ -153,6 +172,7 @@ export class ChessBoardComponent implements OnInit {
     this.dragHighlightSquare.column = piece.column;
     this.dragHighlightSquare.row = piece.row;
 
+    this.dragging = true;
     this.selectedPiece = piece;
     // console.log("start", piece, event);
     // console.log(this.selectedPiece.options);
@@ -190,7 +210,8 @@ export class ChessBoardComponent implements OnInit {
   }
 
   onPieceDragStop(piece, event) {
-    this.selectedPiece = null;
+    // this.selectedPiece = null;
+    this.dragging = false;
     // console.log("stop", piece, event);
   }
 
@@ -219,6 +240,9 @@ export class ChessBoardComponent implements OnInit {
   applyMoveEffects(san) {
     var piece = this.findPieceFromSan(san);
     var move = piece.options.find(move => move.san == san);
+
+    piece.column = move.column;
+    piece.row = move.row;
     if (move.isCastle) {
       if (move.column > 4) {
         // castling king side
@@ -256,10 +280,6 @@ export class ChessBoardComponent implements OnInit {
   }
 
   onDropPiece(event, droptarget: PieceOption) {
-    // console.log("dropped it!");
-    this.selectedPiece.column = droptarget.column;
-    this.selectedPiece.row = droptarget.row;
-    // console.log(droptarget);
     this.makeMove(droptarget.san);
   }
 
@@ -281,5 +301,10 @@ export class ChessBoardComponent implements OnInit {
   onPieceDragOver(piece: PieceWithId, $event) {
     this.dragHighlightSquare.column = piece.column;
     this.dragHighlightSquare.row = piece.row;
+  }
+
+  onPieceMouseDown(piece: PieceWithId, $event) {
+    
+    this.selectedPiece = piece;
   }
 }

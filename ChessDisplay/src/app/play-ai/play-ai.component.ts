@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { PlayAIService, ChessState } from "./play-ai.service";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: "play-ai",
@@ -7,18 +8,23 @@ import { PlayAIService, ChessState } from "./play-ai.service";
   styleUrls: ["./play-ai.component.less"]
 })
 export class PlayAiComponent implements OnInit {
-  constructor(private playAi: PlayAIService) {}
+  constructor(private playAi: PlayAIService, private route: ActivatedRoute) {}
 
   state: ChessState;
   gameId;
   winningMessage;
 
+  difficulty: number;
+
   ngOnInit() {
-    this.startGame();
+    this.route.queryParams.subscribe(params => {
+      this.difficulty = +params['difficulty'],
+      this.playAi.startGame(this.difficulty).subscribe(this.onNewState.bind(this));
+    })
   }
 
   startGame() {
-    this.playAi.startGame().subscribe(this.onNewState.bind(this));
+    
   }
 
   onNewState(progress) {

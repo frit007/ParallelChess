@@ -36,9 +36,11 @@ export interface GameProgress {
 export class PlayAIService {
   constructor(private http: HttpClient) {}
 
-  startGame(): Observable<GameProgress> {
+  startGame(difficulty: number): Observable<GameProgress> {
     return this.http
-      .post<GameProgress>("api/PlayAi/StartGame", {})
+      .post<GameProgress>("api/PlayAi/StartGame", {
+        difficulty: difficulty
+      })
       .pipe<GameProgress>(
         map(progress => {
           this.attachImageToChessState(progress.state);

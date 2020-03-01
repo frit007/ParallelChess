@@ -1,2 +1,9 @@
 <h1 *ngIf="winningMessage">{{ winningMessage }}</h1>
-<chess-board (moveMade)="madeMove($event)" [state]="state"></chess-board>
+<div class="p-grid card-margin">
+    <p-card class="card-size p-col-fixed">
+        <chess-board (moveMade)="madeMove($event)" [state]="state"></chess-board>
+    
+    </p-card>
+
+    
+</div>

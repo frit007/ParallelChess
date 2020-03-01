@@ -1,0 +1,21 @@
+<div class="p-grid" style="margin-top: 50px;">
+    <div class="p-col"></div>
+    <div class="p-col-fixed centered-card p-col-align-center">
+        <p-card>
+            <div>
+                <h3 >Difficulty</h3>
+                <p-dropdown [options]="difficulties" [(ngModel)]="selectedDifficulty"></p-dropdown>
+            </div>
+
+            <div *ngIf="selectedDifficulty > 5">
+                <i class="pi pi-exclamation-triangle "></i>
+                The Computer thinks longer with higher difficulties.
+            </div>
+
+            <p-footer style="text-align: end;">
+                <p-button label="Start Game!" (click)="startGame()"></p-button>
+            </p-footer>
+        </p-card>
+    </div>
+    <div class="p-col"></div>
+</div>
