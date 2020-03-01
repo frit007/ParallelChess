@@ -190,16 +190,15 @@ struct Board {
     MoveOption CanITakeSquare(int position) {
         auto piece = GetPiece(position);
         if (piece == PIECE_EMPTY) {
-            //return true;
-            return NO_FIGHT;
+            return MoveOption::NO_FIGHT;
         }
 
         // check that the current color is not the same as the moving piece
         if (PieceBelongsToMe(piece)) {
-            return INVALID;
+            return MoveOption::INVALID_MOVE;
         }
         else {
-            return CAPTURE;
+            return MoveOption::CAPTURE;
         }
     }
 
@@ -277,10 +276,10 @@ struct Board {
                 move += relativePosition;
                 if (BoardPosition::IsValidPosition(move)) {
                     auto moveOption = CanITakeSquare(move);
-                    if (moveOption == NO_FIGHT) {
+                    if (moveOption == MoveOption::NO_FIGHT) {
                         AddMove(fromPosition, move, MOVEFLAG_EMPTY, moves);
                     }
-                    else if (moveOption == CAPTURE) {
+                    else if (moveOption == MoveOption::CAPTURE) {
                         AddMove(fromPosition, move, MOVEFLAG_EMPTY, moves);
                         break;
                     }
@@ -303,7 +302,7 @@ struct Board {
             int move = relativePaths[i] + fromPosition;
             if (BoardPosition::IsValidPosition(move)) {
                 auto moveOption = CanITakeSquare(move);
-                if (moveOption != MoveOption::INVALID) {
+                if (moveOption != MoveOption::INVALID_MOVE) {
                     AddMove(fromPosition, move, MoveFlags::MOVEFLAG_EMPTY, moves);
                 }
             }
@@ -373,7 +372,7 @@ struct Board {
                 if (
                     // targetposition has to either be the enpassant square.
                     isEnpassant
-                    || CanITakeSquare(move) == CAPTURE)
+                    || CanITakeSquare(move) == MoveOption::CAPTURE)
                     // or be empty or contain an enemy) {
                     AddPawnMove(fromPosition, move, PAWN_MOVE | (isEnpassant ? ENPASSANT : MOVEFLAG_EMPTY), moves);
             }
@@ -386,7 +385,7 @@ struct Board {
                 if (
                     // targetposition has to either be the enpassant square.
                     isEnpassant
-                    || CanITakeSquare(move) == CAPTURE)
+                    || CanITakeSquare(move) == MoveOption::CAPTURE)
                     // or be empty or contain an enemy) {
                     AddPawnMove(fromPosition, move, PAWN_MOVE | (isEnpassant ? ENPASSANT : MOVEFLAG_EMPTY), moves);
             }

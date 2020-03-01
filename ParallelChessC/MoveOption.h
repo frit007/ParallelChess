@@ -1,8 +1,8 @@
 #pragma once
 
 
-enum MoveOption {
-    INVALID,
+enum class MoveOption {
+    INVALID_MOVE,
     CAPTURE,
     NO_FIGHT
 };

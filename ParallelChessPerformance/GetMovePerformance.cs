@@ -201,11 +201,6 @@ namespace ParallelChessPerformance {
         */
         Board board = BoardFactory.LoadBoardFromFen("rnbqkb1r/1p3ppp/p2p1n2/4p3/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 1 6");
         List<Move> moves = new List<Move>();
-        //[GlobalSetup]
-        //public void setup() {
-
-        //}
-
         [Benchmark]
         public void realisticTest() {
             
