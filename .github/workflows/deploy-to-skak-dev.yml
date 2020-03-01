@@ -1,9 +1,11 @@
-name: .NET Core
+name: Deploy to skak.dev
 
 on:
   push:
     branches: 
       - release
+#on: [push]
+
 
 jobs:
   build:
@@ -11,27 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.100
-    - name: Build with dotnet
-      run: dotnet build --configuration Release
     - name: SSH Commands
-      uses: appleboy/ssh-action@v0.0.
+      uses: appleboy/ssh-action@v0.0.7
       with:
-        host: ${{secrets.DEPLOY_HOST}}
+        host: "165.22.88.133"
         username: ${{secrets.DEPLOY_USERNAME}}
         key: ${{secrets.DEPLOY_KEY}}
-        passphrase: ${{secret.DEPLOY_PASSPHRASE}}
-        port: ${{secrets.DEPLOY_PORT}}
+        passphrase: ${{secrets.DEPLOY_PASSPHRASE}}
+        port: "22"
         script_stop: true
         script: |
           cd /var/www/ParallelChess
+          git fetch
           git checkout release
           cd /var/www/ParallelChess/ChessDisplay
-          ng run build-prod
+          npm install
+          npm run build-prod
           cd /var/www/ParallelChess/ChessApi
           supervisorctl stop all
           dotnet publish --configuration Release
