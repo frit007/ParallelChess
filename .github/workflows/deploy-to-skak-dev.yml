@@ -26,6 +26,7 @@ jobs:
           cd /var/www/ParallelChess
           git fetch
           git checkout release
+          git pull
           cd /var/www/ParallelChess/ChessDisplay
           npm install
           npm run build-prod
