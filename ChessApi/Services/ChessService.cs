@@ -30,6 +30,8 @@ namespace ChessApi.Services {
 
             var move = ai.GetBestMove();
 
+            ai.killWorkers();
+
             return move.move;
         }
     }
