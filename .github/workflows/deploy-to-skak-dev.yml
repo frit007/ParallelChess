@@ -4,11 +4,9 @@ on:
   push:
     branches: 
       - release
-#on: [push]
-
 
 jobs:
-  build:
+  deploy:
 
     runs-on: ubuntu-latest
 
@@ -27,7 +25,7 @@ jobs:
           git fetch
           git checkout release
           cd /var/www/ParallelChess/ChessDisplay
-          npm install
+          npm install --production
           npm run build-prod
           cd /var/www/ParallelChess/ChessApi
           supervisorctl stop all
