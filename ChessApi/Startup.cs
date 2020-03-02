@@ -55,7 +55,7 @@ namespace ChessApi {
 
             //services.AddDbContext<ChessContext>(options => options.My)
 
-            services.AddDbContext<ChessContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ChessContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection"),mysql => mysql.EnableRetryOnFailure()));
             services.AddTransient<ChessService>((serviceProvider) => {
                 return new ChessService(Configuration);
             });
