@@ -10,7 +10,7 @@ namespace ParallelChess.MinMax {
 
     struct EvaluatedPosition {
         public float score;
-        public int distanceToEndSearch;
+        public byte distanceToEndSearch;
         public byte depth;
     }
 
@@ -241,7 +241,7 @@ namespace ParallelChess.MinMax {
                     moveScore = MinMax(board, depth, tiedPositions, !maximizing, min, max);
 
                     moveScores[boardHash] = new EvaluatedPosition() {
-                        distanceToEndSearch = movesFromMaxDepth,
+                        distanceToEndSearch = (byte)movesFromMaxDepth,
                         score = moveScore,
                         depth = (byte)depth,
                         //fen = board.simplifiedFEN,
