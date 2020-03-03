@@ -15,6 +15,7 @@ namespace ParallelChess.MinMax {
         private HashSet<Move> alreadySolved = new HashSet<Move>();
         private HashSet<Move> begunMoves = new HashSet<Move>();
 
+        MinMaxAI minmax = new MinMaxAI();
         public ConcurrentQueue<AITask> tasks = new ConcurrentQueue<AITask>();
 
         public bool alive = true;
@@ -188,7 +189,6 @@ namespace ParallelChess.MinMax {
 
 
             aiTask.board.VirtualLevel++;
-            var minmax = new MinMaxAI();
             var moveScore = minmax.MinMax(aiTask.board, aiTask.depth, aiTask.tiedPositions, false, min, max);
             aiTask.board.VirtualLevel--;
             aiTask.board.UndoMove(move);

@@ -16,8 +16,8 @@ namespace ParallelChess {
         PAWN                = 0b0000_0010,
         KNIGHT              = 0b0000_0100,
         KING                = 0b0000_0110,
-        ROOK                = 0b0000_1000,
-        BISHOP              = 0b0001_0000,
+        BISHOP              = 0b0000_1000,
+        ROOK                = 0b0001_0000,
         QUEEN               = 0b0001_1000,
 
         // used to only get what piece it is
@@ -27,8 +27,8 @@ namespace ParallelChess {
 
         // we are using the 4th and 5th bit to store information about if the piece attacks slanted or straight(or both in case of the queen)
         // this is done to speed up attacked checks
-        ATTACKS_STRAIGHT    = 0b000_1000,
-        ATTACKS_SLANTED     = 0b001_0000,
+        ATTACKS_STRAIGHT    = 0b001_0000,
+        ATTACKS_SLANTED     = 0b000_1000,
 
         // use the furthest right as as isWhite because we can compare isWhite directly to other things that also follow this convention
         IS_WHITE            = 0b0000_0001,

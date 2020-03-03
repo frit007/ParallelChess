@@ -224,14 +224,15 @@ namespace ParallelChessTests.AI.Worker {
             Assert.IsTrue(MoveHelper.isValidMove(ai.GetBestMove().move));
         }
 
-        [Test]
-        [Category("slow")]
+        //test removed because it is just too slow
+       [Test]
+       [Category("slow")]
         public static void CompleteTest() {
             // for some reason this board would not return a answer when on difficulty 6
             var board = BoardFactory.LoadBoardFromFen("rnb1kbnr/pppp1ppp/4p3/8/3PP2q/8/PPP2PPP/RNBQKBNR w KQkq - 1 3");
             var ai = new AIWorkerManager();
 
-            ai.spawnWorkers(1);
+            ai.spawnWorkers(3);
             ai.analyzeBoard(board, 6).GetAwaiter().GetResult();
             Assert.IsTrue(MoveHelper.isValidMove(ai.GetBestMove().move));
         }
