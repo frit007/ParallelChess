@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using ParallelChess;
 using System.Threading;
+using ParallelChess.MinMax;
 
 namespace ParallelChessPerformance {
     [SimpleJob]
@@ -199,21 +200,52 @@ namespace ParallelChessPerformance {
         +---------------+
          A B C D E F G H
         */
-        Board board = BoardFactory.LoadBoardFromFen("rnbqkb1r/1p3ppp/p2p1n2/4p3/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 1 6");
-        List<Move> moves = new List<Move>();
-        [Benchmark]
-        public void realisticTest() {
-            
-            for (int i = 0; i < 1000000; i++) {
-                moves.Clear();
-                foreach (var move in board.GetMoves(moves)) {
+        //Board board = BoardFactory.LoadBoardFromFen("rnbqkb1r/1p3ppp/p2p1n2/4p3/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 1 6");
+        //List<Move> moves = new List<Move>();
+        //[Benchmark]
+        //public void realisticTest() {
 
-                    if (board.IsLegalMove(move)) {
-                        board.Move(move);
-                        board.UndoMove(move);
-                    }
-                }
-            }
+        //    for (int i = 0; i < 1000000; i++) {
+        //        moves.Clear();
+        //        foreach (var move in board.GetMoves(moves)) {
+
+        //            if (board.IsLegalMove(move)) {
+        //                board.Move(move);
+        //                board.UndoMove(move);
+        //            }
+        //        }
+        //    }
+
+        //}
+        
+        /**
+         * Starting position white to play
+        +---------------+
+        |r n b _ k b n r| 8
+        |p p p p _ p p p| 7
+        |_ _ _ _ p _ _ _| 6
+        |_ _ _ _ _ _ _ _| 5
+        |_ _ _ P P _ _ q| 4
+        |_ _ _ _ _ _ _ _| 3
+        |P P P _ _ P P P| 2
+        |R N B Q K B N R| 1
+        +---------------+
+        A B C D E F G H
+        */
+        Board slowBoard = BoardFactory.LoadBoardFromFen("rnb1kbnr/pppp1ppp/4p3/8/3PP2q/8/PPP2PPP/RNBQKBNR w KQkq - 1 3");
+        AIWorkerManager ai;
+        [GlobalSetup]
+        public void setup() {
+
+        }
+
+        [Benchmark]
+        public void slowTest() {
+            ai = new AIWorkerManager();
+            ai.spawnWorkers(1);
+
+            ai.analyzeBoard(slowBoard, 6).GetAwaiter().GetResult();
+            ai.killWorkers();
 
         }
     }

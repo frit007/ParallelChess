@@ -61,7 +61,7 @@ namespace ParallelChess {
             }
 
 
-            for (int i = 0; i < castlingOptions.Length; i++) {
+            for (int i = 0; i < enpassantHashTable.Length; i++) {
                 enpassantHashTable[i] = LongRandom(random);
             }
 
@@ -86,6 +86,9 @@ namespace ParallelChess {
             var toPosition = move.targetPosition;
             var fromPosition = move.fromPosition;
 
+            var promotion = ((Piece)move.promotion == Piece.EMPTY) ? fromPiece : (Piece)move.promotion | (fromPiece & Piece.IS_WHITE);
+
+
             // remove the from piece
             boardHash ^= pieceHash(fromPosition, fromPiece);
             // add nothing to fromPosition
@@ -93,7 +96,7 @@ namespace ParallelChess {
             // remove the previous piece at the target location
             boardHash ^= pieceHash(toPosition, toPiece);
             // add the moved piece to the target position
-            boardHash ^= pieceHash(toPosition, fromPiece);
+            boardHash ^= pieceHash(toPosition, promotion);
             // switch turn
             boardHash ^= whiteTurn;
 
@@ -105,20 +108,18 @@ namespace ParallelChess {
                 boardHash ^= enpassantHash(toPosition + BoardStateOffset.ROW_OFFSET - BoardStateOffset.ROW_OFFSET * 2 * board.IsWhiteTurn);
             }
 
-            //if(move.EnPassantTarget != EnPassant.NO_ENPASSANT) {
-
-            //}
+            if (board.EnPassantTarget != EnPassant.NO_ENPASSANT) {
+                // if there is a enpassant target on the board then unmark the enpassant target
+                boardHash ^= enpassantHash(board.EnPassantTarget);
+            }
 
             if (((MoveFlags)move.moveFlags & MoveFlags.ENPASSANT) == MoveFlags.ENPASSANT) {
                 int enpassantSpawnPosition = move.targetPosition - BoardStateOffset.ROW_OFFSET + 2 * BoardStateOffset.ROW_OFFSET * board.IsWhiteTurn;
-                // if the move has a enpassant target then add it
-                boardHash ^= enpassantHash(enpassantSpawnPosition);
 
                 // toPosition -16 if white and + 16 when black.
                 int takenPosition = toPosition + BoardStateOffset.ROW_OFFSET - BoardStateOffset.ROW_OFFSET * 2 * board.IsWhiteTurn;
                 boardHash ^= pieceHash(takenPosition, Piece.EMPTY);
                 boardHash ^= pieceHash(takenPosition, board.GetPiece(takenPosition));
-
             }
 
             var nextCastlingBits = board.CastlingBits

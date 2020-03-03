@@ -7,14 +7,12 @@ using ParallelChess;
 namespace ParallelChessTests.BaseChess {
     class HashTableTests {
 
-        private Board incrementalUpdate(string fen, int fromPosition, int toPosition) {
+        private Board incrementalUpdate(string fen, int fromPosition, int toPosition, Piece promotion = Piece.EMPTY) {
             var board = BoardFactory.LoadBoardFromFen(fen);
-
-            var moves = board.GetMoves();
 
             var boardHash = HashBoard.hash(board);
 
-            var move = moves.FindTargetPosition(fromPosition, toPosition);
+            var move = board.FindMove(fromPosition, toPosition, promotion);
 
             var nextBoardHash = HashBoard.ApplyMove(board, move, boardHash);
 
@@ -259,7 +257,7 @@ namespace ParallelChessTests.BaseChess {
         [Test]
         public void blackCastleQueenSide() {
             /*
-             * Starting position (White to play)
+             * Starting position (Black to play)
             +---------------+
             |r _ _ _ k _ _ r| 8
             |_ _ _ _ _ _ _ _| 7
@@ -284,7 +282,7 @@ namespace ParallelChessTests.BaseChess {
             +---------------+
              A B C D E F G H
              */
-            incrementalUpdate("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1", BoardStateOffset.E8, BoardStateOffset.C8);
+            incrementalUpdate("r3k2r/8/8/8/8/8/8/R3K2R b KQkq - 0 1", BoardStateOffset.E8, BoardStateOffset.C8);
         }
 
         [Test]
@@ -349,10 +347,180 @@ namespace ParallelChessTests.BaseChess {
             incrementalUpdate("r3k2r/8/8/2pP4/8/8/8/R3K2R w KQkq c6 0 2", BoardStateOffset.D5, BoardStateOffset.C6);
         }
 
+        [Test]
+        public void promoteToQueen() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |_ _ _ _ k _ _ _| 8
+            |_ P _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+            b7 -> b8 (Promote to Queen)
+            +---------------+
+            |_ Q _ _ k _ _ _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            incrementalUpdate("4k3/1P6/8/8/8/8/8/4K3 w - - 0 1", BoardStateOffset.B7, BoardStateOffset.B8, Piece.QUEEN);
+        }
+
+        [Test]
+        public void promoteToBishop() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |_ _ _ _ k _ _ _| 8
+            |_ P _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+            b7 -> b8 (Promote to Queen)
+            +---------------+
+            |_ B _ _ k _ _ _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            incrementalUpdate("4k3/1P6/8/8/8/8/8/4K3 w - - 0 1", BoardStateOffset.B7, BoardStateOffset.B8, Piece.BISHOP);
+        }
+
+        [Test]
+        public void promoteToKnight() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |_ _ _ _ k _ _ _| 8
+            |_ P _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+            b7 -> b8 (Promote to Queen)
+            +---------------+
+            |_ N _ _ k _ _ _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            incrementalUpdate("4k3/1P6/8/8/8/8/8/4K3 w - - 0 1", BoardStateOffset.B7, BoardStateOffset.B8, Piece.KNIGHT);
+        }
+
+
+        [Test]
+        public void promoteToRook() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |_ _ _ _ k _ _ _| 8
+            |_ P _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+            b7 -> b8 (Promote to Queen)
+            +---------------+
+            |_ R _ _ k _ _ _| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |_ _ _ _ K _ _ _| 1
+            +---------------+
+             A B C D E F G H
+             */
+            incrementalUpdate("4k3/1P6/8/8/8/8/8/4K3 w - - 0 1", BoardStateOffset.B7, BoardStateOffset.B8, Piece.ROOK);
+        }
+
 
         // in theory the same function can be used to undo a move since we xor everything
         [Test]
         public void canUndoEnpassant() {
+            /*
+             * Starting position (White to play)
+            +---------------+
+            |r _ _ _ k _ _ r| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ _ _ _ _ _ _| 6
+            |_ _ p P _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |R _ _ _ K _ _ R| 1
+            +---------------+
+             A B C D E F G H
+            D5 -> C6
+            +---------------+
+            |r _ _ _ k _ _ r| 8
+            |_ _ _ _ _ _ _ _| 7
+            |_ _ P _ _ _ _ _| 6
+            |_ _ _ _ _ _ _ _| 5
+            |_ _ _ _ _ _ _ _| 4
+            |_ _ _ _ _ _ _ _| 3
+            |_ _ _ _ _ _ _ _| 2
+            |R _ _ _ K _ _ R| 1
+            +---------------+
+             A B C D E F G H
+            */
+            var board = BoardFactory.LoadBoardFromFen("r3k2r/8/8/2pP4/8/8/8/R3K2R w KQkq c6 0 2");
+
+            var moves = board.GetMoves();
+
+            var boardHash = HashBoard.hash(board);
+
+            var move = moves.FindTargetPosition(BoardStateOffset.D5, BoardStateOffset.C6);
+
+            var nextBoardHash = HashBoard.ApplyMove(board, move, boardHash);
+
+            board.Move(move);
+            board.UndoMove(move);
+            var previousHash = HashBoard.ApplyMove(board, move, nextBoardHash);
+
+            Assert.AreEqual(boardHash, previousHash);
+        }
+
+        [Test]
+        public void canPromote() {
             /*
              * Starting position (White to play)
             +---------------+
@@ -404,5 +572,24 @@ namespace ParallelChessTests.BaseChess {
 
             Assert.AreNotEqual(HashBoard.hash(whiteBoard), HashBoard.hash(blackBoard));
         }
+
+        [Test]
+        public void enpassantTargetMakesADifference() {
+            var noEnpassant = BoardFactory.LoadBoardFromFen("rnb1kbnr/1ppp1ppp/p3p3/8/1P1PP2q/5N2/P1P2PPP/RNBQKB1R b KQkq - 1 0");
+            var enpassant = BoardFactory.LoadBoardFromFen("rnb1kbnr/1ppp1ppp/p3p3/8/1P1PP2q/5N2/P1P2PPP/RNBQKB1R b KQkq b3 1 0");
+
+            var enpassantHash = HashBoard.hash(enpassant);
+            Assert.AreNotEqual(HashBoard.hash(noEnpassant), enpassantHash);
+        }
+
+        
+        [Test]
+        public void enpassantTargetUpdates() {
+            //var noEnpassant = BoardFactory.LoadBoardFromFen("");
+
+            incrementalUpdate("rnb1kbnr/pppp1ppp/4p3/8/P2PP2q/8/1PP2PPP/RNBQKBNR b KQkq a3 0 1", BoardStateOffset.A7, BoardStateOffset.A6);
+        }
+
+
     }
 }
