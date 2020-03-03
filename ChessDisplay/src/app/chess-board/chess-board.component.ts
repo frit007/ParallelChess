@@ -40,13 +40,22 @@ export class ChessBoardComponent implements OnInit {
 
       this.assignIds(newPieces);
 
+
       this.pieces = newPieces;
 
-      this.pieces
-        .filter(piece => piece.piece == "n" && piece.column > 2)
-        .forEach(piece => {
-          console.log(piece.id);
-        });
+      if(this.selectedPiece) {
+        this.selectedPiece = this.pieces.find(piece => 
+          piece.row == this.selectedPiece.row 
+          && piece.column == this.selectedPiece.column)
+      }
+
+
+      // this.pieces
+      //   .filter(piece => piece.piece == "n" && piece.column > 2)
+      //   .forEach(piece => {
+      //     console.log(piece.id);
+      //   });
+      
     }
   }
 
@@ -221,6 +230,9 @@ export class ChessBoardComponent implements OnInit {
     this.removeAllOptions();
 
     this.moveMade.emit(san);
+
+    // unselect the piece when we are done
+    this.selectedPiece = null;
   }
 
   findPieceFromSan(san) {
@@ -303,8 +315,24 @@ export class ChessBoardComponent implements OnInit {
     this.dragHighlightSquare.row = piece.row;
   }
 
+  selectedTimestamp;
   onPieceMouseDown(piece: PieceWithId, $event) {
-    
+    var focusedElement = $event.toElement;
+    var clickCount = 0;
+    this.selectedTimestamp = Date.now();
+    var selectedTimestamp = this.selectedTimestamp;
+    var blur = () => {
+      // avoid the first click since it would instantly deselect the piece
+      clickCount++;
+      if(clickCount > 1 && this.selectedTimestamp == selectedTimestamp) {
+        if(piece == this.selectedPiece) {
+          this.selectedPiece = null;
+        }
+        document.removeEventListener("click",blur);
+      }
+    }
+    document.addEventListener("click", blur);
     this.selectedPiece = piece;
   }
+
 }
