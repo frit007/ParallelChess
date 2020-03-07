@@ -1,4 +1,4 @@
-<h1 *ngIf="winningMessage">{{ winningMessage }}</h1>
+
 <div class="p-grid card-margin">
     <p-card class="card-size p-col-fixed">
         <chess-board (moveMade)="madeMove($event)" [state]="state"></chess-board>
@@ -7,3 +7,9 @@
 
     
 </div>
+
+
+<p-dialog [header]="winningMessage" [(visible)]="winningMessage">
+    <button (click)="rematch()">Rematch</button>
+    <button (click)="back()">Back</button>
+</p-dialog>

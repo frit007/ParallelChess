@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, Input } from "@angular/core";
-import { Piece, ChessState, PieceOption } from "../play-ai/play-ai.service";
+import { Piece, ChessState, PieceOption, pieceImage } from "../helpers/chess-helper";
 import { identifierModuleUrl } from "@angular/compiler";
 
 interface PieceWithId extends Piece {
@@ -27,7 +27,20 @@ export class ChessBoardComponent implements OnInit {
   dragHighlightSquare = { column: 0, row: 0 };
 
   dragging = false;
-  // dropTargets = [];
+
+  promotionDialog : {
+    visible: boolean,
+    piece: PieceWithId,
+    column: number,
+    row: number,
+    isWhite: boolean,
+  }= {
+    visible: false,
+    piece: null,
+    column: 0,
+    row: 0,
+    isWhite: true,
+  }
 
   // used for displaying the data
   // reordering the board is needed to display information
@@ -224,7 +237,32 @@ export class ChessBoardComponent implements OnInit {
     // console.log("stop", piece, event);
   }
 
-  makeMove(san) {
+  makeMove(san, overridePromotion = false) {
+    const moveAndPiece = this.findMoveAndPieceFromSan(san);
+
+    if(moveAndPiece.move.isPromotion && !overridePromotion) {
+      this.promotionDialog = {
+        visible: true,
+        piece: moveAndPiece.piece,
+        isWhite: moveAndPiece.piece.isWhite,
+        column: moveAndPiece.move.column,
+        row: moveAndPiece.move.row,
+      }
+
+      if(localStorage.getItem("autoQueen")) {
+        this.promote("Q");
+      }
+      return;
+    }
+
+    if(!moveAndPiece) {
+      alert("sorry, move could not be found");
+      return;
+    }
+
+    // if the promotion dialog is open then close it
+    this.promotionDialog.visible = false;
+
     this.applyMoveEffects(san);
 
     this.removeAllOptions();
@@ -234,6 +272,20 @@ export class ChessBoardComponent implements OnInit {
     // unselect the piece when we are done
     this.selectedPiece = null;
   }
+
+  findMoveAndPieceFromSan(san) {
+    for(const piece of this.pieces) {
+      for(const move of piece.options) {
+        if(move.san == san) {
+          return {
+            move,
+            piece
+          }
+        }
+      }
+    }
+    return null;
+  } 
 
   findPieceFromSan(san) {
     return this.pieces.find(
@@ -250,8 +302,9 @@ export class ChessBoardComponent implements OnInit {
   }
 
   applyMoveEffects(san) {
-    var piece = this.findPieceFromSan(san);
-    var move = piece.options.find(move => move.san == san);
+    const {piece, move} = this.findMoveAndPieceFromSan(san);
+    // var piece = this.findPieceFromSan(san);
+    // var move = piece.options.find(move => move.san == san);
 
     piece.column = move.column;
     piece.row = move.row;
@@ -288,6 +341,16 @@ export class ChessBoardComponent implements OnInit {
         this.pieces = this.pieces.filter(piece => piece != enemyPawn);
       }
     }
+
+    if(move.isPromotion) {
+      let promotionIndex = move.san.indexOf("=");
+      let pieceType = san.substr(promotionIndex+1);
+      piece.piece = piece.isWhite 
+        ? pieceType.toUpperCase() 
+        : pieceType.toLowerCase()
+      piece.image = pieceImage(pieceType)
+    }
+
     this.removePiece(move.column, move.row, piece);
   }
 
@@ -335,4 +398,22 @@ export class ChessBoardComponent implements OnInit {
     this.selectedPiece = piece;
   }
 
+  pieceImage(pieceType:string) {
+    return pieceImage(this.promotionDialog.isWhite 
+      ? pieceType.toUpperCase() 
+      : pieceType.toLowerCase())
+  }
+
+  promote(pieceType:string) {
+    let suffix = `=${pieceType}`
+    // console.log(suffix)
+    let move = this.promotionDialog.piece.options.find((move) => 
+      move.column == this.promotionDialog.column
+      && move.row == this.promotionDialog.row
+      && move.san.includes(suffix)
+      )
+    // console.log(this.promotionDialog.piece)
+    console.log("move", move)
+    this.makeMove(move.san, true)
+  }
 }

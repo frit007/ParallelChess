@@ -66,3 +66,10 @@
     </ng-container>
   </div>
 </div>
+
+<p-dialog header="Promotion" [(visible)]="promotionDialog.visible">
+  <img class="promotionImg" [src]="pieceImage('q')" (click)="promote('Q')"/>
+  <img class="promotionImg" [src]="pieceImage('r')" (click)="promote('R')"/>
+  <img class="promotionImg" [src]="pieceImage('n')" (click)="promote('N')"/>
+  <img class="promotionImg" [src]="pieceImage('b')" (click)="promote('B')"/>
+</p-dialog>

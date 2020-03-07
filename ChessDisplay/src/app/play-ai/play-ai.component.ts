@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import { PlayAIService, ChessState } from "./play-ai.service";
-import { ActivatedRoute } from '@angular/router';
+import { PlayAIService } from "./play-ai.service";
+import { ActivatedRoute, Router } from '@angular/router';
+import { ChessState } from '../helpers/chess-helper';
 
 @Component({
   selector: "play-ai",
@@ -8,7 +9,11 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ["./play-ai.component.less"]
 })
 export class PlayAiComponent implements OnInit {
-  constructor(private playAi: PlayAIService, private route: ActivatedRoute) {}
+  constructor(
+    private playAi: PlayAIService, 
+    private route: ActivatedRoute,
+    private router: Router
+    ) {}
 
   state: ChessState;
   gameId;
@@ -18,25 +23,44 @@ export class PlayAiComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      this.difficulty = +params['difficulty'],
-      this.playAi.startGame(this.difficulty).subscribe(this.onNewState.bind(this));
+      this.startGame(+ params['difficulty']);
     })
   }
 
-  startGame() {
-    
+  startGame(difficulty:number) {
+    this.difficulty = difficulty,
+    this.playAi.startGame(this.difficulty)
+    .subscribe(this.onNewState.bind(this));
   }
 
   onNewState(progress) {
     this.state = progress.state;
     this.gameId = progress.gameId;
+    this.endOfGame(progress.state)
+  }
+
+  winningMessageFromState(state :ChessState) {
     if (this.state.whiteWins) {
-      this.winningMessage = "White won!";
+      return "White won!";
     } else if (this.state.isDraw) {
-      this.winningMessage = "It is a draw!";
+      return "It is a draw!";
     } else if (this.state.blackWins) {
-      this.winningMessage = "Black won!";
+      return "Black won!";
     }
+    return "";
+  }
+
+  endOfGame(state: ChessState) {
+    this.winningMessage = this.winningMessageFromState(state);
+  }
+
+  rematch() {
+    this.startGame(this.difficulty)
+    this.winningMessage = "";
+  }
+
+  back() {
+    this.router.navigate(["/play"]);
   }
 
   madeMove(move) {

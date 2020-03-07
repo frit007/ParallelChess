@@ -9,6 +9,7 @@ namespace ParallelChess {
         public int row { get; set; }
         public bool isCastle { get; set; }
         public bool isEnpassant { get; set; }
+        public bool isPromotion { get; set; }
         // use san(standard algebraic notation) to uniquely identify a move
         public string san { get; set; }
     }
@@ -57,6 +58,7 @@ namespace ParallelChess {
                                 chessPiece.options.Add(new PieceOption() {
                                     row = to.row,
                                     column = to.column,
+                                    isPromotion = (Piece)move.move.promotion != Piece.EMPTY,
                                     isCastle = ((MoveFlags)move.move.moveFlags & MoveFlags.CASTLING) == MoveFlags.CASTLING,
                                     isEnpassant = (((MoveFlags)move.move.moveFlags & MoveFlags.ENPASSANT) == MoveFlags.ENPASSANT),
                                     san = move.san
