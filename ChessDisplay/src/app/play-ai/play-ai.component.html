@@ -10,6 +10,6 @@
 
 
 <p-dialog [header]="winningMessage" [(visible)]="winningMessage">
-    <button (click)="rematch()">Rematch</button>
-    <button (click)="back()">Back</button>
+    <p-button (click)="rematch()" label="Rematch" styleClass="ui-button-success"></p-button>
+    <p-button (click)="back()" label="Back" styleClass="ui-button-secondary"></p-button>
 </p-dialog>
