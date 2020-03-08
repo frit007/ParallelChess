@@ -18,13 +18,20 @@ export class PlayAiComponent implements OnInit {
   state: ChessState;
   gameId;
   winningMessage;
-
   difficulty: number;
+  autoQueen = localStorage.getItem("autoQueen") == "true";
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.startGame(+ params['difficulty']);
     })
+    // this.autoQueen = ;
+  }
+
+  setAutoQueen(autoQueen) {
+    console.log("set auto queen")
+    this.autoQueen = autoQueen;
+    localStorage.setItem("autoQueen", autoQueen)
   }
 
   startGame(difficulty:number) {
@@ -66,6 +73,10 @@ export class PlayAiComponent implements OnInit {
   madeMove(move) {
     this.playAi
       .playMove(this.gameId, move)
-      .subscribe(this.onNewState.bind(this));
+      .subscribe((progress) => {
+        if(progress.gameId == this.gameId) {
+          this.onNewState(progress)
+        }
+      });
   }
 }

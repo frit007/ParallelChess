@@ -18,7 +18,7 @@ import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DialogModule } from 'primeng/dialog'
-
+import {TooltipModule} from 'primeng/tooltip';
 @NgModule({
   declarations: [
     AppComponent,
@@ -38,7 +38,8 @@ import { DialogModule } from 'primeng/dialog'
     ButtonModule,
     DropdownModule,
     BrowserAnimationsModule,
-    DialogModule
+    DialogModule,
+    TooltipModule
   ],
   providers: [
     {

@@ -7,3 +7,29 @@
     margin: 10px;
     justify-content: center;
 }
+
+.chess-grid {
+    display: grid;
+    grid-template-columns: auto 300px;
+    grid-template-areas: 'chess-board chess-panel';
+    
+    @media only screen and (max-width: 700px) {
+        grid-template-columns: auto;
+        grid-template-areas: 
+        'chess-board' 
+        'chess-panel';
+    }
+
+}
+
+.chess-board {
+    grid-area: chess-board;
+}
+
+.chess-panel {
+    grid-area: chess-panel;
+}
+
+.slight-margin {
+    margin: 3px;
+}

@@ -1,11 +1,31 @@
 
-<div class="p-grid card-margin">
-    <p-card class="card-size p-col-fixed">
-        <chess-board (moveMade)="madeMove($event)" [state]="state"></chess-board>
+<div class="chess-grid">
+    <div class="chess-board">
+        <div class="p-grid card-margin">
+            <p-card class="card-size p-col-fixed">
+                <chess-board (moveMade)="madeMove($event)" [state]="state"></chess-board>
+            
+            </p-card>
+        </div>
     
-    </p-card>
-
-    
+    </div>
+    <div class="chess-panel card-margin">
+        <p-card class="card-size">
+            <div class="slight-margin">
+                <p-checkbox 
+                [ngModel]="autoQueen"
+                (ngModelChange)="setAutoQueen(!autoQueen)"
+                    pTooltip="Automatically promote to queen" 
+                    tooltipPosition="top" 
+                    binary="true"
+                    label="Auto queen">
+                </p-checkbox>
+            </div>
+            <div class="slight-margin">
+                <p-button (click)="rematch()" label="Restart"></p-button>
+            </div>
+        </p-card>
+    </div>
 </div>
 
 
