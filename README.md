@@ -7,7 +7,7 @@ The project was developped in visual studio 2019 using dotnet core 3.1
 The project is split into multiple solution each trying to solve a small problem. 
 
 ## ParallelChess
-ParallelChess is the core chess program which tries to be as fast c# allows.
+ParallelChess is the core chess program which tries to be as fast c# allows. [read more here](./ParallelChess/README.md)
 
 ## ParrallelChessTests
 Unit tests for libraries
