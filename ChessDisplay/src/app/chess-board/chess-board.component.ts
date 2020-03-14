@@ -249,7 +249,7 @@ export class ChessBoardComponent implements OnInit {
         row: moveAndPiece.move.row,
       }
 
-      if(localStorage.getItem("autoQueen")) {
+      if(localStorage.getItem("autoQueen") === "true") {
         this.promote("Q");
       }
       return;
