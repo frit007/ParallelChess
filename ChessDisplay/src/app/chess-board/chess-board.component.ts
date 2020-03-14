@@ -344,7 +344,8 @@ export class ChessBoardComponent implements OnInit {
 
     if(move.isPromotion) {
       let promotionIndex = move.san.indexOf("=");
-      let pieceType = san.substr(promotionIndex+1);
+      let pieceType = san.substr(promotionIndex+1, 1);
+      console.log("promote to type", pieceType)
       piece.piece = piece.isWhite 
         ? pieceType.toUpperCase() 
         : pieceType.toLowerCase()
