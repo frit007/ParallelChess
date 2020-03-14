@@ -13,7 +13,7 @@ export class PlayComponent implements OnInit {
   difficulties = [
     {label:'Easy',value: 3},
     {label:'Normal',value: 5},
-    {label:'Normal but slower',value: 7},
+    {label:'Hard',value: 6},
   ];
   selectedDifficulty = 5;
 
