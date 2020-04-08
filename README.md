@@ -34,4 +34,4 @@ A messy library containing performance tests
 A internal cmd line program which makes it a bit easier to generate comments for unit tests that visualize which moves where played.
 
 ## ParallelChessC
-A version the core of ParallelChess written in c++. This was primarily done to see how C# vs c++ would perform(it was slightly faster). And might allow webassembly, since C# doesn't convert well to wasm.  
+A version the core of ParallelChess written in C++. This was primarily done to see how C# vs C++ would perform(it was slightly faster). And might allow webassembly, since the C# version didn't convert well to wasm.  
