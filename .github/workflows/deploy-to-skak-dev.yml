@@ -19,6 +19,7 @@ jobs:
     - name: run tests
       run: dotnet test --configuration Release
   deploy:
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
     - name: SSH Commands
